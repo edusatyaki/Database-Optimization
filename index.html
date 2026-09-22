@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>Database Optimization</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +18,7 @@
   /* Sketchnote palette: cream paper, ink, highlighter, pencil-blue */
   --paper:#FBF3E4;
   --paper-2:#F5EAD6;
-  --card:#FFFCF5;
+  --card:#FFFFFF;
   --ink:#1C1A17;
   --ink-2:#403B34;
   --muted:#6B6259;
@@ -304,9 +306,9 @@ text{font-family:var(--hand)}
 .t-sub{font-size:16px;fill:var(--muted)}
 .t-mono{font-family:'JetBrains Mono',monospace;font-size:14px;fill:var(--ink-2)}
 .t-big{font-family:var(--marker);font-size:30px;font-weight:700;fill:var(--ink)}
-.box{fill:var(--card);stroke:var(--ink);stroke-width:2.2;filter:url(#rough)}
-.box-navy{fill:var(--pencil);stroke:var(--ink);stroke-width:2.2;filter:url(#rough)}
-.box-blue{fill:var(--pencil);stroke:var(--ink);stroke-width:2.2;filter:url(#rough)}
+.box{fill:#ffffff;stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
+.box-navy{fill:#ffffff;stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
+.box-blue{fill:#ffffff;stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
 .box-purple{fill:var(--amber);stroke:var(--ink);stroke-width:2.2;filter:url(#rough)}
 .box-orange{fill:var(--flame);stroke:var(--ink);stroke-width:2.2;filter:url(#rough)}
 .on-navy{fill:var(--ink)}
@@ -547,7 +549,7 @@ function sceneStack(step, focus, compact, hideTech){
     const y = base - (i+1)*(fh+gap);
     if(step < i+1) return;
     const lit = focus === i+1;
-    const fill = lit ? 'var(--amber)' : 'var(--card)';
+    const fill = lit ? 'var(--amber)' : '#ffffff';
     const tc   = 'var(--ink)';
     const sc   = lit ? 'var(--ink-2)' : 'var(--muted)';
     g += `<g class="sv-rise" ${D(i*90)}>
@@ -752,7 +754,7 @@ function sceneShardSplit(step){
       <rect x="${x}" y="172" width="200" height="96" rx="2" class="box-navy"/>
       <text class="on-navy t-lbl" x="${x+16}" y="206" style="font-size:16px">${sv[0]}</text>
       <text class="t-mono" x="${x+16}" y="236" style="fill:var(--ink)">customer_id</text>
-      <text class="t-mono" x="${x+16}" y="254" style="fill:#fff">${sv[1]}</text></g>`;
+      <text class="t-mono" x="${x+16}" y="254" style="fill:var(--ink)">${sv[1]}</text></g>`;
   });
   if(step>=2) g += `<text class="t-big" x="748" y="228" text-anchor="middle" style="fill:var(--muted)">· · ·</text>`;
   if(step>=3) g += `<g class="sv-rise"><rect x="55" y="292" width="890" height="54" rx="2" fill="var(--panel)"
@@ -778,7 +780,7 @@ function sceneAnatomy(step){
     g += `<g class="sv-pop" ${D(i*110)}>
       ${hit ? wire(`M500 182 C500 214 ${x+90} 206 ${x+90} 238`, {dur:1.1, delay:.55, r:5.5})
              : `<path d="M500 182 C500 214 ${x+90} 206 ${x+90} 238" class="wire"/>`}
-      <rect x="${x}" y="240" width="180" height="76" rx="2" fill="${hit?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.2"
+      <rect x="${x}" y="240" width="180" height="76" rx="2" fill="${hit?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6"
             ${hit?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="${x+90}" y="272" text-anchor="middle">Shard ${i+1}</text>
       <text x="${x+90}" y="294" text-anchor="middle" class="t-sub" style="fill:var(--ink-2)">own CPU · disk · network</text></g>`;
@@ -836,7 +838,7 @@ function sceneHash(step){
   if(step>=1) for(let i=0;i<4;i++){
     const x = 430 + i*138, filled = step>=2;
     g += `<g class="sv-pop" ${D(i*100)}>
-      <rect x="${x-52}" y="152" width="118" height="92" rx="2" fill="${filled?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.2"/>
+      <rect x="${x-52}" y="152" width="118" height="92" rx="2" fill="${filled?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6"/>
       <text class="on-navy t-lbl" x="${x+7}" y="186" text-anchor="middle">Shard ${i}</text>
       <text class="t-mono" x="${x+7}" y="216" text-anchor="middle" style="fill:var(--ink-2)">
         ${filled ? (rows.find(r=>+r[1]===i)||['—'])[0] : '—'}</text></g>`;
@@ -871,7 +873,7 @@ function sceneDirectory(step){
     const hit = step>=2 && i===1;
     g += `<g class="sv-pop" ${D(i*90)}>
       <rect x="600" y="${62+(i-1)*88}" width="340" height="70" rx="2"
-            fill="${hit?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.2" ${hit?'class="sv-glow"':''}/>
+            fill="${hit?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6" ${hit?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="624" y="${104+(i-1)*88}" style="font-size:17px">Shard ${i}</text></g>`;
   });
   if(step>=2) g += wire('M372 144 C470 144 480 98 590 98', {dur:1.4, r:5.5});
@@ -939,7 +941,7 @@ function sceneReshard(step){
   if(step>=1) [0,1,2,3].forEach(i=>{
     const nw = i===3;
     g += `<g class="sv-pop" ${D(i*100)}><rect x="${540+i*96}" y="120" width="80" height="96" rx="2"
-      fill="${nw?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.2" ${nw?'class="sv-glow"':''}/>
+      fill="${nw?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6" ${nw?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="${580+i*96}" y="176" text-anchor="middle">S${i+1}</text></g>`;
   });
   if(step>=2) g += `<g class="sv-fade">
@@ -985,7 +987,7 @@ function sceneScan(step){
     <text class="t-lbl" x="${X0+462}" y="262" style="fill:var(--blue);font-size:16px">One piece per month · ~2–3M rows</text>
     <text class="t-sub" x="${X0+462}" y="284">Go straight to the Jan-2025 piece; ignore the other 59.</text></g>`;
   if(step>=3) g += `<g class="sv-rise"><rect x="${X0}" y="312" width="840" height="52" rx="2" class="box-navy"/>
-    <text class="t-lbl on-navy" x="${X0+22}" y="336" style="fill:#fff">A query that took 30 minutes now takes seconds.</text>
+    <text class="t-lbl on-navy" x="${X0+22}" y="336" style="fill:var(--ink)">A query that took 30 minutes now takes seconds.</text>
     <text x="${X0+22}" y="356" style="fill:var(--ink-2)" class="t-sub">The engine skips the other 59 pieces entirely — that skipping is partition pruning.</text></g>`;
   return SV('0 0 1000 376', g);
 }
@@ -1003,7 +1005,7 @@ function scenePruning(step){
              stroke-dasharray="3 7" opacity=".5"/>`;
     g += `<g class="sv-rise" ${D(i*90)}>
       <rect x="${x}" y="138" width="280" height="96" rx="2"
-        fill="${hit?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.2"
+        fill="${hit?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6"
         opacity="${skipped?.45:1}" ${hit?'class="sv-glow"':''}/>
       <text class="t-mono" x="${x+22}" y="176" style="fill:${hit?'var(--ink)':'var(--muted)'};font-size:15px">${name}${hit?' ✓':''}</text>
       <text class="t-sub" x="${x+22}" y="202" style="fill:${hit?'var(--ink-2)':'var(--muted)'}">
