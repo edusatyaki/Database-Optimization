@@ -178,35 +178,31 @@ remembered per machine. Checked for overflow across all 120 steps, in both theme
 
 ## Design
 
-The palette is **Amazon's** — squid ink `#232F3E`, Amazon orange `#FF9900`,
-Amazon page grey `#EAEDED`, teal `#007185` for links and labels, price red
-`#B12704` for hotspots and pitfalls, success green `#067D62` for benefits.
-Orange is a **fill only**: `#FF9900` on white is about 2.2:1 and fails as body
-text, so small text stays squid ink or teal.
+A **sketchnote**: cream paper, marker headings, highlighter ribbons and
+hand-drawn boxes, rather than a corporate slide template.
 
-The layout is a **chapter rail beside a document**, not a slide with a header
-band:
+- **Paper** `#FBF3E4` with two soft wash gradients, no flat white anywhere.
+- **Caveat** for headings and big numerals, **Patrick Hand** for body and
+  labels, JetBrains Mono kept for SQL where alignment matters.
+- Slide titles sit on an **amber highlighter stripe**, drawn as a background
+  gradient sized to the text so it hugs the words and is rotated half a degree
+  off true.
+- Boxes use the uneven-corner trick — `border-radius:255px 15px 225px 15px/
+  15px 225px 15px 255px` — with a 2.5px ink border, an offset hard shadow and a
+  fraction of a degree of rotation that alternates by position, so no two
+  cards sit quite square.
+- Diagrams are roughened by an SVG `feTurbulence` + `feDisplacementMap` filter,
+  which makes straight edges wobble like pen on paper. Two strengths: a coarser
+  one for shapes, a finer one for connector lines.
+- The rail is the notebook margin — dashed rules, no fill, the current chapter
+  boxed in highlighter.
 
-- A squid-ink rail on the left carries identity, the lecture, and a live table
-  of contents — the current chapter is marked in orange, earlier ones dim, and
-  any chapter is clickable to jump to it. Position is therefore always visible
-  without spending a header row on it.
-- The stage gets the full height of the screen, with the eyebrow, title and
-  kicker above a squid-ink rule.
-- Content blocks are **flat sheets**: square corners, hairline borders, a 3px
-  coloured top edge, no shadows. Icons are square outlines rather than tinted
-  tiles.
-- A thin orange progress bar across the bottom tracks the whole deck, step by
-  step rather than slide by slide.
+Colour is used semantically, not decoratively: **pencil blue** for machinery,
+**amber** for emphasis, **flame** for hotspots and pitfalls, **leaf** for
+benefits. Warm-toned dark mode keeps the character. Press `T`.
 
-**Type is Arial throughout**, matching the other teaching sites in this
-workspace. The display / editorial / UI roles are still separate design tokens,
-so the hierarchy is carried by size, weight and colour rather than by three
-typefaces. SQL and query output stay in JetBrains Mono, where column alignment
-is load-bearing — the only face fetched from Google Fonts.
-
-Dark mode keeps the family, moving to a deep Amazon navy rather than a neutral
-black. Press `T`.
+Contrast is checked against the paper rather than assumed: the fill colours
+(flame, amber, leaf) have darker text-safe variants for anywhere they set type.
 
 ## The worked example
 
