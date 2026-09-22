@@ -112,6 +112,30 @@ question students actually ask next — *where would we really use this?*
 Motion respects `prefers-reduced-motion` — with that setting on, everything
 appears instantly instead of animating.
 
+## Nothing off the page
+
+A slide clips rather than scrolls, and an inner wrapper scales the step down if
+it would not fit — so nothing is scrollable and nothing hangs off the screen.
+Three things had to be true for that to actually work:
+
+- The wrapper needs a **definite height**, or percentage heights inside it
+  (the chart and stack rows) fall back to their intrinsic ratio.
+- It must be measured **top-aligned**. A centred flex column splits its
+  overflow above and below, and `scrollHeight` only counts what hangs below —
+  so a centred measurement under-reports the true need by about half.
+- It must carry **no transition on `transform`**. The fit clears and re-sets the
+  scale several times per render; with a transition declared, each reset
+  restarted it and the browser held the from-value, so the scale never rendered
+  at all.
+
+The rail is constrained the same way: the grid row is `minmax(0,1fr)` and both
+columns clip internally, so the rail can never burst its cell and push the
+progress bar off-screen. Below 820px of height it drops its key legend, and
+below 600px it drops the wordmark, rather than overflowing.
+
+Audited by walking every slide and asking whether any element's bounding box
+falls outside the viewport — at 863px and at 620px of height, in both themes.
+
 ## No scrollbars, ever
 
 A slide clips rather than scrolls, and an inner wrapper scales the step down if

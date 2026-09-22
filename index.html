@@ -98,6 +98,7 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
+body{height:100dvh}
 html{font-size:clamp(15px, calc(3.5vh * var(--scale)), 56px)}
 body{
   margin:0;background:var(--bg);color:var(--ink);overflow:hidden;
@@ -108,11 +109,13 @@ body{
    Flat and rule-based rather than floating cards: square corners, hairline
    borders, no shadows. The rail carries identity and position so the stage
    gets the full height of the screen.                                      */
-#app{height:100vh;max-width:100vw;display:grid;
-  grid-template-columns:clamp(8.2rem,12.5vw,12.5rem) minmax(0,1fr);overflow:hidden}
+#app{height:100%;max-width:100%;display:grid;
+  grid-template-columns:clamp(8.2rem,12.5vw,12.5rem) minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr);overflow:hidden}
 
 .rail{background:var(--squid);color:#fff;display:flex;flex-direction:column;
-  padding:1rem .95rem;gap:.85rem;border-right:3px solid var(--orange);min-width:0}
+  padding:.9rem .9rem;gap:.7rem;border-right:3px solid var(--orange);
+  min-width:0;min-height:0;overflow:hidden}
 .rail-top{display:flex;align-items:center;gap:.5rem}
 .rail .shield{width:1.7rem;height:1.7rem;flex:0 0 auto}
 .rail-mark{font-size:.5rem;font-weight:700;line-height:1.25;letter-spacing:.2px}
@@ -122,7 +125,8 @@ body{
 .rail-lecture b{display:block;margin-top:.22rem;font-size:.62rem;letter-spacing:0;
   text-transform:none;color:#fff;line-height:1.2}
 
-.rail-nav{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:.1rem;overflow:hidden}
+.rail-nav{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;
+  gap:.08rem;overflow:hidden}
 .rn{display:grid;grid-template-columns:1.35rem 1fr;gap:.4rem;align-items:baseline;
   padding:.3rem .25rem;cursor:pointer;border-left:3px solid transparent;
   color:rgba(255,255,255,.58);transition:color .15s,border-color .15s,background .15s}
@@ -147,7 +151,7 @@ body{
 kbd{font-family:var(--mono);font-size:.92em;background:rgba(255,255,255,.12);
   border:1px solid rgba(255,255,255,.2);border-radius:2px;padding:1px 4px;color:#fff}
 
-.doc{min-width:0;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
+.doc{min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
 .doc-head{flex:0 0 auto;min-width:0;padding:.72rem 1.35rem .5rem;border-bottom:3px solid var(--squid)}
 .eyebrow{font-size:.5rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
   color:var(--orange-deep);margin-bottom:.2rem}
@@ -159,11 +163,23 @@ kbd{font-family:var(--mono);font-size:.92em;background:rgba(255,255,255,.12);
 main{flex:1 1 auto;min-height:0;min-width:0;padding:.65rem 1.35rem .7rem;display:flex;overflow:hidden}
 .slide{flex:1 1 auto;min-height:0;min-width:0;display:flex;align-items:center;
   justify-content:center;overflow:hidden}
-.fit{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;gap:.45rem;
-  justify-content:center;transform-origin:center center;transition:transform .12s ease-out}
+.fit{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;gap:.38rem;
+  justify-content:center;transform-origin:center center}
 
 .progress{flex:0 0 auto;height:4px;background:var(--line)}
 .progress span{display:block;height:100%;background:var(--orange);transition:width .2s ease}
+
+@media (max-height:820px){ .rail-keys{display:none} }
+@media (max-height:720px){
+  .rail-lecture{padding-bottom:.5rem}
+  .rail-lecture b{font-size:.56rem}
+  .rn{padding:.22rem .25rem}
+  .rail-foot{gap:.35rem;padding-top:.5rem}
+}
+@media (max-height:600px){
+  .rail-mark,.rail-lecture b{display:none}
+  .rn-t{font-size:.46rem}
+}
 
 @media (max-width:860px){
   #app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
@@ -176,26 +192,26 @@ main{flex:1 1 auto;min-height:0;min-width:0;padding:.65rem 1.35rem .7rem;display
 }
 
 /* ================= shared blocks ================= */
-.lede{font-family:var(--news);font-size:.86rem;line-height:1.5;color:var(--ink-2);max-width:54rem}
+.lede{margin:0;font-family:var(--news);font-size:.86rem;line-height:1.5;color:var(--ink-2);max-width:54rem}
 .lede b{color:var(--ink);font-weight:600}
 .kicker{font-family:var(--news);font-style:italic;font-size:.82rem;color:var(--violet);margin:0}
 .stage-row{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
 svg.scene{width:100%;height:100%;max-height:100%;overflow:visible;fill:var(--ink)}
-.cards{display:grid;gap:.62rem}
+.cards{display:grid;gap:.5rem}
 /* equal-height cards within a row, without forcing the grid to fill */
 .fit > .cards > .pop{display:flex}
 .fit > .cards > .pop > .card{flex:1 1 auto}
 .card{position:relative;background:var(--panel);border:1px solid var(--line);
-  border-top:3px solid var(--blue);border-radius:0;padding:.75rem .95rem;overflow:hidden}
+  border-top:3px solid var(--blue);border-radius:0;padding:.6rem .85rem;overflow:hidden}
 .card.warn{border-top-color:var(--red)} .card.good{border-top-color:var(--green)}
 .card.pp{border-top-color:var(--squid-2)} .card.tl{border-top-color:var(--link)}
-.card h4{margin:0 0 .28rem;font-size:.5rem;font-weight:700;letter-spacing:1.9px;
+.card h4{margin:0 0 .22rem;font-size:.48rem;font-weight:700;letter-spacing:1.9px;
   text-transform:uppercase;color:var(--blue)}
 .card.warn h4{color:var(--red)} .card.good h4{color:var(--green)}
 .card.pp h4{color:var(--squid-2)} .card.tl h4{color:var(--link)}
-.card h3{margin:0 0 .26rem;font-size:.9rem;font-weight:700;line-height:1.22;letter-spacing:-.01em;
+.card h3{margin:0 0 .22rem;font-size:.85rem;font-weight:700;line-height:1.22;letter-spacing:-.01em;
   color:var(--ink)}
-.card p{margin:0;font-size:.72rem;line-height:1.45;color:var(--ink-2)}
+.card p{margin:0;font-size:.68rem;line-height:1.42;color:var(--ink-2)}
 .card:has(.ico) h3,.card:has(.ico) h4{padding-right:2.6rem}
 .card .ico{position:absolute;right:.7rem;top:.7rem;width:1.8rem;height:1.8rem;border-radius:0;
   display:grid;place-items:center;background:transparent;border:1px solid var(--line)}
@@ -1062,7 +1078,7 @@ const DECK = [
   {note:'System Level. The bottleneck is compute and infrastructure, so the fix is to scale out. No amount of query tuning fixes a saturated machine.'},
   {note:'Second one. Again, let them answer.'},
   {note:'Query Level. The statement itself is inefficient — the fix is in how it is written, not in the hardware.'}],
-  body:(st)=>`<div class="cards" style="gap:.55rem;align-content:center;flex:1">
+  body:(st)=>`<div class="cards" style="gap:.55rem">
     <div class="pop card"><h3>1 · A single machine cannot handle the request volume.</h3>
       ${st>=1?`<p class="pop" style="margin-top:.3rem"><b style="color:var(--blue)">&rarr; System Level.</b>
         The bottleneck is compute and infrastructure — the fix is to scale out.</p>`:`<p style="opacity:.4">…</p>`}</div>
@@ -1099,7 +1115,7 @@ const DECK = [
   {note:'Read the definition slowly. Horizontally partitioning a database across multiple independent instances, each one called a shard.'},
   {note:'Each shard is a self-contained database holding a subset of the data. The union of all shards is the complete dataset.'},
   {note:'And crucially — to any external system the database still appears as a single logical entity. The splitting is internal.'}],
-  body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.6rem">
+  body:(st)=>`<div class="cards" style="gap:.6rem">
     <div class="pop" style="background:var(--navy);color:#fff;border-radius:12px;padding:.8rem 1.05rem">
       <div style="font-size:.52rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
         color:var(--gold);margin-bottom:.3rem">Definition</div>
@@ -1151,7 +1167,7 @@ const DECK = [
       ['Range queries','Single shard','Scatter–gather','Depends on layout',false],
       ['Rebalancing','Re-split ranges','Re-hash all data','Edit one entry',false],
       ['Main risk','Hotspots','Costly ranges','Central bottleneck',true]];
-    return `<div class="cards" style="gap:.4rem;align-content:center;flex:1">
+    return `<div class="cards" style="gap:.4rem">
       <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.5rem;padding:.4rem .7rem;
         background:var(--navy);border-radius:8px;color:#fff;font-size:.6rem;font-weight:700">
         <span></span><span>Range</span><span>Hash</span><span>Directory</span></div>
@@ -1192,7 +1208,7 @@ const DECK = [
   {note:'Second: size. The working set no longer fits on the largest machine you can economically buy or operate.'},
   {note:'Third, and the one people forget: you must have a key that almost every query already carries. Tenant ID, user ID, workspace ID. Without it, every query becomes scatter-gather and you have made things worse.'},
   {note:'Now the counter-cases. If READS are the bottleneck, add replicas — far cheaper and reversible. If you can still scale up, do that first. If you have no natural shard key, sharding will hurt. And if your workload genuinely needs cross-entity transactions and joins, sharding takes those away from you.'}],
-  body:(st)=>`<div class="cards" style="grid-template-columns:1fr 1fr;align-content:center;flex:1;gap:.55rem">
+  body:(st)=>`<div class="cards" style="grid-template-columns:1fr 1fr;gap:.55rem">
     <div style="grid-column:1/-1" class="pop">${card('Shard when all three are true','Writes are the wall',
       'A single primary cannot absorb the write throughput — and replicas do not help with writes.','good',ico('bolt'))}</div>
     ${st>=1?`<div class="pop">${card('Condition 2','The data outgrew the machine',
@@ -1216,7 +1232,7 @@ const DECK = [
         'Hashing spreads new writes evenly across all shards, avoiding the hotspot that range sharding creates on the newest-value shard.'],
       ['What is a scatter–gather query, and under which strategy does it occur?',
         'A query that must hit every shard and merge results. It commonly occurs with hash-based sharding, on range queries.']];
-    return `<div class="cards" style="gap:.5rem;align-content:center;flex:1">
+    return `<div class="cards" style="gap:.5rem">
       ${qs.map((q,i)=>`<div class="card pop" style="animation-delay:${i*50}ms">
         <h3>${i+1} · ${q[0]}</h3>
         ${st>=i+1?`<p class="pop" style="margin-top:.28rem">${q[1]}</p>`:`<p style="opacity:.35">…</p>`}</div>`).join('')}
@@ -1233,7 +1249,7 @@ const DECK = [
   tag:'partitioning', steps:[
   {note:'Dividing a single large table into smaller physical segments called partitions — while the table still appears as one logical entity to the application. The application does not change its queries at all.'},
   {note:'Queries against the main table are automatically redirected by the engine to the relevant partitions. That automatic redirection is called partition pruning, and it is the whole benefit.'}],
-  body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.7rem">
+  body:(st)=>`<div class="cards" style="gap:.7rem">
     <div class="pop" style="background:var(--navy);color:#fff;border-radius:12px;padding:.9rem 1.15rem">
       <div style="font-size:.52rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
         color:var(--gold);margin-bottom:.3rem">Definition</div>
@@ -1289,7 +1305,7 @@ const DECK = [
   {note:'Query performance: filtering on the partition key scans only the relevant partition. The monthly seller report goes from five years of data to one month.'},
   {note:'Data lifecycle. This one is underrated. DROP TABLE orders_2020 completes in milliseconds — it is a metadata operation. A DELETE with a date filter locks the table and runs for hours.'},
   {note:'Smaller indexes: each partition has its own index, smaller and faster to scan than one massive index over the whole table.'}],
-  body:(st)=>`<div class="cards" style="grid-template-columns:repeat(3,1fr);align-content:center;flex:1">
+  body:(st)=>`<div class="cards" style="grid-template-columns:repeat(3,1fr)">
     ${st>=0?`<div class="pop d1">${card('Query performance','Scan one partition, not five years','Filtering on the partition key scans only the relevant partition — the monthly seller report drops from 150M rows to one month.','good',ico('bolt'))}</div>`:''}
     ${st>=1?`<div class="pop d2">${card('Data lifecycle','<code>DROP TABLE orders_2020</code>','A metadata operation completing in milliseconds — versus a DELETE that locks the table for hours.','good',ico('trash'))}</div>`:''}
     ${st>=2?`<div class="pop d3">${card('Smaller indexes','One index per partition','Smaller and faster to scan than a single massive index over the whole table.','good',ico('grid'))}</div>`:''}
@@ -1300,7 +1316,7 @@ const DECK = [
   {note:'No pruning without the partition key. Partitioned by order_date, a query filtering on customer_id hits every partition. You get none of the benefit.'},
   {note:'Cross-partition aggregations add overhead. Total revenue for the year must scan every partition — partitioning does not help and adds a little coordination cost.'},
   {note:'And too many partitions degrade the planner. One partition per day over ten years is three thousand six hundred and fifty partitions. The planner evaluates all of them, and planning itself becomes slow.'}],
-  body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.5rem">
+  body:(st)=>`<div class="cards" style="gap:.5rem">
     ${st>=0?`<div class="pop d1">${card('Pitfall 1','No pruning without the partition key','Partitioned by <code>order_date</code>, a query <code>WHERE customer_id = 500</code> hits every partition — no pruning at all.','warn',ico('ban'))}</div>`:''}
     ${st>=1?`<div class="pop d2">${card('Pitfall 2','Cross-partition aggregations add overhead','Queries that aggregate across all partitions — total revenue for the year — must scan every one of them.','warn',ico('sigma'))}</div>`:''}
     ${st>=2?`<div class="pop d3">${card('Pitfall 3','Too many partitions degrade the planner','One partition per day over 10 years = 3,650 partitions. The planner must evaluate all of them, and planning itself becomes slow.','warn',ico('clock'))}</div>`:''}
@@ -1313,7 +1329,7 @@ const DECK = [
   {note:'Two: nearly every query filters on the same natural key, and in practice that key is almost always time. Orders by date, events by day, logs by hour.'},
   {note:'Three: you delete old data on a schedule. This is the underrated one — dropping a partition is instant, where a DELETE across hundreds of millions of rows can lock the table for hours.'},
   {note:'And the counter-cases: if the table is small enough for an index to handle, partitioning adds complexity for nothing. If there is no shared filter key you get zero pruning. And if your scheme would create thousands of partitions, planning itself becomes the bottleneck.'}],
-  body:(st)=>`<div class="cards" style="grid-template-columns:1fr 1fr 1fr;align-content:center;flex:1;gap:.55rem">
+  body:(st)=>`<div class="cards" style="grid-template-columns:1fr 1fr 1fr;gap:.55rem">
     ${st>=0?`<div class="pop d1">${card('Signal 1','One table dominates',
       'Hundreds of millions of rows, or tens to hundreds of GB, while the rest of the schema is small.','good',ico('db'))}</div>`:''}
     ${st>=1?`<div class="pop d2">${card('Signal 2','A shared filter key',
@@ -1337,7 +1353,7 @@ const DECK = [
         'No. The filter is not on the partition key, so the engine cannot prune and must scan every partition.'],
       ['Why drop a partition to remove old data instead of a DELETE?',
         'Dropping a partition is a metadata operation completing in milliseconds. A DELETE with a date filter locks the table and runs for hours across hundreds of millions of rows.']];
-    return `<div class="cards" style="gap:.5rem;align-content:center;flex:1">
+    return `<div class="cards" style="gap:.5rem">
       ${qs.map((q,i)=>`<div class="card pp pop" style="animation-delay:${i*50}ms">
         <h3>${i+1} · ${q[0]}</h3>
         ${st>=i+1?`<p class="pop" style="margin-top:.28rem">${q[1]}</p>`:`<p style="opacity:.35">…</p>`}</div>`).join('')}
@@ -1349,7 +1365,7 @@ const DECK = [
   {note:'That paper is the direct ancestor of DynamoDB, and of a whole generation of distributed stores that followed it.'},
   {note:'And DynamoDB makes today\'s lesson unavoidable. Every table must declare a partition key. DynamoDB hashes that key to choose a physical partition — which is exactly hash-based sharding, offered as a managed service.'},
   {note:'Here is the payoff line for the whole lecture: choosing a low-cardinality partition key in DynamoDB gives you a hot partition. That is the same hotspot we drew on the bar chart. Managed infrastructure does not remove the shard-key decision — it just stops you from being able to fix it afterwards.'}],
-  body:(st)=>`<div class="cards plan" style="align-content:center;flex:1;gap:.45rem">
+  body:(st)=>`<div class="cards plan" style="gap:.45rem">
     ${st>=0?`<div class="pop d1">${card('Dynamo · 2007','Consistent hashing across a ring',
       'Partition the key space across a ring of nodes so that adding or removing a node moves only a fraction of the keys — not all of them.','',ico('layers'))}</div>`:''}
     ${st>=1?`<div class="pop d2">${card('Its descendants','DynamoDB, and much of the industry',
@@ -1376,7 +1392,7 @@ const DECK = [
       ['Shopify','MySQL "pods", sharded by shop','A shop lives entirely inside one shard, with its own database and application capacity.','build','tl'],
       ['Vitess (from YouTube)','A sharding layer over MySQL','Began as YouTube\'s router, now open source — sharding without writing the router yourself.','route','pp'],
       ['TimescaleDB','PostgreSQL range partitioning by time','Chunks instead of partitions, created and dropped automatically. Partitioning as a product.','clock','pp']];
-    return `<div class="cards" style="gap:.38rem;align-content:center;flex:1">
+    return `<div class="cards" style="gap:.38rem">
       ${rows.map((r,i)=> st>=i+1 ? `<div class="card ${r[4]} pop" style="animation-delay:${i*40}ms;padding:.42rem .95rem">
         <span class="ico" style="top:.5rem;width:1.85rem;height:1.85rem">${ico(r[3])}</span>
         <div style="display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;padding-right:2.4rem">
@@ -1407,7 +1423,7 @@ const DECK = [
       ['4','Add read replicas','If READS are the bottleneck, this is far cheaper than sharding.','days · reversible','layers','tl'],
       ['5','Partition the table','Storage layout changes. One machine. No application change.','weeks · reversible','db','pp'],
       ['6','Shard','Months of work, and a permanent architectural commitment.','months · one-way door','server','warn']];
-    return `<div class="cards" style="gap:.4rem;align-content:center;flex:1">
+    return `<div class="cards" style="gap:.4rem">
       ${rungs.map((r,i)=> st>=i ? `<div class="card ${r[5]} pop" style="animation-delay:${i*40}ms;padding:.6rem .95rem">
         <span class="ico">${ico(r[4])}</span>
         <div style="display:flex;align-items:baseline;gap:.6rem">
@@ -1425,7 +1441,7 @@ const DECK = [
   {note:'Step two: move the reporting and analytics traffic to read replicas. Those queries are the ones hurting everyone else, and they do not need the primary.'},
   {note:'Step three, and only if writes are still the wall after one and two: shard by customer_id. Note the choice — customer_id, not order_date. And we co-locate each customer\'s orders with the customer row, so the join the product runs constantly stays inside one shard.'},
   {note:'And explicitly, what we would not do: shard by order_date, which recreates the hotspot we saw; or shard before partitioning, which is months of irreversible work to solve a problem that weeks of reversible work would have solved.'}],
-  body:(st)=>`<div class="cards plan" style="align-content:center;flex:1;gap:.42rem">
+  body:(st)=>`<div class="cards plan" style="gap:.42rem">
     ${st>=1?`<div class="pop d1">${card('Step 1 · weeks, reversible','Partition <code>orders</code> by month',
       'The monthly report stops scanning five years. Retention becomes <code>DROP TABLE orders_2020</code> instead of an overnight DELETE. No application change.','good',ico('db'))}</div>`:''}
     ${st>=2?`<div class="pop d2">${card('Step 2 · days, reversible','Move reporting to read replicas',
@@ -1512,9 +1528,14 @@ function fitSlide(){
   const measure = () => {
     if(!fit.isConnected) return;
     fit.style.transform = '';
+    /* A centred flex column splits its overflow above AND below, and
+       scrollHeight only counts what hangs below — so it under-reports the true
+       need by about half. Measure top-aligned, where all of it goes downward. */
+    fit.style.justifyContent = 'flex-start';
     const avail = fit.clientHeight, need = fit.scrollHeight;
+    fit.style.justifyContent = '';
     if(need > avail + 1){
-      const k = Math.max(0.68, (avail - 6) / need);     // 6px of breathing room
+      const k = Math.max(0.6, (avail - 6) / need);       // 6px of breathing room
       fit.style.transform = `scale(${k.toFixed(4)})`;
     }
   };
@@ -1524,6 +1545,7 @@ function fitSlide(){
   fitTimer = setTimeout(measure, 520);                  // after the last .pop lands
 }
 window.addEventListener('resize', fitSlide);
+if(window.ResizeObserver) new ResizeObserver(fitSlide).observe(document.querySelector('#app'));
 /* the rail is the table of contents: click a chapter to jump to its first slide */
 $('#railNav').innerHTML = CHAPTERS.map(ch =>
   `<div class="rn" data-ch="${ch.n}">
