@@ -116,14 +116,10 @@ body{
 .rail{background:var(--squid);color:#fff;display:flex;flex-direction:column;
   padding:.9rem .9rem;gap:.7rem;border-right:3px solid var(--orange);
   min-width:0;min-height:0;overflow:hidden}
-.rail-top{display:flex;align-items:center;gap:.5rem}
-.rail .shield{width:1.7rem;height:1.7rem;flex:0 0 auto}
-.rail-mark{font-size:.5rem;font-weight:700;line-height:1.25;letter-spacing:.2px}
-.rail-mark span{font-weight:400;color:rgba(255,255,255,.7)}
-.rail-lecture{font-size:.42rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
-  color:var(--orange);padding-bottom:.7rem;border-bottom:1px solid rgba(255,255,255,.18)}
-.rail-lecture b{display:block;margin-top:.22rem;font-size:.62rem;letter-spacing:0;
-  text-transform:none;color:#fff;line-height:1.2}
+.rail-lecture{font-size:.46rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--orange);padding-bottom:.8rem;border-bottom:1px solid rgba(255,255,255,.18)}
+.rail-lecture b{display:block;margin-top:.3rem;font-size:.76rem;letter-spacing:-.01em;
+  text-transform:none;color:#fff;line-height:1.18}
 
 .rail-nav{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;
   gap:.08rem;overflow:hidden}
@@ -177,7 +173,7 @@ main{flex:1 1 auto;min-height:0;min-width:0;padding:.65rem 1.35rem .7rem;display
   .rail-foot{gap:.35rem;padding-top:.5rem}
 }
 @media (max-height:600px){
-  .rail-mark,.rail-lecture b{display:none}
+  .rail-lecture b{display:none}
   .rn-t{font-size:.46rem}
 }
 
@@ -185,7 +181,8 @@ main{flex:1 1 auto;min-height:0;min-width:0;padding:.65rem 1.35rem .7rem;display
   #app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
   .rail{flex-direction:row;align-items:center;gap:.7rem;border-right:none;
     border-bottom:3px solid var(--orange);padding:.5rem .8rem}
-  .rail-nav,.rail-keys,.rail-lecture{display:none}
+  .rail-nav,.rail-keys{display:none}
+  .rail-lecture{padding-bottom:0;border-bottom:none}
   .rail-foot{flex-direction:row;align-items:center;border-top:none;padding-top:0;margin-left:auto}
   .doc-head{padding:.8rem 1rem .5rem}
   main{padding:.7rem 1rem}
@@ -368,15 +365,6 @@ text{font-family:var(--arial)}
 <body>
 <div id="app">
   <aside class="rail">
-    <div class="rail-top">
-      <svg class="shield" viewBox="0 0 40 40" aria-hidden="true">
-        <path d="M20 3 L34 8 V20 C34 29 27.5 35 20 37 C12.5 35 6 29 6 20 V8 Z"
-              fill="none" stroke="var(--orange)" stroke-width="2.6"/>
-        <path d="M15 14 h6.5 a4.5 4.5 0 0 1 0 9 H15 z M15 14 v13" fill="none"
-              stroke="var(--orange)" stroke-width="2.6" stroke-linecap="round"/>
-      </svg>
-      <div class="rail-mark">Newton School<br><span>of Technology</span></div>
-    </div>
     <div class="rail-lecture">Lecture 13<b>Database Optimization</b></div>
     <nav class="rail-nav" id="railNav"></nav>
     <div class="rail-foot">
@@ -1452,7 +1440,7 @@ const DECK = [
       'Sharding by <code>order_date</code> recreates the hotspot. Sharding before partitioning spends months of irreversible work on a problem weeks of reversible work would have solved.','warn',ico('ban'))}</div>`:''}
   </div>` },
 
-{ id:'recap', kick:'two levels down, three to go', eyebrow:'Where we\'ve been · what\'s next', title:'Two levels down, three to go',
+{ id:'recap', kick:'the foundation and the floor plan are done', eyebrow:'Where we\'ve been · what\'s next', title:'Two levels down, three to go',
   tag:'recap', steps:[
   {note:'Level one, System: sharding. Scale out across machines. Range, hash and directory strategies — mind the shard key, the hotspots, and the cross-shard cost.'},
   {note:'Level two, Storage: partitioning. Organize within an instance. Range, list and hash types — pruning speeds reads, but only when you filter on the partition key.'},

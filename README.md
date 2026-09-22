@@ -206,8 +206,8 @@ and worth stating as such in class:
 That second point is the spine of the lecture: managed infrastructure does not
 remove the shard-key decision, it removes your ability to fix it later.
 
-This is a case study for teaching. The deck carries Newton School branding and
-is not affiliated with or endorsed by Amazon.
+This is a case study for teaching. The deck is not affiliated with, endorsed by,
+or produced in association with Amazon.
 
 ## Source
 
