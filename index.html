@@ -13,51 +13,60 @@
      projector resolution. --scale is the presenter's live zoom (+ / - / 0).   */
   --scale:1;
 
-  /* Palette taken from the Normalisation Lab (edusatyaki/Normalization) */
-  --navy:#073b66;
-  --navy-deep:#062f52;
-  --blue:#087cad;
-  --cyan:#45b6d9;
-  --ink:#17324a;
-  --ink-2:#3d5a73;
-  --muted:#5c7080;
-  --paper:#f4f8fb;
-  --white:#ffffff;
-  --line:#c9d9e4;
-  --line-2:#dbe7f0;
-  --red:#b9364b;
-  --red-soft:#fff0f2;
-  --green:#147a58;
-  --green-soft:#e9f8f1;
-  --gold:#f4c542;
-  --gold-soft:#fdf4d9;
+  /* Amazon palette.
+     Orange is a FILL colour only — #FF9900 on white is ~2.2:1 and fails as text.
+     Small text uses squid ink or the teal link colour instead.               */
+  --squid:#232F3E;          /* Amazon nav / masthead */
+  --squid-2:#37475A;        /* secondary nav */
+  --squid-deep:#131A22;
+  --orange:#FF9900;         /* Amazon orange */
+  --orange-deep:#E47911;
+  --orange-soft:#FFF3E0;
+  --link:#007185;           /* Amazon teal link */
+  --link-soft:#E3F1F3;
+  --ink:#0F1111;
+  --ink-2:#3A4145;
+  --muted:#565959;
+  --paper:#EAEDED;          /* Amazon page background */
+  --white:#FFFFFF;
+  --line:#D5D9D9;
+  --line-2:#E3E6E6;
+  --red:#B12704;            /* Amazon price red */
+  --red-soft:#FDECEA;
+  --green:#067D62;          /* Amazon success green */
+  --green-soft:#E7F4F1;
 
   --bg:var(--paper);
-  --bg-2:#eaf1f7;
+  --bg-2:#DFE3E3;
   --panel:var(--white);
-  --panel-2:#eef4f9;
+  --panel-2:#F3F5F5;
 
-  /* names the scene code already speaks, in the Lab's voice */
-  --accent:var(--blue);
-  --accent-deep:var(--navy);
-  --accent-soft:#cfe4f0;
-  --accent-tint:#eaf4fa;
-  --violet:var(--navy);        /* levels 3-5 */
-  --violet-soft:#e6eef5;
-  --teal:var(--cyan);
+  /* names the rest of the stylesheet and the scene code already speak */
+  --navy:var(--squid);
+  --navy-deep:var(--squid-deep);
+  --blue:var(--link);
+  --cyan:var(--squid-2);
+  --gold:var(--orange);
+  --gold-soft:var(--orange-soft);
+  --accent:var(--link);
+  --accent-deep:var(--squid);
+  --accent-soft:#C7D1D1;
+  --accent-tint:var(--link-soft);
+  --violet:var(--squid-2);
+  --violet-soft:#E7EAEE;
+  --teal:var(--link);
   --clay:var(--red);
   --ok:var(--green);
   --navy-900:var(--ink);
-  --navy-800:var(--navy-deep);
-  --navy-700:var(--navy);
-  --blue-400:var(--navy);
-  --blue-300:var(--cyan);
-  --purple:var(--navy);
-  --purple-300:var(--cyan);
-  --orange:var(--red);
+  --navy-800:var(--squid-deep);
+  --navy-700:var(--squid);
+  --blue-400:var(--squid);
+  --blue-300:var(--orange);
+  --purple:var(--squid-2);
+  --purple-300:var(--orange);
 
-  --shadow:0 18px 44px rgba(7,59,102,.12);
-  --shadow-sm:0 8px 22px rgba(7,59,102,.10);
+  --shadow:0 14px 34px rgba(15,17,17,.14);
+  --shadow-sm:0 6px 18px rgba(15,17,17,.10);
 
   --arial:Arial,'Helvetica Neue',Helvetica,sans-serif;
   --serif:var(--arial);
@@ -66,27 +75,26 @@
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 :root[data-theme="dark"]{
-  --bg:#07243c;
-  --bg-2:#0a2c48;
-  --panel:#0d3253;
-  --panel-2:#123c61;
-  --ink:#eaf3fa;
-  --ink-2:#bdd4e6;
-  --muted:#8fabc2;
-  --line:#1d4a72;
-  --line-2:#194164;
-  --navy:#0b4d80;
-  --navy-deep:#052033;
-  --blue:#45b6d9;
-  --cyan:#7ad0ea;
-  --white:#0d3253;
-  --accent-soft:#12466e;
-  --accent-tint:#0f3c60;
-  --violet-soft:#123c61;
-  --red-soft:#3a1a22;
-  --green-soft:#0f3a2c;
-  --shadow:0 18px 44px rgba(0,0,0,.45);
-  --shadow-sm:0 8px 22px rgba(0,0,0,.4);
+  --bg:#131A22;
+  --bg-2:#1A222C;
+  --panel:#232F3E;
+  --panel-2:#2C3A4B;
+  --ink:#F2F4F4;
+  --ink-2:#CDD4D8;
+  --muted:#9BA4A8;
+  --line:#3B4A5C;
+  --line-2:#33404F;
+  --white:#232F3E;
+  --squid:#131A22;
+  --link:#4FBFC9;
+  --accent-soft:#3B4A5C;
+  --accent-tint:#1D2C34;
+  --link-soft:#1D2C34;
+  --violet-soft:#2C3A4B;
+  --red-soft:#3A1C16;
+  --green-soft:#0F2E28;
+  --shadow:0 14px 34px rgba(0,0,0,.5);
+  --shadow-sm:0 6px 18px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -121,11 +129,17 @@ header{flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:11px 26px;
   padding:5px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);color:#fff;
   background:rgba(255,255,255,.12);white-space:nowrap}
 .badge.p{color:var(--navy);border-color:var(--gold);background:var(--gold)}
+.present{display:inline-flex;align-items:center;gap:.4em;cursor:pointer;white-space:nowrap;
+  font-family:var(--arial);font-size:clamp(9px,1.1vh,17px);font-weight:700;letter-spacing:.4px;
+  padding:5px 12px;border-radius:999px;border:none;background:var(--orange);color:var(--squid-deep);
+  transition:filter .15s,transform .15s}
+.present:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.present svg{width:1.05em;height:1.05em}
 .clock{font-family:var(--mono);font-size:clamp(9px,1.12vh,17px);color:rgba(255,255,255,.75);min-width:4.2em;text-align:right}
 
 main{flex:1 1 auto;min-height:0;padding:16px 24px;display:flex}
-.slide{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:.5rem;
-  overflow-y:auto;overscroll-behavior:contain}
+.slide{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:.55rem;
+  justify-content:center;overflow-y:auto;overscroll-behavior:contain}
 .slide::-webkit-scrollbar{width:8px}
 .slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
 
@@ -147,6 +161,9 @@ kbd{font-family:var(--mono);font-size:clamp(8px,.95vh,15px);background:var(--pan
 .stage-row{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
 svg.scene{width:100%;height:100%;max-height:100%;overflow:visible;fill:var(--ink)}
 .cards{display:grid;gap:.62rem}
+/* equal-height cards within a row, without forcing the grid to fill */
+.slide > .cards > .pop{display:flex}
+.slide > .cards > .pop > .card{flex:1 1 auto}
 .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;
   padding:.85rem 1.05rem;box-shadow:var(--shadow-sm);overflow:hidden}
 .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--blue)}
@@ -154,6 +171,7 @@ svg.scene{width:100%;height:100%;max-height:100%;overflow:visible;fill:var(--ink
 .card.pp::before{background:var(--violet)} .card.tl::before{background:var(--teal)}
 .card h4{margin:0 0 .3rem;font-size:.58rem;font-weight:700;letter-spacing:1.5px;
   text-transform:uppercase;color:var(--blue)}
+.card:has(.ico) h3,.card:has(.ico) h4{padding-right:2.9rem}
 .card.warn h4{color:var(--clay)} .card.good h4{color:var(--ok)}
 .card.pp h4{color:var(--violet)} .card.tl h4{color:var(--teal)}
 .card h3{margin:0 0 .3rem;font-family:var(--serif);font-size:.9rem;font-weight:700;line-height:1.25;
@@ -253,6 +271,9 @@ text{font-family:var(--arial)}
 #zoom.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 #zoom small{display:block;font-size:.42em;color:var(--muted);font-weight:400;margin-top:.3rem;text-align:center}
 
+:root:fullscreen main{padding:22px 34px}
+:root:fullscreen header{padding-top:13px;padding-bottom:13px}
+
 @media (max-width:900px){ header,main,footer{padding-left:14px;padding-right:14px} }
 </style>
 </head>
@@ -277,6 +298,11 @@ text{font-family:var(--arial)}
     <div class="badges">
       <span class="badge" id="sTag">intro</span>
       <span class="badge p">Lecture 13</span>
+      <button class="present" id="btnFull" title="Full screen (F)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/>
+        </svg><span id="btnFullTxt">Present</span></button>
       <span class="clock" id="clock">00:00</span>
     </div>
   </header>
@@ -759,30 +785,32 @@ const card = (k,t,p,cls='',ico='') =>
      <h4>${k}</h4><h3>${t}</h3><p>${p}</p></div>`;
 
 const DECK = [
-{ id:'title', kick:'same code, two hundred times the load', eyebrow:'Lecture 13 · Database Optimization', title:'Why does a database slow down?',
+{ id:'title', kick:'one database, then the world', eyebrow:'Lecture 13 · Database Optimization', title:'Why does a database slow down?',
   tag:'intro', steps:[
-  {note:'Open on the question, not the answer. Everyone here has written SQL that worked fine on a laptop. Today is about what happens to that same SQL when the data grows two hundred times.'},
+  {note:'Open on the question, not the answer. Everyone here has written SQL that worked fine on a laptop. Today is about what happens to that same SQL when the data grows a thousand times — and we will follow one company that actually lived it.'},
   {note:'Build the stack one floor at a time as you name each level. The point of the whole lecture is in this picture: optimization is not one trick, it is five different places a problem can live.'},
   {note:'Levels 1 and 2 are today. Levels 3, 4 and 5 are the next lectures — level 3 is the transactions material.'}],
   body:(st)=>`
     <div class="stage-row">${sceneStack(Math.min(st*2+1,6), 0)}</div>
     <p class="lede">${st>=2
       ? 'Optimization is a <b>layered discipline</b>. Diagnose which layer the problem lives in, then reach for that layer\'s technique. A problem at the infrastructure level needs a different fix from a problem inside a query.'
-      : 'ShopFast ran on a single PostgreSQL instance for three years. Same code, same queries — and today the server throws timeouts.'}</p>` },
+      : 'Amazon began in 1995 as a bookstore running on a single relational database. The catalogue, the orders, the customers — one machine. Every technique in this lecture exists because that stopped working.'}</p>` },
 
-{ id:'growth', kick:'the code never changed — the load did', eyebrow:'Same code · 200× the load', title:'What changed in three years',
+{ id:'growth', kick:'a bookstore that became a catalogue of everything', eyebrow:'Amazon · 1995 to today', title:'What growth does to a design',
   tag:'the hook', steps:[
-  {note:'Nothing in the codebase changed. Everything about the load did. Let the three numbers land before you explain anything.'},
-  {note:'Customers 10K to 2M. Orders per minute 50 to thousands. Catalog 500 products to a million. That is roughly two hundred times the pressure on the same design.'},
-  {note:'Several things broke at once — and each one has a specific home in the database system. That is what the five levels are for.'}],
+  {note:'Amazon opened in 1995 selling books from a single relational database. Let the arc land before you explain anything: the software did not get worse, the load got bigger.'},
+  {note:'Customers, catalogue and order rate each grew by orders of magnitude. Be honest with the class that these figures are illustrative — the exact internal numbers are not public — but the shape of the curve is real and documented.'},
+  {note:'And here is the part that is fully documented: Amazon ran its core systems on Oracle databases for years, and in 2018 AWS announced the consumer business had turned off its last Oracle database, having moved onto DynamoDB, Aurora, RDS and Redshift. That migration is this lecture, at company scale.'}],
   body:(st)=>`
-    <div class="stage-row" style="flex:0 0 auto;height:44%">${sceneGrowth(Math.min(st+1,3))}</div>
+    <div class="stage-row" style="flex:0 0 auto;height:34%">${sceneGrowth(Math.min(st+1,3))}</div>
     <div class="cards" style="grid-template-columns:repeat(3,1fr)">
-      ${st>=1?`<div class="pop d1">${card('Customers','10K &rarr; 2M','Two million accounts against a schema designed for ten thousand.','',ico('users'))}</div>`:''}
-      ${st>=1?`<div class="pop d2">${card('Orders / minute','~50 &rarr; 1000s','Write contention the original design never had to survive.','tl',ico('cart'))}</div>`:''}
-      ${st>=1?`<div class="pop d3">${card('Product catalog','500 &rarr; 1M','Searches that were trivial at 500 rows now scan a million.','pp',ico('search'))}</div>`:''}
+      ${st>=1?`<div class="pop d1">${card('Customers','thousands &rarr; hundreds of millions','A schema designed for a bookstore, serving a global marketplace.','',ico('users'))}</div>`:''}
+      ${st>=1?`<div class="pop d2">${card('Orders / second','a handful &rarr; thousands','Write contention the original single-database design never had to survive.','tl',ico('cart'))}</div>`:''}
+      ${st>=1?`<div class="pop d3">${card('Catalogue','books &rarr; everything','Searches that were trivial over one category now span hundreds of millions of items.','pp',ico('search'))}</div>`:''}
     </div>
-    ${st>=2?`<p class="lede pop">Several things broke at once — and <b>each has a specific home</b> in the database system.</p>`:''}` },
+    ${st>=2?`<p class="lede pop">Amazon ran its core systems on Oracle for years. In <b>2018</b> AWS announced the
+      consumer business had shut down its last Oracle database. Each thing that broke had
+      <b>a specific home</b> — that is what the five levels are for.</p>`:''}` },
 
 { id:'levels', kick:'five places a bottleneck can live', eyebrow:'From infrastructure down to the individual query', title:'The five levels of optimization',
   tag:'part 1', steps:[
@@ -798,7 +826,7 @@ const DECK = [
       Transaction is the rules for moving through corridors without colliding · Schema is how furniture inside a room is arranged ·
       Query is the specific path a person walks from desk to printer.</p>`:''}` },
 
-{ id:'mapped', kick:'symptom first, then the layer', eyebrow:'One real symptom per level', title:'Five levels, mapped to ShopFast',
+{ id:'mapped', kick:'symptom first, then the layer', eyebrow:'One real symptom per level', title:'Five levels, mapped to Amazon',
   tag:'diagnosis', steps:[
   {note:'Read the symptom first and let them guess the level before you reveal the fix. This table is the practical payoff of the whole model.'},
   {note:'System: 50,000 reads a second on one server, CPU maxed. No query rewrite saves you. Distribute across servers — sharding.'},
@@ -883,7 +911,7 @@ const DECK = [
   body:(st)=>`<div class="stage-row">${sceneScaleOut(st+1)}</div>
     ${st>=2?`<p class="lede pop">This is <b>Horizontal Scaling</b> — and <b>Sharding</b> is what enables it.</p>`:''}` },
 
-{ id:'split', kick:'one billion rows across ten nodes', eyebrow:'Example · ShopFast · 1 billion orders', title:'Split the data by customer ID',
+{ id:'split', kick:'one billion rows across ten nodes', eyebrow:'Example · Amazon orders · 1 billion rows', title:'Split the data by customer ID',
   tag:'sharding', steps:[
   {note:'One orders table, a billion rows. No single machine indexes and serves that at the speed the checkout page needs.'},
   {note:'Split on customer_id. Server one takes the first hundred million IDs, server two the next hundred million, and so on to server ten.'},
@@ -961,9 +989,9 @@ const DECK = [
 { id:'crossshard', kick:'joins that leave the database', eyebrow:'Pitfall 1 · challenges of sharding', title:'Cross-shard queries',
   tag:'pitfalls', steps:[
   {note:'When a query joins or aggregates data living on multiple shards, the application must fetch from each and combine in memory.'},
-  {note:'That is an application-level join, and it is far slower than a native SQL join. ShopFast shards customers by customer_id and orders by order_id — so one customer\'s orders are spread across many shards. A one-to-many join that took milliseconds in a single instance now takes seconds.'}],
+  {note:'That is an application-level join, and it is far slower than a native SQL join. Suppose customers are sharded by customer_id but orders by order_id — one customer\'s orders are then spread across every shard. A one-to-many join that took milliseconds in a single instance now takes seconds.'}],
   body:(st)=>`<div class="stage-row">${sceneScatter(st+1)}</div>
-    ${st>=1?`<p class="lede pop"><b>ShopFast:</b> customers sharded by <code>customer_id</code>, orders by <code>order_id</code>.
+    ${st>=1?`<p class="lede pop"><b>The mistake:</b> customers sharded by <code>customer_id</code>, orders by <code>order_id</code>.
       To report customers with their orders the app queries every shard, collects, and merges.</p>`:''}` },
 
 { id:'reshard', kick:'redistributing data on a live system', eyebrow:'Pitfall 2 · challenges of sharding', title:'Re-sharding',
@@ -975,7 +1003,7 @@ const DECK = [
 
 { id:'hotspot', kick:'one shard saturated, nine idle', eyebrow:'Pitfall 3 · a poor shard key in action', title:'Hotspots',
   tag:'pitfalls', steps:[
-  {note:'ShopFast picks order_date as the shard key, with range sharding. Seems reasonable.'},
+  {note:'Suppose the orders table is sharded on order_date, with range sharding. It looks reasonable — orders are naturally time-ordered.'},
   {note:'The 2023 shard is idle. Nobody queries two-year-old orders.'},
   {note:'2024 is idle too.'},
   {note:'Early 2025 gets light traffic.'},
@@ -1020,7 +1048,7 @@ const DECK = [
 
 { id:'scanprob', kick:'150M rows read to return 3M', eyebrow:'Why partitioning exists · the need', title:'The full table scan problem',
   tag:'part 3 · partitioning', steps:[
-  {note:'Sharding spread data across machines. But within a single instance a table can still hold hundreds of millions of rows. ShopFast orders: 150 million.'},
+  {note:'Sharding spread data across machines. But within a single instance a table can still hold hundreds of millions of rows — one region\'s orders table, say 150 million.'},
   {note:'A query for January 2025 examines all 150 million rows to find the two or three million that match. That is a full table scan, and it is slow no matter what hardware you throw at it.'},
   {note:'Now cut the table into one piece per month. Go straight to the January 2025 piece and ignore the other fifty-nine. A query that took thirty minutes now takes seconds.'}],
   body:(st)=>`<div class="stage-row">${sceneScan(st+1)}</div>` },
@@ -1082,11 +1110,11 @@ const DECK = [
 
 { id:'benefits', kick:'what partitioning buys', eyebrow:'What partitioning buys you', title:'Benefits of partitioning',
   tag:'partitioning', steps:[
-  {note:'Query performance: filtering on the partition key scans only the relevant partition. ShopFast\'s monthly report goes from five years of data to one month.'},
+  {note:'Query performance: filtering on the partition key scans only the relevant partition. The monthly seller report goes from five years of data to one month.'},
   {note:'Data lifecycle. This one is underrated. DROP TABLE orders_2020 completes in milliseconds — it is a metadata operation. A DELETE with a date filter locks the table and runs for hours.'},
   {note:'Smaller indexes: each partition has its own index, smaller and faster to scan than one massive index over the whole table.'}],
   body:(st)=>`<div class="cards" style="grid-template-columns:repeat(3,1fr);align-content:center;flex:1">
-    ${st>=0?`<div class="pop d1">${card('Query performance','Scan one partition, not five years','Filtering on the partition key scans only the relevant partition — ShopFast\'s monthly report drops from 150M rows to one month.','good',ico('bolt'))}</div>`:''}
+    ${st>=0?`<div class="pop d1">${card('Query performance','Scan one partition, not five years','Filtering on the partition key scans only the relevant partition — the monthly seller report drops from 150M rows to one month.','good',ico('bolt'))}</div>`:''}
     ${st>=1?`<div class="pop d2">${card('Data lifecycle','<code>DROP TABLE orders_2020</code>','A metadata operation completing in milliseconds — versus a DELETE that locks the table for hours.','good',ico('trash'))}</div>`:''}
     ${st>=2?`<div class="pop d3">${card('Smaller indexes','One index per partition','Smaller and faster to scan than a single massive index over the whole table.','good',ico('grid'))}</div>`:''}
   </div>` },
@@ -1139,15 +1167,32 @@ const DECK = [
         ${st>=i+1?`<p class="pop" style="margin-top:.28rem">${q[1]}</p>`:`<p style="opacity:.35">…</p>`}</div>`).join('')}
     </div>`; } },
 
-{ id:'wild', kick:'every one of them shards on the tenant', eyebrow:'How production systems actually do this',
+{ id:'amazondb', kick:'the paper that started it', eyebrow:'Amazon\'s own answer',
+  title:'Dynamo, and the partition key', tag:'real world', steps:[
+  {note:'Before we look at anyone else, look at what Amazon itself published. The 2007 Dynamo paper describes partitioning a key space across a ring of nodes using consistent hashing, so that adding or removing a node moves only a fraction of the keys instead of re-hashing everything.'},
+  {note:'That paper is the direct ancestor of DynamoDB, and of a whole generation of distributed stores that followed it.'},
+  {note:'And DynamoDB makes today\'s lesson unavoidable. Every table must declare a partition key. DynamoDB hashes that key to choose a physical partition — which is exactly hash-based sharding, offered as a managed service.'},
+  {note:'Here is the payoff line for the whole lecture: choosing a low-cardinality partition key in DynamoDB gives you a hot partition. That is the same hotspot we drew on the bar chart. Managed infrastructure does not remove the shard-key decision — it just stops you from being able to fix it afterwards.'}],
+  body:(st)=>`<div class="cards plan" style="align-content:center;flex:1;gap:.45rem">
+    ${st>=0?`<div class="pop d1">${card('Dynamo · 2007','Consistent hashing across a ring',
+      'Partition the key space across a ring of nodes so that adding or removing a node moves only a fraction of the keys — not all of them.','',ico('layers'))}</div>`:''}
+    ${st>=1?`<div class="pop d2">${card('Its descendants','DynamoDB, and much of the industry',
+      'The paper is the direct ancestor of DynamoDB and of a generation of distributed stores built after it.','tl',ico('route'))}</div>`:''}
+    ${st>=2?`<div class="pop d3">${card('DynamoDB today','Every table declares a partition key',
+      'The key is hashed to choose a physical partition. That is hash-based sharding, offered as a managed service.','tl',ico('db'))}</div>`:''}
+    ${st>=3?`<div class="pop d4">${card('The lesson','A low-cardinality key still burns you',
+      'Pick a poor partition key and you get a hot partition — the same hotspot from the bar chart. Managed infrastructure does not remove the shard-key decision.','warn',ico('ban'))}</div>`:''}
+  </div>` },
+
+{ id:'wild', kick:'every one of them shards on the tenant', eyebrow:'How other production systems do this',
   title:'In the wild', tag:'real world', steps:[
-  {note:'These are publicly documented architectures — engineering blogs, conference talks, open source. Worth showing students that this is not a textbook exercise.'},
-  {note:'Instagram sharded PostgreSQL by user ID, into thousands of logical shards mapped onto a smaller number of physical databases. The logical-shard trick means you can move shards between machines without re-hashing.'},
-  {note:'Notion sharded Postgres by workspace ID. A workspace is the natural unit — almost every query in the product is scoped to one workspace, so almost every query hits one shard.'},
+  {note:'Publicly documented architectures — engineering blogs, conference talks, open source.'},
+  {note:'Instagram sharded PostgreSQL by user ID, into thousands of logical shards mapped onto a smaller number of physical databases. The logical-shard trick means a shard can move between machines without re-hashing.'},
+  {note:'Notion sharded Postgres by workspace ID. A workspace is the natural unit — almost every query in the product is already scoped to one workspace, so almost every query hits one shard.'},
   {note:'Shopify calls theirs pods: a shop lives entirely inside one shard, with its own database and application capacity. Same idea — shard on the tenant.'},
-  {note:'Vitess began as YouTube\'s sharding layer over MySQL and is now open source, used by many companies who want sharding without writing the router themselves.'},
+  {note:'Vitess began as YouTube\'s sharding layer over MySQL and is now open source, used by companies who want sharding without writing the router themselves.'},
   {note:'And on the partitioning side, TimescaleDB is essentially automated Postgres range partitioning by time — chunks instead of partitions, created and pruned for you.'},
-  {note:'Pull the common thread out loud: every one of these shards on the entity the product is about. That is what keeps queries on a single shard and avoids scatter-gather.'}],
+  {note:'Pull the common thread out loud: every one of these shards on the entity the product is about. Amazon on the item or customer key, Notion on the workspace, Shopify on the shop. That is what keeps queries on a single shard.'}],
   body:(st)=>{
     const rows=[
       ['Instagram','PostgreSQL, sharded by user ID','Thousands of logical shards mapped onto fewer physical databases — so a shard can move machines without re-hashing.','users',''],
@@ -1155,21 +1200,21 @@ const DECK = [
       ['Shopify','MySQL "pods", sharded by shop','A shop lives entirely inside one shard, with its own database and application capacity.','build','tl'],
       ['Vitess (from YouTube)','A sharding layer over MySQL','Began as YouTube\'s router, now open source — sharding without writing the router yourself.','route','pp'],
       ['TimescaleDB','PostgreSQL range partitioning by time','Chunks instead of partitions, created and dropped automatically. Partitioning as a product.','clock','pp']];
-    return `<div class="cards" style="gap:.42rem;align-content:center;flex:1">
-      ${rows.map((r,i)=> st>=i+1 ? `<div class="card ${r[4]} pop" style="animation-delay:${i*40}ms;padding:.46rem .9rem">
-        <span class="ico" style="top:.5rem;width:1.8rem;height:1.8rem">${ico(r[3])}</span>
-        <div style="display:flex;align-items:baseline;gap:.55rem;flex-wrap:wrap">
-          <span style="font-family:var(--serif);font-size:.84rem;font-weight:600">${r[0]}</span>
-          <span style="font-family:var(--mono);font-size:.54rem;color:var(--accent-deep)">${r[1]}</span></div>
-        <p style="margin-top:.06rem;font-size:.66rem;line-height:1.4;padding-right:2.2rem">${r[2]}</p></div>` : '').join('')}
-      ${st>=6?`<div class="pop" style="margin-top:.1rem;padding:.46rem .9rem;border-radius:16px;
+    return `<div class="cards" style="gap:.45rem;align-content:center;flex:1">
+      ${rows.map((r,i)=> st>=i+1 ? `<div class="card ${r[4]} pop" style="animation-delay:${i*40}ms;padding:.5rem .95rem">
+        <span class="ico" style="top:.5rem;width:1.85rem;height:1.85rem">${ico(r[3])}</span>
+        <div style="display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;padding-right:2.4rem">
+          <span style="font-size:.86rem;font-weight:700">${r[0]}</span>
+          <span style="font-family:var(--mono);font-size:.55rem;color:var(--blue)">${r[1]}</span></div>
+        <p style="margin-top:.08rem;font-size:.68rem;line-height:1.4;padding-right:2.4rem">${r[2]}</p></div>` : '').join('')}
+      ${st>=6?`<div class="pop" style="margin-top:.08rem;padding:.5rem .95rem;border-radius:10px;
         background:var(--accent-tint);border:1px solid var(--accent-soft);border-left:5px solid var(--blue)">
-        <p style="margin:0;font-family:var(--news);font-size:.74rem;line-height:1.4;color:var(--ink)">
-        <b>The common thread:</b> every one of them shards on the entity the product is about — user, workspace,
+        <p style="margin:0;font-size:.72rem;line-height:1.4;color:var(--ink)">
+        <b>The common thread:</b> every one of them shards on the entity the product is about — customer, workspace,
         shop — so the overwhelming majority of queries stay on a single shard.</p></div>`:''}
     </div>`; } },
 
-{ id:'plan', kick:'the ladder, applied', eyebrow:'ShopFast · what we would actually do',
+{ id:'plan', kick:'the ladder, applied', eyebrow:'What we would actually do',
   title:'Putting it together', tag:'real world', steps:[
   {note:'Let us end by applying the ladder to the company we opened with, in order.'},
   {note:'Step one: partition orders by month. The monthly report stops scanning five years of data, and retention becomes a DROP instead of an overnight DELETE. Weeks of work, no application change, fully reversible.'},
@@ -1291,8 +1336,7 @@ document.addEventListener('keydown', e=>{
     case 'ArrowUp':    e.preventDefault(); jump(-1); break;
     case 'Home': si=0; pi=0; render(); break;
     case 'End':  si=DECK.length-1; pi=DECK[si].steps.length-1; render(); break;
-    case 'f': case 'F':
-      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); break;
+    case 'f': case 'F': e.preventDefault(); toggleFull(); break;
     case 's': case 'S': $('#notes').classList.toggle('open'); break;
     case 'o': case 'O': $('#ov').classList.toggle('open'); break;
     case 't': case 'T':
@@ -1305,6 +1349,16 @@ document.addEventListener('keydown', e=>{
   }
 });
 stage.addEventListener('click', () => next());
+
+/* ---- full screen: a visible control, since F is only in the footer legend ---- */
+function toggleFull(){
+  document.fullscreenElement ? document.exitFullscreen()
+                             : document.documentElement.requestFullscreen().catch(()=>{});
+}
+$('#btnFull').addEventListener('click', e => { e.stopPropagation(); toggleFull(); });
+document.addEventListener('fullscreenchange', () => {
+  $('#btnFullTxt').textContent = document.fullscreenElement ? 'Exit' : 'Present';
+});
 
 /* ---- run of show ---- */
 $('#ovGrid').innerHTML = DECK.map((s,i)=>

@@ -26,11 +26,11 @@ The whole deck runs on the arrow keys.
 | `S` | speaker notes drawer |
 | `O` | run of show — jump to any slide |
 | `T` | light / dark theme |
-| `F` | full screen |
+| `F` *(or the **Present** button)* | full screen |
 | `+` / `−` / `0` | type size, for the room you are in |
 | `Home` / `End` | first / last slide |
 
-32 slides, 120 steps. Notes are written for speaking aloud, one per step.
+33 slides, 124 steps. Notes are written for speaking aloud, one per step.
 
 ## The judgement and real-world track
 
@@ -77,12 +77,15 @@ remembered per machine. Checked for overflow across all 120 steps, in both theme
 
 ## Design
 
-Built to match the **Normalisation Lab** (`edusatyaki/Normalization`) — navy
-masthead under a gold rule, light blue paper (`#f4f8fb`), white cards with a
-coloured left rail, solid navy blocks carrying a gold eyebrow for definitions,
-and blue letterspaced eyebrow labels. Semantic colours follow the Lab too: red
-`#b9364b` for hotspots and pitfalls, green `#147a58` for benefits, cyan for
-secondary emphasis.
+Coloured in **Amazon's palette** — squid-ink masthead (`#232F3E`) under an
+Amazon-orange rule (`#FF9900`), Amazon page grey (`#EAEDED`) for the paper, teal
+`#007185` for links and labels, price red `#B12704` for hotspots and pitfalls,
+success green `#067D62` for benefits. Structure follows the Normalisation Lab
+(`edusatyaki/Normalization`): white cards with a coloured left rail, solid
+squid-ink blocks with a gold eyebrow for definitions, tight 12px radii.
+
+Orange is used as a **fill only** — `#FF9900` on white is about 2.2:1 and fails
+as body text, so small text uses squid ink or the teal.
 
 **Type is Arial throughout**, matching the other teaching sites in this
 workspace. The display / editorial / UI roles are still separate design tokens,
@@ -96,6 +99,28 @@ no emoji, so it holds up on a projector.
 
 Dark mode is a deep navy drawn from the same family rather than a neutral black,
 so the palette keeps its character in a dim hall. Press `T`.
+
+## The worked example
+
+The running example is **Amazon**, and the arc is its real one: a 1995 bookstore
+on a single relational database, growing into a catalogue that no single machine
+could serve. Growth figures on the hook slide are illustrative — the exact
+internal numbers are not public — but two things in the deck are documented fact
+and worth stating as such in class:
+
+- Amazon ran its core systems on Oracle for years; in **2018** AWS announced the
+  consumer business had shut down its last Oracle database, moving onto DynamoDB,
+  Aurora, RDS and Redshift.
+- The **2007 Dynamo paper** describes partitioning a key space across a ring of
+  nodes with consistent hashing — the ancestor of DynamoDB, which is why every
+  DynamoDB table must declare a partition key, and why a low-cardinality key
+  still produces a hot partition today.
+
+That second point is the spine of the lecture: managed infrastructure does not
+remove the shard-key decision, it removes your ability to fix it later.
+
+This is a case study for teaching. The deck carries Newton School branding and
+is not affiliated with or endorsed by Amazon.
 
 ## Source
 
