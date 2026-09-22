@@ -120,10 +120,9 @@ the default size no step needs it; the fit exists as a guard for high zoom and
 unusual aspect ratios. The notes drawer and run of show still scroll, with their
 scrollbars hidden.
 
-The masthead stacks eyebrow / title / kicker in one block that takes the full
-middle width, so slide titles are never clipped. Chapter position and the
-section tag live in the footer, with the presenter's step counter and key
-legend.
+Slide titles are never clipped: the title block owns the full width of the
+document column, and everything that used to compete with it for a header row
+— identity, chapter position, step counter, key legend — lives in the rail.
 
 ## Sizing it for the room
 
@@ -134,15 +133,26 @@ remembered per machine. Checked for overflow across all 120 steps, in both theme
 
 ## Design
 
-Coloured in **Amazon's palette** — squid-ink masthead (`#232F3E`) under an
-Amazon-orange rule (`#FF9900`), Amazon page grey (`#EAEDED`) for the paper, teal
-`#007185` for links and labels, price red `#B12704` for hotspots and pitfalls,
-success green `#067D62` for benefits. Structure follows the Normalisation Lab
-(`edusatyaki/Normalization`): white cards with a coloured left rail, solid
-squid-ink blocks with a gold eyebrow for definitions, tight 12px radii.
+The palette is **Amazon's** — squid ink `#232F3E`, Amazon orange `#FF9900`,
+Amazon page grey `#EAEDED`, teal `#007185` for links and labels, price red
+`#B12704` for hotspots and pitfalls, success green `#067D62` for benefits.
+Orange is a **fill only**: `#FF9900` on white is about 2.2:1 and fails as body
+text, so small text stays squid ink or teal.
 
-Orange is used as a **fill only** — `#FF9900` on white is about 2.2:1 and fails
-as body text, so small text uses squid ink or the teal.
+The layout is a **chapter rail beside a document**, not a slide with a header
+band:
+
+- A squid-ink rail on the left carries identity, the lecture, and a live table
+  of contents — the current chapter is marked in orange, earlier ones dim, and
+  any chapter is clickable to jump to it. Position is therefore always visible
+  without spending a header row on it.
+- The stage gets the full height of the screen, with the eyebrow, title and
+  kicker above a squid-ink rule.
+- Content blocks are **flat sheets**: square corners, hairline borders, a 3px
+  coloured top edge, no shadows. Icons are square outlines rather than tinted
+  tiles.
+- A thin orange progress bar across the bottom tracks the whole deck, step by
+  step rather than slide by slide.
 
 **Type is Arial throughout**, matching the other teaching sites in this
 workspace. The display / editorial / UI roles are still separate design tokens,
@@ -150,12 +160,8 @@ so the hierarchy is carried by size, weight and colour rather than by three
 typefaces. SQL and query output stay in JetBrains Mono, where column alignment
 is load-bearing — the only face fetched from Google Fonts.
 
-Every slide carries an italic kicker beside the title ("one shard saturated, nine
-idle"), and the five levels each get a stroked line-art icon in a tinted tile —
-no emoji, so it holds up on a projector.
-
-Dark mode is a deep navy drawn from the same family rather than a neutral black,
-so the palette keeps its character in a dim hall. Press `T`.
+Dark mode keeps the family, moving to a deep Amazon navy rather than a neutral
+black. Press `T`.
 
 ## The worked example
 
