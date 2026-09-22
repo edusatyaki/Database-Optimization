@@ -77,24 +77,25 @@ remembered per machine. Checked for overflow across all 120 steps, in both theme
 
 ## Design
 
-Built on the **Atelier** house palette shared by `cs-atelier`, `data-atelier` and
-`machine-atelier` — warm paper (`#f4efe8`), cream cards with long soft shadows.
-Coral is the primary voice, with violet and teal as secondaries and a clay red
-for hotspots and warnings.
+Built to match the **Normalisation Lab** (`edusatyaki/Normalization`) — navy
+masthead under a gold rule, light blue paper (`#f4f8fb`), white cards with a
+coloured left rail, solid navy blocks carrying a gold eyebrow for definitions,
+and blue letterspaced eyebrow labels. Semantic colours follow the Lab too: red
+`#b9364b` for hotspots and pitfalls, green `#147a58` for benefits, cyan for
+secondary emphasis.
 
-**Type is Arial throughout**, matching the other teaching sites in this workspace.
-The display / editorial / UI roles are still separate design tokens, so the
-hierarchy is carried by size, weight and colour rather than by three typefaces.
-SQL and query output stay in JetBrains Mono, where column alignment is
-load-bearing.
+**Type is Arial throughout**, matching the other teaching sites in this
+workspace. The display / editorial / UI roles are still separate design tokens,
+so the hierarchy is carried by size, weight and colour rather than by three
+typefaces. SQL and query output stay in JetBrains Mono, where column alignment
+is load-bearing — the only face fetched from Google Fonts.
 
 Every slide carries an italic kicker beside the title ("one shard saturated, nine
-idle"), and the five levels each get a line-art icon in a soft inset circle — the
-same device `data-atelier` uses for its concept library, drawn as stroked SVG
-rather than emoji so it holds up on a projector.
+idle"), and the five levels each get a stroked line-art icon in a tinted tile —
+no emoji, so it holds up on a projector.
 
-Dark mode is a warm dark brown rather than a cold black, so the palette keeps
-its character in a dim hall. Press `T`.
+Dark mode is a deep navy drawn from the same family rather than a neutral black,
+so the palette keeps its character in a dim hall. Press `T`.
 
 ## Source
 

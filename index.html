@@ -13,73 +13,80 @@
      projector resolution. --scale is the presenter's live zoom (+ / - / 0).   */
   --scale:1;
 
-  /* Atelier house palette — shared with cs-atelier / data-atelier / machine-atelier */
-  --bg:#f4efe8;
-  --bg-2:#efe7dd;
-  --panel:#fbf7f1;
-  --panel-2:#f6f0e7;
-  --ink:#2b2622;
-  --ink-2:#6f665d;
-  --muted:#a89e93;
-  --line:#e7ddce;
-  --line-2:#efe7db;
+  /* Palette taken from the Normalisation Lab (edusatyaki/Normalization) */
+  --navy:#073b66;
+  --navy-deep:#062f52;
+  --blue:#087cad;
+  --cyan:#45b6d9;
+  --ink:#17324a;
+  --ink-2:#3d5a73;
+  --muted:#5c7080;
+  --paper:#f4f8fb;
+  --white:#ffffff;
+  --line:#c9d9e4;
+  --line-2:#dbe7f0;
+  --red:#b9364b;
+  --red-soft:#fff0f2;
+  --green:#147a58;
+  --green-soft:#e9f8f1;
+  --gold:#f4c542;
+  --gold-soft:#fdf4d9;
 
-  --accent:#d98b7d;          /* coral — the primary voice */
-  --accent-deep:#c1705f;
-  --accent-soft:#f6e3dd;
-  --accent-tint:#fbeee9;
-  --violet:#8a7bd8;
-  --violet-soft:#efeafb;
-  --teal:#5c9aa1;
-  --teal-soft:#e4f1f0;
-  --gold:#f6e9a8;
-  --gold-line:#e9d778;
-  --clay:#b4533f;            /* warnings, hotspots */
-  --ok:#7fae86;
+  --bg:var(--paper);
+  --bg-2:#eaf1f7;
+  --panel:var(--white);
+  --panel-2:#eef4f9;
 
-  /* names the scene code already speaks, re-voiced in Atelier colours */
-  --navy-900:#2b2622;
-  --navy-800:#3a332c;
-  --navy-700:#463c33;
-  --blue:var(--accent);
-  --blue-400:var(--accent-deep);
-  --blue-300:#e9b5a9;
-  --purple:var(--violet);
-  --purple-300:#b3a8e8;
-  --orange:var(--clay);
-  --green:var(--ok);
+  /* names the scene code already speaks, in the Lab's voice */
+  --accent:var(--blue);
+  --accent-deep:var(--navy);
+  --accent-soft:#cfe4f0;
+  --accent-tint:#eaf4fa;
+  --violet:var(--navy);        /* levels 3-5 */
+  --violet-soft:#e6eef5;
+  --teal:var(--cyan);
+  --clay:var(--red);
+  --ok:var(--green);
+  --navy-900:var(--ink);
+  --navy-800:var(--navy-deep);
+  --navy-700:var(--navy);
+  --blue-400:var(--navy);
+  --blue-300:var(--cyan);
+  --purple:var(--navy);
+  --purple-300:var(--cyan);
+  --orange:var(--red);
 
-  --shadow:0 24px 60px -30px rgba(80,54,40,.35);
-  --shadow-sm:0 10px 30px -18px rgba(80,54,40,.4);
+  --shadow:0 18px 44px rgba(7,59,102,.12);
+  --shadow-sm:0 8px 22px rgba(7,59,102,.10);
 
   --arial:Arial,'Helvetica Neue',Helvetica,sans-serif;
-  --serif:var(--arial);    /* display role */
-  --news:var(--arial);     /* editorial role */
-  --sans:var(--arial);     /* UI role */
-  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --serif:var(--arial);
+  --news:var(--arial);
+  --sans:var(--arial);
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 :root[data-theme="dark"]{
-  --bg:#1d1916;
-  --bg-2:#241f1b;
-  --panel:#272220;
-  --panel-2:#2f2925;
-  --ink:#f2ebe1;
-  --ink-2:#cdc2b5;
-  --muted:#9d9186;
-  --line:#3a322c;
-  --line-2:#332c27;
-  --accent:#e59f92;
-  --accent-deep:#d98b7d;
-  --accent-soft:#3a2b27;
-  --accent-tint:#2f2421;
-  --violet:#a396e8;
-  --violet-soft:#2b2740;
-  --teal:#77b3ba;
-  --navy-900:#f2ebe1;
-  --navy-800:#141110;
-  --navy-700:#161312;
-  --shadow:0 24px 60px -30px rgba(0,0,0,.7);
-  --shadow-sm:0 10px 30px -18px rgba(0,0,0,.7);
+  --bg:#07243c;
+  --bg-2:#0a2c48;
+  --panel:#0d3253;
+  --panel-2:#123c61;
+  --ink:#eaf3fa;
+  --ink-2:#bdd4e6;
+  --muted:#8fabc2;
+  --line:#1d4a72;
+  --line-2:#194164;
+  --navy:#0b4d80;
+  --navy-deep:#052033;
+  --blue:#45b6d9;
+  --cyan:#7ad0ea;
+  --white:#0d3253;
+  --accent-soft:#12466e;
+  --accent-tint:#0f3c60;
+  --violet-soft:#123c61;
+  --red-soft:#3a1a22;
+  --green-soft:#0f3a2c;
+  --shadow:0 18px 44px rgba(0,0,0,.45);
+  --shadow-sm:0 8px 22px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -92,29 +99,29 @@ body{
 /* ================= shell ================= */
 #app{height:100vh;display:flex;flex-direction:column}
 header{flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:11px 26px;
-  border-bottom:1px solid var(--line);background:var(--bg)}
+  background:var(--navy);color:#fff;border-bottom:3px solid var(--gold)}
 .mark{display:flex;align-items:center;gap:9px;flex:0 0 auto}
 .mark .shield{width:clamp(20px,2.7vh,42px);height:clamp(20px,2.7vh,42px);flex:0 0 auto}
-.mark .spark{color:var(--accent);font-size:clamp(9px,1.2vh,18px);align-self:flex-start;margin-left:-2px}
-.mark .txt{font-size:clamp(9px,1.18vh,18px);line-height:1.15;font-weight:600;color:var(--ink-2);
+.mark .spark{color:var(--gold);font-size:clamp(9px,1.2vh,18px);align-self:flex-start;margin-left:-2px}
+.mark .txt{font-size:clamp(9px,1.18vh,18px);line-height:1.15;font-weight:600;color:rgba(255,255,255,.88);
   letter-spacing:.1px;white-space:nowrap}
 :root[data-theme="dark"] .mark .txt{color:var(--ink)}
 .title-wrap{flex:1 1 auto;min-width:0}
-.kick{flex:0 1 auto;min-width:0;font-family:var(--news);font-style:italic;color:var(--violet);
-  font-size:clamp(11px,1.6vh,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+.kick{flex:0 1 auto;min-width:0;font-family:var(--news);font-style:italic;color:var(--cyan);
+  font-size:clamp(11px,1.5vh,24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   padding-right:.6rem}
 @media (max-width:1100px){.kick{display:none}}
 .eyebrow{font-size:clamp(9px,1.15vh,17px);font-weight:700;letter-spacing:1.6px;
-  text-transform:uppercase;color:var(--accent-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.slide-title{min-width:0;font-family:var(--serif);font-size:clamp(17px,2.4vh,38px);font-weight:700;
+  text-transform:uppercase;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide-title{min-width:0;font-family:var(--serif);font-size:clamp(17px,2.4vh,38px);font-weight:700;color:#fff;
   line-height:1.15;letter-spacing:-.01em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .badges{display:flex;gap:8px;align-items:center;flex:0 0 auto}
-.badge{font-size:clamp(8px,1.02vh,15px);font-weight:600;letter-spacing:.8px;text-transform:uppercase;
-  padding:5px 13px;border-radius:999px;border:1px solid var(--accent-soft);color:var(--accent-deep);
-  background:var(--accent-tint);white-space:nowrap}
-.badge.p{color:var(--violet);border-color:var(--violet-soft);background:var(--violet-soft)}
-.clock{font-family:var(--mono);font-size:clamp(9px,1.12vh,17px);color:var(--muted);min-width:4.2em;text-align:right}
+.badge{font-size:clamp(8px,1.02vh,15px);font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:5px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);color:#fff;
+  background:rgba(255,255,255,.12);white-space:nowrap}
+.badge.p{color:var(--navy);border-color:var(--gold);background:var(--gold)}
+.clock{font-family:var(--mono);font-size:clamp(9px,1.12vh,17px);color:rgba(255,255,255,.75);min-width:4.2em;text-align:right}
 
 main{flex:1 1 auto;min-height:0;padding:16px 24px;display:flex}
 .slide{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:.5rem;
@@ -126,8 +133,8 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 26px;b
 .dots{display:flex;gap:5px;flex:1 1 auto;flex-wrap:wrap}
 .pd{width:9px;height:9px;border-radius:50%;background:var(--line);cursor:pointer;transition:.2s}
 .pd:hover{transform:scale(1.4)}
-.pd.done{background:var(--accent-soft)}
-.pd.now{background:var(--accent);transform:scale(1.4)}
+.pd.done{background:var(--cyan)}
+.pd.now{background:var(--blue);transform:scale(1.4)}
 .steps{font-family:var(--mono);font-size:clamp(9px,1.1vh,17px);color:var(--muted);white-space:nowrap}
 .keys{font-size:clamp(9px,1.02vh,16px);color:var(--muted);white-space:nowrap}
 kbd{font-family:var(--mono);font-size:clamp(8px,.95vh,15px);background:var(--panel);
@@ -140,31 +147,29 @@ kbd{font-family:var(--mono);font-size:clamp(8px,.95vh,15px);background:var(--pan
 .stage-row{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
 svg.scene{width:100%;height:100%;max-height:100%;overflow:visible;fill:var(--ink)}
 .cards{display:grid;gap:.62rem}
-.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:20px;
+.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;
   padding:.85rem 1.05rem;box-shadow:var(--shadow-sm);overflow:hidden}
-.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);
-  opacity:.9}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--blue)}
 .card.warn::before{background:var(--clay)} .card.good::before{background:var(--ok)}
 .card.pp::before{background:var(--violet)} .card.tl::before{background:var(--teal)}
 .card h4{margin:0 0 .3rem;font-size:.58rem;font-weight:700;letter-spacing:1.5px;
-  text-transform:uppercase;color:var(--accent-deep)}
+  text-transform:uppercase;color:var(--blue)}
 .card.warn h4{color:var(--clay)} .card.good h4{color:var(--ok)}
 .card.pp h4{color:var(--violet)} .card.tl h4{color:var(--teal)}
 .card h3{margin:0 0 .3rem;font-family:var(--serif);font-size:.9rem;font-weight:700;line-height:1.25;
   letter-spacing:-.01em}
 .card p{margin:0;font-family:var(--news);font-size:.72rem;line-height:1.45;color:var(--ink-2)}
-.card .ico{position:absolute;right:.9rem;top:.85rem;width:2.15rem;height:2.15rem;border-radius:50%;
-  display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);
-  box-shadow:inset 0 1px 3px rgba(80,54,40,.10)}
-.card .ico svg{width:1.1rem;height:1.1rem;color:var(--accent-deep)}
+.card .ico{position:absolute;right:.9rem;top:.85rem;width:2.15rem;height:2.15rem;border-radius:10px;
+  display:grid;place-items:center;background:var(--accent-tint);border:1px solid var(--accent-soft)}
+.card .ico svg{width:1.1rem;height:1.1rem;color:var(--blue)}
 .plan .card{padding:.56rem .95rem}
 .plan .card h3{font-size:.88rem;margin-bottom:.16rem}
 .plan .card p{font-size:.7rem;line-height:1.4;padding-right:2.4rem}
 .card.warn .ico svg{color:var(--clay)} .card.good .ico svg{color:var(--ok)}
 .card.pp .ico svg{color:var(--violet)} .card.tl .ico svg{color:var(--teal)}
 code,.mono{font-family:var(--mono);font-size:.88em;background:var(--accent-tint);
-  padding:1px 6px;border-radius:6px;color:var(--accent-deep);border:1px solid var(--accent-soft)}
-:root[data-theme="dark"] code,:root[data-theme="dark"] .mono{color:var(--accent)}
+  padding:1px 6px;border-radius:4px;color:var(--navy);border:1px solid var(--accent-soft)}
+:root[data-theme="dark"] code,:root[data-theme="dark"] .mono{color:var(--cyan)}
 
 .pop{opacity:0;transform:translateY(12px);animation:pop .42s cubic-bezier(.22,1,.36,1) forwards}
 @keyframes pop{to{opacity:1;transform:none}}
@@ -223,27 +228,27 @@ text{font-family:var(--arial)}
 
 /* ================= notes / overview / zoom ================= */
 #notes{position:fixed;left:0;right:0;bottom:0;z-index:40;transform:translateY(101%);
-  transition:transform .28s ease;background:#2b2622;color:#f4efe8;
-  border-top:3px solid var(--accent);padding:14px 24px 16px;max-height:46vh;overflow-y:auto}
+  transition:transform .28s ease;background:var(--navy);color:#eaf3fa;
+  border-top:3px solid var(--gold);padding:14px 24px 16px;max-height:46vh;overflow-y:auto}
 #notes.open{transform:none}
-#notes h6{margin:0 0 6px;font-size:.5rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent)}
+#notes h6{margin:0 0 6px;font-size:.5rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold)}
 #notes .say{font-family:var(--news);font-size:.82rem;line-height:1.55;max-width:66rem}
-#notes .say b{color:#f0b9ab;font-weight:600}
-#notes .nxt{margin-top:8px;font-size:.5rem;color:#a89e93;font-family:var(--mono)}
+#notes .say b{color:var(--gold);font-weight:700}
+#notes .nxt{margin-top:8px;font-size:.5rem;color:#8fabc2;font-family:var(--mono)}
 
 #ov{position:fixed;inset:0;z-index:50;background:var(--bg);padding:28px;display:none;overflow-y:auto}
 #ov.open{display:block}
-#ov h3{margin:0 0 16px;font-family:var(--serif);font-size:.86rem;font-weight:700;color:var(--ink);letter-spacing:0;text-transform:none}
+#ov h3{margin:0 0 16px;font-family:var(--serif);font-size:.86rem;font-weight:700;color:var(--navy);letter-spacing:0;text-transform:none}
 .ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:10px}
-.ovc{padding:12px 14px;border-radius:16px;border:1px solid var(--line);cursor:pointer;
+.ovc{padding:12px 14px;border-radius:10px;border:1px solid var(--line);cursor:pointer;
   background:var(--panel);transition:.2s;box-shadow:var(--shadow-sm)}
-.ovc:hover{border-color:var(--accent);transform:translateY(-3px)}
-.ovc .i{font-family:var(--mono);font-size:.45rem;color:var(--accent-deep);font-weight:700}
+.ovc:hover{border-color:var(--blue);transform:translateY(-3px)}
+.ovc .i{font-family:var(--mono);font-size:.45rem;color:var(--blue);font-weight:700}
 .ovc .t{font-family:var(--serif);font-size:.7rem;font-weight:700;margin-top:4px;line-height:1.2}
 
 #zoom{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);z-index:60;
-  padding:.9rem 1.5rem;border-radius:18px;border:2px solid var(--accent);background:var(--panel);
-  color:var(--accent-deep);font-family:var(--mono);font-size:1.5rem;font-weight:700;opacity:0;
+  padding:.9rem 1.5rem;border-radius:12px;border:2px solid var(--blue);background:var(--panel);
+  color:var(--navy);font-family:var(--mono);font-size:1.5rem;font-weight:700;opacity:0;
   pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:var(--shadow)}
 #zoom.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 #zoom small{display:block;font-size:.42em;color:var(--muted);font-weight:400;margin-top:.3rem;text-align:center}
@@ -257,9 +262,9 @@ text{font-family:var(--arial)}
     <div class="mark">
       <svg class="shield" viewBox="0 0 40 40" aria-hidden="true">
         <path d="M20 3 L34 8 V20 C34 29 27.5 35 20 37 C12.5 35 6 29 6 20 V8 Z"
-              fill="none" stroke="var(--accent)" stroke-width="2.6"/>
+              fill="none" stroke="var(--gold)" stroke-width="2.6"/>
         <path d="M15 14 h6.5 a4.5 4.5 0 0 1 0 9 H15 z M15 14 v13" fill="none"
-              stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/>
+              stroke="var(--gold)" stroke-width="2.6" stroke-linecap="round"/>
       </svg>
       <div class="txt">Newton School<br>of Technology</div>
       <span class="spark">&#10022;</span>
@@ -341,7 +346,7 @@ function sceneStack(step, focus){
     const tc   = lit ? '#fff' : 'var(--ink)';
     const sc   = lit ? 'rgba(255,255,255,.8)' : 'var(--muted)';
     g += `<g class="sv-rise" ${D(i*90)}>
-      <rect x="${x}" y="${y}" width="${w}" height="${fh}" rx="17" fill="${fill}"
+      <rect x="${x}" y="${y}" width="${w}" height="${fh}" rx="10" fill="${fill}"
             stroke="${lit?'none':'var(--line)'}" stroke-width="1.5"
             ${lit?'class="sv-glow"':''}/>
       <rect x="${x}" y="${y+11}" width="5" height="${fh-22}" rx="2.5" fill="${L.c}"
@@ -394,7 +399,7 @@ function sceneScaleUp(step){
   let g = `<line x1="80" y1="86" x2="520" y2="86" stroke="var(--orange)" stroke-width="4" stroke-dasharray="10 8"/>
     <text class="t-lbl" x="300" y="70" text-anchor="middle" style="fill:var(--orange)">the ceiling — biggest box money can buy</text>`;
   g += `<g style="transition:all .5s cubic-bezier(.22,1,.36,1)">
-    <rect x="${cx-w/2}" y="${base-h}" width="${w}" height="${h}" rx="12"
+    <rect x="${cx-w/2}" y="${base-h}" width="${w}" height="${h}" rx="8"
           class="box-navy" ${step>=3?'':''}/>
     <text class="on-navy t-lbl" x="${cx}" y="${base-h/2-4}" text-anchor="middle" style="font-size:16px">1 server</text>
     <text x="${cx}" y="${base-h/2+18}" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.75)">
@@ -424,7 +429,7 @@ function sceneScaleUp(step){
 /* ---- 4. scale out: one box becomes many ---- */
 function sceneScaleOut(step){
   let g='';
-  g += `<g><rect x="60" y="150" width="150" height="120" rx="12" class="box-navy"/>
+  g += `<g><rect x="60" y="150" width="150" height="120" rx="8" class="box-navy"/>
     <text class="on-navy t-lbl" x="135" y="196" text-anchor="middle">1 huge</text>
     <text class="on-navy t-lbl" x="135" y="218" text-anchor="middle">server</text>
     <text x="135" y="246" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.7)">1B rows · maxed</text></g>`;
@@ -433,7 +438,7 @@ function sceneScaleOut(step){
   if(step>=2) for(let i=0;i<5;i++){
     const x = 330 + i*128;
     g += `<g class="sv-pop" ${D(i*110)}>
-      <rect x="${x}" y="152" width="108" height="116" rx="11" class="box-blue"/>
+      <rect x="${x}" y="152" width="108" height="116" rx="8" class="box-blue"/>
       <text class="on-navy t-lbl" x="${x+54}" y="200" text-anchor="middle">S${i+1}</text>
       <text x="${x+54}" y="224" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.8)">200M rows</text>
       <text x="${x+54}" y="244" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.8)">full speed</text></g>`;
@@ -456,7 +461,7 @@ function sceneShardSplit(step){
     const x = 55 + i*240 , skip = i===3;
     g += `<g class="sv-pop" ${D(i*120)}>
       <path d="M500 84 C500 130 ${x+100} 120 ${x+100} 168" class="wire live"/>
-      <rect x="${x}" y="172" width="200" height="96" rx="11" class="box-navy"/>
+      <rect x="${x}" y="172" width="200" height="96" rx="8" class="box-navy"/>
       <text class="on-navy t-lbl" x="${x+16}" y="206" style="font-size:16px">${sv[0]}</text>
       <text class="t-mono" x="${x+16}" y="236" style="fill:var(--blue-300)">customer_id</text>
       <text class="t-mono" x="${x+16}" y="254" style="fill:#fff">${sv[1]}</text></g>`;
@@ -483,7 +488,7 @@ function sceneAnatomy(step){
     const hit = step>=3 && i===1;
     g += `<g class="sv-pop" ${D(i*110)}>
       <path d="M500 182 C500 214 ${x+90} 206 ${x+90} 238" class="wire ${hit?'live':''}"/>
-      <rect x="${x}" y="240" width="180" height="76" rx="11" fill="${hit?'var(--blue)':'var(--navy-700)'}"
+      <rect x="${x}" y="240" width="180" height="76" rx="8" fill="${hit?'var(--blue)':'var(--navy-700)'}"
             ${hit?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="${x+90}" y="272" text-anchor="middle">Shard ${i+1}</text>
       <text x="${x+90}" y="294" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.75)">own CPU · disk · network</text></g>`;
@@ -502,7 +507,7 @@ function sceneRange(step){
     const x = 60 + i*310;
     const hit = step>=2 && i===0;
     g += `<g class="sv-rise" ${D(i*110)}>
-      <rect x="${x}" y="120" width="280" height="104" rx="11" fill="var(--panel)"
+      <rect x="${x}" y="120" width="280" height="104" rx="8" fill="var(--panel)"
             stroke="${hit?'var(--blue)':'var(--line)'}" stroke-width="${hit?3:1.5}" ${hit?'class="sv-glow"':''}/>
       <rect x="${x}" y="120" width="280" height="6" rx="3" fill="var(--blue)"/>
       <text class="t-lbl" x="${x+20}" y="162" style="fill:var(--blue);font-size:17px">${sh[0]}</text>
@@ -541,7 +546,7 @@ function sceneHash(step){
   if(step>=1) for(let i=0;i<4;i++){
     const x = 430 + i*138, filled = step>=2;
     g += `<g class="sv-pop" ${D(i*100)}>
-      <rect x="${x-52}" y="152" width="118" height="92" rx="11" fill="${filled?'var(--blue)':'var(--navy-700)'}"/>
+      <rect x="${x-52}" y="152" width="118" height="92" rx="8" fill="${filled?'var(--blue)':'var(--navy-700)'}"/>
       <text class="on-navy t-lbl" x="${x+7}" y="186" text-anchor="middle">Shard ${i}</text>
       <text class="t-mono" x="${x+7}" y="216" text-anchor="middle" style="fill:rgba(255,255,255,.9)">
         ${filled ? (rows.find(r=>+r[1]===i)||['—'])[0] : '—'}</text></g>`;
@@ -575,7 +580,7 @@ function sceneDirectory(step){
   [1,2,3].forEach(i=>{ if(step<1) return;
     const hit = step>=2 && i===1;
     g += `<g class="sv-pop" ${D(i*90)}>
-      <rect x="600" y="${62+(i-1)*88}" width="340" height="70" rx="11"
+      <rect x="600" y="${62+(i-1)*88}" width="340" height="70" rx="8"
             fill="${hit?'var(--blue)':'var(--navy-700)'}" ${hit?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="624" y="${104+(i-1)*88}" style="font-size:17px">Shard ${i}</text></g>`;
   });
@@ -617,7 +622,7 @@ function sceneScatter(step){
   for(let i=0;i<4;i++){
     const x=110+i*225;
     if(step>=1) g += `<path d="M500 70 C500 110 ${x+85} 100 ${x+85} 146" class="wire live sv-fade" ${D(i*90)}/>`;
-    if(step>=1) g += `<g class="sv-pop" ${D(i*90)}><rect x="${x}" y="148" width="170" height="70" rx="11" class="box-navy"/>
+    if(step>=1) g += `<g class="sv-pop" ${D(i*90)}><rect x="${x}" y="148" width="170" height="70" rx="8" class="box-navy"/>
       <text class="on-navy t-lbl" x="${x+85}" y="180" text-anchor="middle">Shard ${i+1}</text>
       <text x="${x+85}" y="202" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.75)">partial result</text></g>`;
     if(step>=2) g += `<path d="M${x+85} 220 C${x+85} 262 500 250 500 292" class="wire live sv-fade" ${D(i*90)}
@@ -695,7 +700,7 @@ function scenePruning(step){
     if(step>=1) g += `<path d="M500 80 C500 112 ${x+140} 104 ${x+140} 136" class="wire ${hit?'live':''} sv-fade" ${D(i*90)}
       ${skipped?'stroke-dasharray="3 7"':''}/>`;
     g += `<g class="sv-rise" ${D(i*90)}>
-      <rect x="${x}" y="138" width="280" height="96" rx="11"
+      <rect x="${x}" y="138" width="280" height="96" rx="8"
         fill="${hit?'var(--navy-700)':'var(--panel)'}" stroke="${hit?'none':'var(--line)'}"
         opacity="${skipped?.45:1}" ${hit?'class="sv-glow"':''}/>
       <text class="t-mono" x="${x+22}" y="176" style="fill:${hit?'#fff':'var(--muted)'};font-size:15px">${name}${hit?' ✓':''}</text>
@@ -716,7 +721,7 @@ function sceneVersus(step){
       <text x="250" y="60" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">many machines · a scaling technique</text></g>`;
     [0,1,2].forEach(i=>{
       g += `<g class="sv-pop" ${D(i*100)}>
-        <rect x="${72+i*128}" y="86" width="108" height="118" rx="11" class="box-navy"/>
+        <rect x="${72+i*128}" y="86" width="108" height="118" rx="8" class="box-navy"/>
         <text class="on-navy t-sub" x="${126+i*128}" y="112" text-anchor="middle">machine ${i+1}</text>
         <rect x="${86+i*128}" y="126" width="80" height="14" rx="4" fill="var(--blue-300)"/>
         <rect x="${86+i*128}" y="146" width="80" height="14" rx="4" fill="var(--blue-300)"/>
@@ -726,7 +731,7 @@ function sceneVersus(step){
   if(step>=2){
     g += `<g class="sv-rise"><text class="t-serif" x="750" y="38" text-anchor="middle" style="fill:var(--violet);font-size:23px;font-weight:700">Partitioning</text>
       <text x="750" y="60" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">one machine · a storage-organisation technique</text>
-      <rect x="560" y="86" width="380" height="118" rx="12" fill="var(--panel)" stroke="var(--purple)" stroke-width="2"/>
+      <rect x="560" y="86" width="380" height="118" rx="8" fill="var(--panel)" stroke="var(--purple)" stroke-width="2"/>
       <text class="t-sub" x="750" y="106" text-anchor="middle" style="fill:var(--purple)">a single instance</text></g>`;
     [0,1,2,3].forEach(i=>{
       g += `<g class="sv-pop" ${D(i*90)}><rect x="${578+i*92}" y="118" width="80" height="70" rx="8" class="box-purple"/>
@@ -809,11 +814,11 @@ const DECK = [
       ['Query','Revenue report joins 5 tables; takes 45 seconds.','Rewrite with join order & early filtering.','var(--purple)']];
     return `<div class="cards" style="gap:.4rem">
       <div style="display:grid;grid-template-columns:1fr 2.4fr 2.4fr;gap:.5rem;padding:.35rem .7rem;
-        background:var(--navy-700);border-radius:10px;color:#fff;font-size:.56rem;font-weight:700;
+        background:var(--navy);border-radius:8px;color:#fff;font-size:.56rem;font-weight:700;
         letter-spacing:.8px;text-transform:uppercase"><span>Level</span><span>Symptom</span><span>Fix</span></div>
       ${rows.map((r,i)=> st>=i+1 ? `<div class="pop" style="animation-delay:${i*50}ms;display:grid;
         grid-template-columns:1fr 2.4fr 2.4fr;gap:.5rem;padding:.42rem .7rem;background:var(--panel);
-        border-radius:10px;border-left:4px solid ${r[3]};align-items:center">
+        border-radius:8px;border-left:5px solid ${r[3]};align-items:center">
         <span style="font-weight:700;color:${r[3]};font-size:.66rem">${r[0]}</span>
         <span style="font-size:.6rem;color:var(--ink-2)">${r[1]}</span>
         <span style="font-size:.6rem;color:var(--ink-2)">${r[2]}</span></div>` : '').join('')}
@@ -891,9 +896,11 @@ const DECK = [
   {note:'Each shard is a self-contained database holding a subset of the data. The union of all shards is the complete dataset.'},
   {note:'And crucially — to any external system the database still appears as a single logical entity. The splitting is internal.'}],
   body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.6rem">
-    <div class="pop" style="background:var(--navy-700);color:#fff;border-radius:14px;padding:.85rem 1rem">
-      <div style="font-size:.86rem;font-weight:700;line-height:1.35">Horizontally partitioning a database across multiple
-        independent database instances — each called a <span style="color:var(--blue-300)">Shard</span>.</div></div>
+    <div class="pop" style="background:var(--navy);color:#fff;border-radius:12px;padding:.8rem 1.05rem">
+      <div style="font-size:.52rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+        color:var(--gold);margin-bottom:.3rem">Definition</div>
+      <div style="font-size:.88rem;font-weight:700;line-height:1.35">Horizontally partitioning a database across multiple
+        independent database instances — each called a <span style="color:var(--cyan)">Shard</span>.</div></div>
     <div class="cards" style="grid-template-columns:1fr 1fr">
       ${st>=1?`<div class="pop d1">${card('Self-contained','Each shard is a full database','It holds a subset of the rows. The union of all shards is the complete dataset.','',ico('db'))}</div>`:''}
       ${st>=2?`<div class="pop d2">${card('Transparent','One logical entity','To any external system it still looks like a single database — the spread is internal.','pp',ico('layers'))}</div>`:''}
@@ -942,7 +949,7 @@ const DECK = [
       ['Main risk','Hotspots','Costly ranges','Central bottleneck',true]];
     return `<div class="cards" style="gap:.4rem;align-content:center;flex:1">
       <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.5rem;padding:.4rem .7rem;
-        background:var(--navy-700);border-radius:10px;color:#fff;font-size:.6rem;font-weight:700">
+        background:var(--navy);border-radius:8px;color:#fff;font-size:.6rem;font-weight:700">
         <span></span><span>Range</span><span>Hash</span><span>Directory</span></div>
       ${rows.map((r,i)=> st>=i ? `<div class="pop" style="animation-delay:${i*50}ms;display:grid;
         grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.5rem;padding:.46rem .7rem;background:var(--panel);border-radius:10px">
@@ -1023,9 +1030,11 @@ const DECK = [
   {note:'Dividing a single large table into smaller physical segments called partitions — while the table still appears as one logical entity to the application. The application does not change its queries at all.'},
   {note:'Queries against the main table are automatically redirected by the engine to the relevant partitions. That automatic redirection is called partition pruning, and it is the whole benefit.'}],
   body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.7rem">
-    <div class="pop" style="background:var(--navy-700);color:#fff;border-radius:14px;padding:1rem 1.15rem">
+    <div class="pop" style="background:var(--navy);color:#fff;border-radius:12px;padding:.9rem 1.15rem">
+      <div style="font-size:.52rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+        color:var(--gold);margin-bottom:.3rem">Definition</div>
       <div style="font-size:.92rem;font-weight:700;line-height:1.35">Dividing a single large table into smaller physical
-        segments called <span style="color:var(--purple-300)">Partitions</span> — while the table still appears as
+        segments called <span style="color:var(--cyan)">Partitions</span> — while the table still appears as
         one logical entity to the application.</div></div>
     ${st>=1?`<p class="lede pop">Queries against the main table are automatically redirected by the engine to the
       relevant partition(s). This automatic redirection is called <b>Partition Pruning</b> — and it is the whole benefit.</p>`:''}
@@ -1054,12 +1063,12 @@ const DECK = [
         "PARTITION BY HASH (product_id);\n\nCREATE TABLE products_p0\n  PARTITION OF products\n  FOR VALUES WITH\n  (MODULUS 4, REMAINDER 0);",'var(--green)']];
     return `<div class="cards" style="grid-template-columns:repeat(3,1fr);flex:1;align-content:center">
       ${t.map((x,i)=> st>=i ? `<div class="pop" style="animation-delay:${i*60}ms;background:var(--panel);
-        border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column">
+        border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--line);display:flex;flex-direction:column">
         <div style="background:${x[4]};color:#fff;padding:.42rem .7rem">
           <div style="font-size:.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.85">${x[1]}</div>
           <div style="font-size:.8rem;font-weight:700">${x[0]} Partitioning</div></div>
         <div style="padding:.5rem .7rem;font-size:.56rem;line-height:1.4;color:var(--ink-2)">${x[2]}</div>
-        <pre style="margin:0;padding:.5rem .7rem;background:var(--navy-800);color:#CFE6FF;
+        <pre style="margin:0;padding:.5rem .7rem;background:var(--navy-deep);color:#cfe6ff;
           font-family:var(--mono);font-size:.46rem;line-height:1.55;flex:1;white-space:pre-wrap">${x[3]}</pre>
       </div>` : '').join('')}
     </div>`; } },
@@ -1154,7 +1163,7 @@ const DECK = [
           <span style="font-family:var(--mono);font-size:.54rem;color:var(--accent-deep)">${r[1]}</span></div>
         <p style="margin-top:.06rem;font-size:.66rem;line-height:1.4;padding-right:2.2rem">${r[2]}</p></div>` : '').join('')}
       ${st>=6?`<div class="pop" style="margin-top:.1rem;padding:.46rem .9rem;border-radius:16px;
-        background:var(--accent-tint);border:1px solid var(--accent-soft)">
+        background:var(--accent-tint);border:1px solid var(--accent-soft);border-left:5px solid var(--blue)">
         <p style="margin:0;font-family:var(--news);font-size:.74rem;line-height:1.4;color:var(--ink)">
         <b>The common thread:</b> every one of them shards on the entity the product is about — user, workspace,
         shop — so the overwhelming majority of queries stay on a single shard.</p></div>`:''}
@@ -1189,8 +1198,8 @@ const DECK = [
       ${st>=0?`<div class="pop d1">${card('Level 1 · System','Sharding','Scale out across machines. Range, hash, directory strategies — mind the shard key, hotspots, and cross-shard cost.','',ico('build'))}</div>`:''}
       ${st>=1?`<div class="pop d2">${card('Level 2 · Storage','Partitioning','Organize within an instance. Range, list, hash types — pruning speeds reads, but only when you filter on the partition key.','tl',ico('db'))}</div>`:''}
     </div>
-    ${st>=2?`<div class="pop" style="background:var(--navy-700);color:#fff;border-radius:14px;padding:.6rem .85rem">
-      <div style="font-size:.5rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--purple-300)">Next lecture · Transaction Level</div>
+    ${st>=2?`<div class="pop" style="background:var(--navy);color:#fff;border-radius:12px;padding:.65rem .95rem">
+      <div style="font-size:.5rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold)">Next lecture · Transaction Level</div>
       <div style="font-size:.72rem;line-height:1.4;margin-top:.2rem">When thousands of users write simultaneously, how does the
         database stop two updates to the same row from corrupting each other?</div></div>`:''}` }
 ];
