@@ -872,9 +872,9 @@ function sceneDirectory(step){
   [1,2,3].forEach(i=>{ if(step<1) return;
     const hit = step>=2 && i===1;
     g += `<g class="sv-pop" ${D(i*90)}>
-      <rect x="600" y="${62+(i-1)*88}" width="340" height="70" rx="2"
+      <rect x="600" y="${52+(i-1)*76}" width="340" height="62" rx="2"
             fill="${hit?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6" ${hit?'class="sv-glow"':''}/>
-      <text class="on-navy t-lbl" x="624" y="${104+(i-1)*88}" style="font-size:17px">Shard ${i}</text></g>`;
+      <text class="on-navy t-lbl" x="624" y="${90+(i-1)*76}" style="font-size:17px">Shard ${i}</text></g>`;
   });
   if(step>=2) g += wire('M372 144 C470 144 480 98 590 98', {dur:1.4, r:5.5});
   if(step>=3) g += `<g class="sv-rise"><rect x="60" y="292" width="430" height="66" rx="2" fill="var(--panel)" stroke="var(--line)"/>
