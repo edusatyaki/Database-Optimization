@@ -91,6 +91,27 @@ question students actually ask next — *where would we really use this?*
 
 ## What is animated
 
+The connectors are not decorative dashes — a query is a **packet that actually
+travels** the path, so the room watches work move between components rather
+than inferring it:
+
+| Scene | Motion |
+|-------|--------|
+| Anatomy | A query rides app &rarr; router &rarr; the one shard holding its key |
+| Cross-shard query | Packets fan out to all four shards in blue, then partial results ride back in red |
+| Hash sharding | Each computed `id mod 4` sends its row to the shard it hashed to |
+| Directory sharding | The looked-up entry travels to the shard it names |
+| Partition pruning | The query only travels to the partition it matches; the others dim out |
+| Shard split | Rows stream from the one table down into each of the ten servers |
+| Re-sharding | Rows migrate from the old shard map to the new one |
+| Full table scan | A scan head sweeps every cell, then one month lights up |
+| Hotspots | Bars grow from the floor; the newest turns red and keeps pulsing |
+
+Everything respects `prefers-reduced-motion` — with that on, packets are not
+emitted at all and entrances resolve instantly.
+
+## What is animated (structure)
+
 | Scene | Motion |
 |-------|--------|
 | The five levels | A building assembles from the foundation up; each level lights when you name it |
