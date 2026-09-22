@@ -112,6 +112,19 @@ question students actually ask next — *where would we really use this?*
 Motion respects `prefers-reduced-motion` — with that setting on, everything
 appears instantly instead of animating.
 
+## No scrollbars, ever
+
+A slide clips rather than scrolls, and an inner wrapper scales the step down if
+it would not fit — so nothing is scrollable and nothing is silently cut off. At
+the default size no step needs it; the fit exists as a guard for high zoom and
+unusual aspect ratios. The notes drawer and run of show still scroll, with their
+scrollbars hidden.
+
+The masthead stacks eyebrow / title / kicker in one block that takes the full
+middle width, so slide titles are never clipped. Chapter position and the
+section tag live in the footer, with the presenter's step counter and key
+legend.
+
 ## Sizing it for the room
 
 Type is a share of **screen height**, not fixed pixels, so the deck keeps its
