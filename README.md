@@ -189,6 +189,21 @@ document column, and everything that used to compete with it for a header row
 
 ## Sizing it for the room
 
+Type scales with the **smaller** viewport dimension — `min(3.5vh, 2.08vw)` —
+not with height alone. Height alone looks right on 16:9 and then fails on a
+4:3 or 16:10 projector: the narrower screen wraps more text, the content grows
+taller, and slides overflow. Tying the scale to whichever dimension is tighter
+makes the deck adapt to the *shape* of the screen, not just its resolution.
+
+The level detail panel sizes itself the same way and expresses its internals in
+`em`, so it compacts as a unit on a short screen instead of forcing the global
+auto-fit to shrink the entire slide.
+
+Verified with real viewport resizes at 1024x768, 1280x800, 1512x982 and
+1920x1080: no clipping on any of the 40 slides, and the auto-fit never reaches
+its floor.
+
+
 Type is a share of **screen height**, not fixed pixels, so the deck keeps its
 physical size whatever resolution the projector runs at — the root is `3.5vh`,
 so body copy lands around 30px at 1080p. `+` / `−` adjust live and the setting is
