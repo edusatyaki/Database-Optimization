@@ -523,7 +523,7 @@ const LEVELS = [   /* index 0 sits at the bottom: System is the foundation */
   {n:'04', t:'Schema Level',      d:'Table & index design',                     k:'Normalization \u00b7 Indexing', c:'var(--violet)', i:'grid'},
   {n:'05', t:'Query Level',       d:'How each SQL statement is written',        k:'SQL & plan tuning',        c:'var(--violet)', i:'search'}
 ];
-function sceneStack(step, focus, compact){
+function sceneStack(step, focus, compact, hideTech){
   /* Compact mode is taller and narrower so it fills a half-width column instead
      of shrinking to fit. Everything inside a row is a fraction of the row
      height, so the two modes share one layout. */
@@ -560,8 +560,8 @@ function sceneStack(step, focus, compact){
             style="fill:${tc};font-size:${px(18)}px">${L.t}</text>
       <text x="${x+px(132)}" y="${y+fh*0.74}"
             style="fill:${sc};font-size:${px(14)}px">${L.d}</text>
-      <text class="t-mono" x="${x+w-px(20)}" y="${y+fh*0.62}" text-anchor="end"
-            style="fill:var(--orange-deep);font-size:${px(16)}px">${L.k}</text>
+      ${hideTech ? '' : `<text class="t-mono" x="${x+w-px(20)}" y="${y+fh*0.62}" text-anchor="end"
+            style="fill:var(--orange-deep);font-size:${px(16)}px">${L.k}</text>`}
     </g>`;
   });
   g += `<g class="sv-fade">
@@ -627,6 +627,36 @@ function levelPanel(n){
     ${row('You do', d.fix,'good')}
     ${row('It costs', d.cost)}
   </div>`;
+}
+
+/* ---- the vocabulary picture: pieces on many machines vs pieces in one ---- */
+function sceneVocab(step){
+  let g = '';
+  if(step>=1){
+    g += `<g class="sv-rise"><text class="t-lbl" x="250" y="30" text-anchor="middle"
+        style="font-size:19px">Sharding &mdash; pieces on different machines</text></g>`;
+    [0,1,2].forEach(i=>{
+      const x = 70 + i*130;
+      g += `<g class="sv-pop" ${D(i*110)}>
+        <rect x="${x}" y="58" width="104" height="96" rx="2" class="box"/>
+        <text class="t-sub" x="${x+52}" y="80" text-anchor="middle">machine ${i+1}</text>
+        <rect x="${x+16}" y="94" width="72" height="16" rx="2" fill="var(--pencil)" stroke="var(--ink)" stroke-width="1.6"/>
+        <rect x="${x+16}" y="118" width="72" height="16" rx="2" fill="var(--pencil)" stroke="var(--ink)" stroke-width="1.6"/></g>`;
+    });
+  }
+  if(step>=2){
+    g += `<g class="sv-rise"><text class="t-lbl" x="750" y="30" text-anchor="middle"
+        style="font-size:19px">Partitioning &mdash; pieces inside one machine</text></g>
+      <rect x="560" y="58" width="380" height="96" rx="2" class="box"/>
+      <text class="t-sub" x="750" y="80" text-anchor="middle">one machine</text>`;
+    [0,1,2,3].forEach(i=>{
+      g += `<g class="sv-pop" ${D(i*90)}>
+        <rect x="${578+i*92}" y="94" width="76" height="46" rx="2" fill="var(--amber)"
+              stroke="var(--ink)" stroke-width="1.8"/>
+        <text class="t-sub" x="${616+i*92}" y="122" text-anchor="middle">piece ${i+1}</text></g>`;
+    });
+  }
+  return SV('0 0 1000 176', g);
 }
 
 /* ---- 2. load growth: counters + a curve that bends ---- */
@@ -1041,7 +1071,7 @@ const card = (k,t,p,cls='',ico='') =>
    opens with the problem that forced the next technique.
    ===================================================================== */
 const CHAPTERS = [
- {n:1, t:'One machine',                    of:['title','growth']},
+ {n:1, t:'One machine',                    of:['title','growth','vocab']},
  {n:2, t:'A map of where things break',    of:['levels','mapped','quiz1']},
  {n:3, t:'The machine runs out',           of:['scaleup','scaleout','split','define','anatomy']},
  {n:4, t:'Deciding where each row lives',  of:['range','hash','directory','compare']},
@@ -1101,7 +1131,7 @@ const DECK = [
   {note:'Build the stack one floor at a time as you name each level. The point of the whole lecture is in this picture: optimization is not one trick, it is five different places a problem can live.'},
   {note:'Levels 1 and 2 are today. Levels 3, 4 and 5 are the next lectures — level 3 is the transactions material.'}],
   body:(st)=>`
-    <div class="stage-row">${sceneStack(Math.min(st*2+1,6), 0)}</div>
+    <div class="stage-row">${sceneStack(Math.min(st*2+1,6), 0, false, true)}</div>
     <div style="display:flex;align-items:center;gap:1.3rem">
       ${st<2 ? `<div class="pop" style="flex:0 0 auto">${amazonLogo('2rem','','one database, 1995')}</div>` : ''}
       <p class="lede" style="flex:1 1 auto">${st>=2
@@ -1126,6 +1156,23 @@ const DECK = [
     </div>
     ${st>=2?`<p class="lede pop">Amazon ran on Oracle for years. In <b>2018</b> AWS announced the consumer business
       had shut down its last Oracle database. Each thing that broke had <b>a specific home</b>.</p>`:''}` },
+
+{ id:'vocab', kick:'plain words first, mechanics later', eyebrow:'Two words you will hear all lecture',
+  title:'Cut the data up — but where?', tag:'vocabulary', steps:[
+  {note:'Before any technique, two words. Both mean the same simple thing: you stop keeping all the data in one lump and cut it into pieces. The only difference is where the pieces end up.'},
+  {note:'Sharding: the pieces go on DIFFERENT MACHINES. You do it when one machine is not enough — not enough disk, not enough write throughput. Say it plainly: sharding is about machines.'},
+  {note:'Partitioning: the pieces stay on the SAME MACHINE, as separate chunks of one table. You do it when one table is too big to scan efficiently. Partitioning is about tables.'},
+  {note:'That is the whole distinction, and it is the one students most often get backwards in an exam. Machines versus tables. Everything else in this lecture is detail on top of those two sentences.'}],
+  body:(st)=>`
+    <div class="cards" style="grid-template-columns:1fr 1fr;gap:.8rem">
+      ${st>=1?`<div class="pop d1">${card('Word one','Sharding',
+        'Cut the data up and put the pieces on <b>different machines</b>. You reach for it when one machine is not enough.','tl',ico('server'))}</div>`:''}
+      ${st>=2?`<div class="pop d2">${card('Word two','Partitioning',
+        'Cut one big table up and keep the pieces on the <b>same machine</b>. You reach for it when one table is too big to scan.','pp',ico('db'))}</div>`:''}
+    </div>
+    <div class="stage-row" style="flex:1 1 auto;min-height:0">${sceneVocab(st)}</div>
+    ${st>=3?`<p class="lede pop"><b>Machines versus tables.</b> That is the whole difference, and it is the one
+      most often got backwards. Everything else today is detail on top of those two sentences.</p>`:''}` },
 
 { id:'levels', kick:'five places a bottleneck can live', eyebrow:'From infrastructure down to the individual query',
   title:'The five levels of optimization', tag:'part 1', steps:[

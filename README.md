@@ -30,7 +30,25 @@ The whole deck runs on the arrow keys.
 | `+` / `−` / `0` | type size, for the room you are in |
 | `Home` / `End` | first / last slide |
 
-39 slides, 148 steps. Notes are written for speaking aloud, one per step.
+40 slides, 152 steps. Notes are written for speaking aloud, one per step.
+
+## Vocabulary before mechanics
+
+Both key words are defined in plain English **before** anything uses them.
+Chapter 1 closes on *Cut the data up — but where?*, which says only this:
+
+> **Sharding** — cut the data up and put the pieces on **different machines**.
+> You reach for it when one machine is not enough.
+>
+> **Partitioning** — cut one big table up and keep the pieces on the **same
+> machine**. You reach for it when one table is too big to scan.
+>
+> Machines versus tables. That is the whole difference.
+
+The five-level map that follows names both as techniques, so it has to come
+second. The title slide's stack withholds its technique column for the same
+reason — it would otherwise put both words on screen on slide one, before
+either has been explained.
 
 ## Structure: it is a story
 
@@ -42,7 +60,7 @@ then turns to the fix.
 
 | Ch | Chapter | The problem that opens it |
 |----|---------|---------------------------|
-| 1 | One machine | A 1995 bookstore, everything in one database. |
+| 1 | One machine | A 1995 bookstore, everything in one database — and the two words the lecture runs on. |
 | 2 | A map of where things break | Several things broke at once — each has a home. |
 | 3 | The machine runs out | Reads spread to replicas; writes cannot. → **Sharding** |
 | 4 | Deciding where each row lives | Which rows go where — the choice you cannot undo. |
