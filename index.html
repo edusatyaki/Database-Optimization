@@ -244,6 +244,29 @@ text{font-family:var(--arial)}
   .sv-fade,.sv-rise,.sv-pop,.pop{opacity:1;transform:none}
 }
 
+/* ================= side-by-side explainer ================= */
+.split{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1.25fr .9fr;gap:1.1rem;align-items:center}
+.split-l,.split-r{min-width:0;min-height:0}
+.split-l{display:flex;align-items:center}
+.lp{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--blue);
+  border-radius:12px;padding:.85rem 1rem;box-shadow:var(--shadow-sm)}
+.lp-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.lp-ico{flex:0 0 auto;width:2.1rem;height:2.1rem;border-radius:10px;display:grid;place-items:center;
+  background:var(--accent-tint);border:1px solid var(--accent-soft)}
+.lp-ico svg{width:1.1rem;height:1.1rem;color:var(--blue)}
+.lp-n{font-size:.5rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--blue)}
+.lp-t{font-size:.88rem;font-weight:700;line-height:1.15;color:var(--ink)}
+.lp-when{margin-left:auto;flex:0 0 auto;font-size:.46rem;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--squid);background:var(--orange);padding:3px 9px;border-radius:999px}
+.lp-owns{margin:0 0 .55rem;font-size:.72rem;line-height:1.45;color:var(--ink-2)}
+.lp-row{display:grid;grid-template-columns:5.4rem 1fr;gap:.55rem;padding:.3rem 0;
+  border-top:1px solid var(--line-2)}
+.lp-k{font-size:.5rem;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);
+  padding-top:.12rem}
+.lp-row.warn .lp-k{color:var(--red)} .lp-row.good .lp-k{color:var(--green)}
+.lp-v{font-size:.68rem;line-height:1.4;color:var(--ink-2)}
+@media (max-width:980px){.split{grid-template-columns:1fr;gap:.6rem}}
+
 /* ================= chapter opener ================= */
 .chapter{flex:1 1 auto;display:flex;align-items:center;gap:2.4rem;padding:0 .6rem}
 .ch-rail{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:.25rem;
@@ -394,43 +417,110 @@ const LEVELS = [   /* index 0 sits at the bottom: System is the foundation */
   {n:'04', t:'Schema Level',      d:'Table & index design',                     k:'Normalization \u00b7 Indexing', c:'var(--violet)', i:'grid'},
   {n:'05', t:'Query Level',       d:'How each SQL statement is written',        k:'SQL & plan tuning',        c:'var(--violet)', i:'search'}
 ];
-function sceneStack(step, focus){
-  const W=1000, fh=66, gap=9, x=170, w=660, base=372;
+function sceneStack(step, focus, compact){
+  /* Compact mode is taller and narrower so it fills a half-width column instead
+     of shrinking to fit. Everything inside a row is a fraction of the row
+     height, so the two modes share one layout. */
+  const fh   = compact ? 104 : 66;
+  const gap  = compact ? 16  : 9;
+  const k    = fh / 66;                       // type scale
+  const x    = compact ? 26  : 170;
+  const w    = compact ? 948 : 660;
+  const base = compact ? 636 : 372;
+  const VB   = compact ? '0 0 1000 700' : '0 0 1000 420';
+  const px   = n => Math.round(n * k * 10) / 10;   // a NUMBER: these get added to x
   let g='';
   LEVELS.forEach((L,i)=>{
     const y = base - (i+1)*(fh+gap);
-    const shown = step >= i+1;
-    const lit = focus === i+1;                   // focus is a level number 1..5
-    if(!shown) return;
+    if(step < i+1) return;
+    const lit = focus === i+1;
     const fill = lit ? L.c : 'var(--panel)';
     const tc   = lit ? '#fff' : 'var(--ink)';
-    const sc   = lit ? 'rgba(255,255,255,.8)' : 'var(--muted)';
+    const sc   = lit ? 'rgba(255,255,255,.82)' : 'var(--muted)';
     g += `<g class="sv-rise" ${D(i*90)}>
-      <rect x="${x}" y="${y}" width="${w}" height="${fh}" rx="10" fill="${fill}"
-            stroke="${lit?'none':'var(--line)'}" stroke-width="1.5"
-            ${lit?'class="sv-glow"':''}/>
-      <rect x="${x}" y="${y+11}" width="5" height="${fh-22}" rx="2.5" fill="${L.c}"
+      <rect x="${x}" y="${y}" width="${w}" height="${fh}" rx="${px(10)}" fill="${fill}"
+            stroke="${lit?'none':'var(--line)'}" stroke-width="1.5" ${lit?'class="sv-glow"':''}/>
+      <rect x="${x}" y="${y+fh*0.17}" width="5" height="${fh*0.66}" rx="2.5" fill="${L.c}"
             opacity="${lit?'.8':'1'}"/>
-      <circle cx="${x+44}" cy="${y+fh/2}" r="19"
+      <circle cx="${x+px(44)}" cy="${y+fh/2}" r="${px(19)}"
               fill="${lit?'rgba(255,255,255,.22)':'var(--bg)'}"
               stroke="${lit?'rgba(255,255,255,.4)':'var(--line)'}"/>
-      <g transform="translate(${x+33} ${y+fh/2-11}) scale(.92)" stroke="${lit?'#fff':L.c}"
-         fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="${ICON[L.i]}"/></g>
-      <text class="t-serif" x="${x+80}" y="${y+43}" style="fill:${lit?'#fff':L.c};font-size:24px">${L.n}</text>
-      <text class="t-serif" x="${x+132}" y="${y+29}" style="fill:${tc};font-size:18px">${L.t}</text>
-      <text x="${x+132}" y="${y+49}" style="fill:${sc};font-family:var(--news);font-size:14px">${L.d}</text>
-      <text class="t-mono" x="${x+w-20}" y="${y+41}" text-anchor="end"
-            style="fill:${lit?'#fff':'var(--accent-deep)'};font-size:13px">${L.k}</text>
+      <g transform="translate(${x+px(44)-px(11)} ${y+fh/2-px(11)}) scale(${(0.92*k).toFixed(2)})"
+         stroke="${lit?'#fff':L.c}" fill="none" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round"><path d="${ICON[L.i]}"/></g>
+      <text class="t-serif" x="${x+px(80)}" y="${y+fh*0.65}"
+            style="fill:${lit?'#fff':L.c};font-size:${px(24)}px">${L.n}</text>
+      <text class="t-serif" x="${x+px(132)}" y="${y+fh*0.44}"
+            style="fill:${tc};font-size:${px(18)}px">${L.t}</text>
+      <text x="${x+px(132)}" y="${y+fh*0.74}"
+            style="fill:${sc};font-size:${px(14)}px">${L.d}</text>
+      <text class="t-mono" x="${x+w-px(20)}" y="${y+fh*0.62}" text-anchor="end"
+            style="fill:${lit?'#fff':'var(--accent-deep)'};font-size:${px(13)}px">${L.k}</text>
     </g>`;
   });
-  // the plot of land
-  g += `<g class="sv-fade"><rect x="${x-26}" y="${base+4}" width="${w+52}" height="12" rx="6" fill="var(--ink)" opacity=".8"/>
-        <text x="${x+w/2}" y="${base+36}" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">the hardware it all stands on</text></g>`;
-  if(step>=6) g += `<g class="sv-fade"><path d="M110 ${base-5*(fh+gap)-10} L110 ${base}" class="wire live"/>
-      <text class="t-sub" x="98" y="${base-5*(fh+gap)/2}" text-anchor="end" transform="rotate(-90 98 ${base-5*(fh+gap)/2})"
-            style="font-size:12px;font-weight:600;fill:var(--accent-deep);font-family:var(--news);font-style:italic">built from the foundation up</text></g>`;
-  return SV(`0 0 ${W} 420`, g);
+  g += `<g class="sv-fade">
+    <rect x="${x-px(14)}" y="${base+px(4)}" width="${w+px(28)}" height="${px(12)}" rx="${px(6)}"
+          fill="var(--ink)" opacity=".8"/>
+    <text x="${x+w/2}" y="${base+px(36)}" text-anchor="middle"
+      style="font-style:italic;font-size:${px(14)}px;fill:var(--muted)">the hardware it all stands on</text></g>`;
+  if(step>=6 && !compact) g += `<g class="sv-fade">
+    <path d="M110 ${base-5*(fh+gap)-10} L110 ${base}" class="wire live"/>
+    <text x="98" y="${base-5*(fh+gap)/2}" text-anchor="end"
+          transform="rotate(-90 98 ${base-5*(fh+gap)/2})"
+          style="font-size:12px;font-weight:700;fill:var(--accent-deep);font-style:italic">built from the foundation up</text></g>`;
+  return SV(VB, g);
+}
+
+/* ---- what each level owns, shown beside the stack ---- */
+const LEVEL_DETAIL = {
+ 1:{owns:'How data and traffic are spread across physical machines.',
+    tech:'Sharding · read replicas',
+    symptom:'The whole system is slow, not one query. CPU pinned, or a single primary cannot absorb the writes.',
+    fix:'Add machines and split the data across them.',
+    cost:'Joins move into application memory; re-sharding is expensive; operations multiply.',
+    when:'Today · chapter 3', cls:''},
+ 2:{owns:'How bytes are physically laid out inside one instance.',
+    tech:'Partitioning · clustering · VACUUM',
+    symptom:'One table dominates, and a query for one month reads five years of it.',
+    fix:'Split the table on the key the query already filters on — usually time.',
+    cost:'No pruning unless you filter on the partition key.',
+    when:'Today · chapter 6', cls:'tl'},
+ 3:{owns:'Correctness when many users read and write at the same time.',
+    tech:'MVCC · locking · isolation levels',
+    symptom:'Throughput collapses while the CPU sits idle — sessions are waiting, not working.',
+    fix:'Right isolation level, consistent lock order, retry on 40001 and 40P01.',
+    cost:'Stronger isolation means more aborted transactions to retry.',
+    when:'Next lecture', cls:'pp'},
+ 4:{owns:'How tables, types, constraints and indexes are designed.',
+    tech:'Normalization · indexing',
+    symptom:'A sequential scan over a large table for a filter that matches very few rows.',
+    fix:'The right index type, on the right columns, in the right order.',
+    cost:'Every index slows every insert, update and delete.',
+    when:'A later lecture', cls:'pp'},
+ 5:{owns:'How one individual SQL statement is written and planned.',
+    tech:'EXPLAIN · join order · early filtering',
+    symptom:'The system is healthy and one query is slow.',
+    fix:'Read the plan. The gap between estimated and actual rows is the tell.',
+    cost:'Nothing structural — this is the cheapest level to fix.',
+    when:'A later lecture', cls:'pp'}
+};
+
+function levelPanel(n){
+  const L = LEVELS[n-1], d = LEVEL_DETAIL[n];
+  if(!L || !d) return '';
+  const row = (k,v,c='') => `<div class="lp-row ${c}"><div class="lp-k">${k}</div><div class="lp-v">${v}</div></div>`;
+  return `<div class="lp pop">
+    <div class="lp-head">
+      <span class="lp-ico">${ico(L.i)}</span>
+      <div><div class="lp-n">Level ${L.n}</div><div class="lp-t">${L.t}</div></div>
+      <span class="lp-when">${d.when}</span>
+    </div>
+    <p class="lp-owns">${d.owns}</p>
+    ${row('Technique','<span class="mono">'+d.tech+'</span>')}
+    ${row('You see','${SYM}'.replace('${SYM}', d.symptom),'warn')}
+    ${row('You do', d.fix,'good')}
+    ${row('It costs', d.cost)}
+  </div>`;
 }
 
 /* ---- 2. load growth: counters + a curve that bends ---- */
@@ -904,19 +994,28 @@ const DECK = [
       consumer business had shut down its last Oracle database. Each thing that broke had
       <b>a specific home</b> — that is what the five levels are for.</p>`:''}` },
 
-{ id:'levels', kick:'five places a bottleneck can live', eyebrow:'From infrastructure down to the individual query', title:'The five levels of optimization',
-  tag:'part 1', steps:[
-  {note:'Level 1, System. The physical infrastructure — how data is spread across machines when one machine is no longer enough. Technique: sharding. This is today.'},
-  {note:'Level 2, Storage. How data is laid out on disk inside one instance. A table with hundreds of millions of rows destroys performance even on good hardware. Technique: partitioning. Also today.'},
-  {note:'Level 3, Transaction. How concurrent users read and write without corrupting each other. MVCC, locking, deadlock handling. Next lecture.'},
-  {note:'Level 4, Schema. Table and index design. A poor schema guarantees poor performance no matter how powerful the hardware.'},
-  {note:'Level 5, Query. How the individual SQL statement is written. A bad query cripples a perfect schema on perfect hardware.'},
-  {note:'Now the mental model: these are the layers of a building. Foundation, floor plan, corridor rules, furniture, and the path you walk. You cannot fix the foundation by rearranging furniture.'}],
-  body:(st)=>`
-    <div class="stage-row">${sceneStack(6, st>=1 && st<=5 ? st : 0)}</div>
-    ${st>=5?`<p class="lede pop"><b>One mental model:</b> System is the foundation and the plot of land · Storage is how rooms are arranged on each floor ·
-      Transaction is the rules for moving through corridors without colliding · Schema is how furniture inside a room is arranged ·
-      Query is the specific path a person walks from desk to printer.</p>`:''}` },
+{ id:'levels', kick:'five places a bottleneck can live', eyebrow:'From infrastructure down to the individual query',
+  title:'The five levels of optimization', tag:'part 1', steps:[
+  {note:'Level 1, System. The physical infrastructure — how data is spread across machines when one is no longer enough. The tell is that the WHOLE system is slow, not one query. Technique: sharding. This is chapter 3, today.'},
+  {note:'Level 2, Storage. How data is laid out on disk inside one instance. A table with hundreds of millions of rows destroys performance even on good hardware. Technique: partitioning. Chapter 6, today.'},
+  {note:'Level 3, Transaction. Correctness when many users read and write at once. The signature symptom is throughput collapsing while the CPU sits idle — sessions are waiting on locks, not working. MVCC, locking, isolation levels. Next lecture.'},
+  {note:'Level 4, Schema. Table and index design. The tell is a sequential scan over a large table for a filter matching very few rows. A poor schema guarantees poor performance no matter how powerful the hardware.'},
+  {note:'Level 5, Query. How the individual statement is written. The tell is the simplest one: the system is healthy and one query is slow. Cheapest level to fix, and where most real slowdowns actually live.'},
+  {note:'Now the mental model: these are the layers of a building. Foundation, floor plan, corridor rules, furniture, and the path you walk. You cannot fix the foundation by rearranging the furniture — and the diagnosis always runs the other way, from the cheap top down to the expensive bottom.'}],
+  body:(st)=>{
+    const focus = st <= 4 ? st+1 : 0;
+    return `<div class="split">
+      <div class="split-l">${sceneStack(6, focus, true)}</div>
+      <div class="split-r">${focus ? levelPanel(focus) : `
+        <div class="lp pop"><div class="lp-head"><div><div class="lp-n">One mental model</div>
+          <div class="lp-t">Layers of a building</div></div></div>
+          <p class="lp-owns">System is the foundation and the plot of land. Storage is how rooms are arranged on
+          each floor. Transaction is the rules for moving through corridors without colliding. Schema is how the
+          furniture inside a room is arranged. Query is the path a person walks from desk to printer.</p>
+          <div class="lp-row good"><div class="lp-k">The point</div>
+            <div class="lp-v">You cannot fix the foundation by rearranging furniture — and you should never start
+            at the foundation.</div></div></div>`}</div>
+    </div>`; } },
 
 { id:'mapped', kick:'symptom first, then the layer', eyebrow:'One real symptom per level', title:'Five levels, mapped to Amazon',
   tag:'diagnosis', steps:[

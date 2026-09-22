@@ -55,6 +55,27 @@ Each chapter card has four steps: the situation, the problem, why it hurts, and
 the turn into the technique. The masthead always shows which chapter you are in,
 and the run of show (`O`) marks the chapter cards in squid ink.
 
+## The five levels, explained side by side
+
+The levels slide is a split: the stack on the left, and a detail panel on the
+right that changes as each level is highlighted. Every level answers the same
+four questions, so students can compare them directly rather than hearing five
+unrelated descriptions.
+
+| | |
+|---|---|
+| **Owns** | what that layer is responsible for |
+| **You see** | the symptom that tells you the problem lives here |
+| **You do** | the fix |
+| **It costs** | what you give up to get it |
+
+A pill on each panel says when the course covers it — *today · chapter 3*,
+*today · chapter 6*, *next lecture*, *a later lecture* — so the scope of this
+lecture is visible rather than assumed. The last step swaps the panel for the
+building analogy and the rule that follows from it: you cannot fix the
+foundation by rearranging furniture, and you should never start at the
+foundation.
+
 ## The judgement and real-world track
 
 The source lecture explains the mechanisms. These five slides answer the
