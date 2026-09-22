@@ -1,7 +1,7 @@
 # Database Optimization — animated infographic deck
 
-An infographic, motion-graphics retelling of **DBMS Lecture 13 · Database
-Optimization**, built to be presented. Every concept from the source deck is
+An infographic, motion-graphics retelling of a **DBMS Database Optimization**
+session, built to be presented. Every concept from the source deck is
 here, but the static diagrams are replaced with animated SVG scenes that build
 themselves one step at a time as you talk.
 
@@ -128,7 +128,7 @@ than inferring it:
 Everything respects `prefers-reduced-motion` — with that on, packets are not
 emitted at all and entrances resolve instantly.
 
-## What is animated (structure)
+## Structure of the animation
 
 | Scene | Motion |
 |-------|--------|
@@ -270,7 +270,7 @@ or produced in association with Amazon.
 
 ## Source
 
-`DBMS Lecture 13.pdf` — 46 slides. Structure preserved: the hook, the five
+The source deck — 46 slides. Structure preserved: the hook, the five
 levels, sharding (need → definition → anatomy → three strategies → pitfalls →
 checkpoint), partitioning (need → definition → vs sharding → three types →
 pruning → benefits → limitations → checkpoint), and the hand-off to the
