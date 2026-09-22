@@ -30,7 +30,30 @@ The whole deck runs on the arrow keys.
 | `+` / `−` / `0` | type size, for the room you are in |
 | `Home` / `End` | first / last slide |
 
-33 slides, 124 steps. Notes are written for speaking aloud, one per step.
+39 slides, 148 steps. Notes are written for speaking aloud, one per step.
+
+## Structure: it is a story
+
+The deck runs as one continuous narrative rather than a taxonomy. Amazon starts
+on a single machine, and every technique in the lecture arrives because
+something in the story broke. Eight chapters, six of which open with a
+full-width chapter card that states the situation, names the problem, and only
+then turns to the fix.
+
+| Ch | Chapter | The problem that opens it |
+|----|---------|---------------------------|
+| 1 | One machine | A 1995 bookstore, everything in one database. |
+| 2 | A map of where things break | Several things broke at once — each has a home. |
+| 3 | The machine runs out | Reads spread to replicas; writes cannot. → **Sharding** |
+| 4 | Deciding where each row lives | Which rows go where — the choice you cannot undo. |
+| 5 | What sharding broke | A join, adding a machine, and even traffic — all stopped being free. |
+| 6 | Still too big for one table | A tenth of a billion is still 150M rows. → **Partitioning** |
+| 7 | Amazon's own answer | They solved it first, then published how. |
+| 8 | What you should actually do | You know *how*. The harder question is *when*, and in what order. |
+
+Each chapter card has four steps: the situation, the problem, why it hurts, and
+the turn into the technique. The masthead always shows which chapter you are in,
+and the run of show (`O`) marks the chapter cards in squid ink.
 
 ## The judgement and real-world track
 

@@ -244,6 +244,37 @@ text{font-family:var(--arial)}
   .sv-fade,.sv-rise,.sv-pop,.pop{opacity:1;transform:none}
 }
 
+/* ================= chapter opener ================= */
+.chapter{flex:1 1 auto;display:flex;align-items:center;gap:2.4rem;padding:0 .6rem}
+.ch-rail{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:.25rem;
+  padding-right:2.2rem;border-right:4px solid var(--orange)}
+.ch-num{font-family:var(--arial);font-size:5.4rem;font-weight:700;line-height:.84;
+  color:var(--squid);letter-spacing:-.045em}
+:root[data-theme="dark"] .ch-num{color:var(--ink)}
+.ch-of{font-size:.48rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted)}
+.ch-body{flex:1 1 auto;min-width:0;max-width:46rem}
+.ch-when{font-size:.54rem;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;
+  color:var(--orange-deep);margin-bottom:.4rem}
+.ch-title{margin:0 0 .75rem;font-size:1.75rem;font-weight:700;line-height:1.08;
+  letter-spacing:-.022em;color:var(--squid)}
+:root[data-theme="dark"] .ch-title{color:var(--ink)}
+.ch-problem{margin:0 0 .55rem;font-size:1rem;font-weight:700;line-height:1.35;color:var(--ink)}
+.ch-detail{margin:0 0 .6rem;font-size:.8rem;line-height:1.5;color:var(--ink-2)}
+.ch-next{margin:0;font-size:.78rem;line-height:1.45;color:var(--blue);font-weight:700;
+  border-left:4px solid var(--orange);padding-left:.75rem}
+@media (max-width:900px){
+  .chapter{flex-direction:column;align-items:flex-start;gap:1rem}
+  .ch-rail{flex-direction:row;align-items:baseline;border-right:none;
+    border-bottom:4px solid var(--orange);padding:0 0 .4rem;gap:.7rem}
+  .ch-num{font-size:3rem}}
+
+/* ================= chapter chip in the masthead ================= */
+.chchip{flex:0 0 auto;display:flex;align-items:center;gap:.4em;white-space:nowrap;
+  font-family:var(--arial);font-size:clamp(8px,1.02vh,15px);font-weight:700;
+  color:rgba(255,255,255,.7);letter-spacing:.2px}
+.chchip b{color:var(--orange);font-weight:700}
+@media (max-width:1080px){.chchip{display:none}}
+
 /* ================= notes / overview / zoom ================= */
 #notes{position:fixed;left:0;right:0;bottom:0;z-index:40;transform:translateY(101%);
   transition:transform .28s ease;background:var(--navy);color:#eaf3fa;
@@ -261,6 +292,8 @@ text{font-family:var(--arial)}
 .ovc{padding:12px 14px;border-radius:10px;border:1px solid var(--line);cursor:pointer;
   background:var(--panel);transition:.2s;box-shadow:var(--shadow-sm)}
 .ovc:hover{border-color:var(--blue);transform:translateY(-3px)}
+.ovc-ch{background:var(--squid);border-color:var(--squid)}
+.ovc-ch .t{color:#fff}.ovc-ch .i{color:var(--orange)}
 .ovc .i{font-family:var(--mono);font-size:.45rem;color:var(--blue);font-weight:700}
 .ovc .t{font-family:var(--serif);font-size:.7rem;font-weight:700;margin-top:4px;line-height:1.2}
 
@@ -296,6 +329,7 @@ text{font-family:var(--arial)}
     </div>
     <div class="kick" id="sKick"></div>
     <div class="badges">
+      <span class="chchip" id="sChap"></span>
       <span class="badge" id="sTag">intro</span>
       <span class="badge p">Lecture 13</span>
       <button class="present" id="btnFull" title="Full screen (F)">
@@ -784,6 +818,64 @@ const card = (k,t,p,cls='',ico='') =>
   `<div class="card ${cls}">${ico?`<span class="ico">${ico}</span>`:''}
      <h4>${k}</h4><h3>${t}</h3><p>${p}</p></div>`;
 
+/* =====================================================================
+   The story spine. Every slide belongs to a chapter, and each chapter
+   opens with the problem that forced the next technique.
+   ===================================================================== */
+const CHAPTERS = [
+ {n:1, t:'One machine',                    of:['title','growth']},
+ {n:2, t:'A map of where things break',    of:['levels','mapped','quiz1']},
+ {n:3, t:'The machine runs out',           of:['scaleup','scaleout','split','define','anatomy']},
+ {n:4, t:'Deciding where each row lives',  of:['range','hash','directory','compare']},
+ {n:5, t:'What sharding broke',            of:['crossshard','reshard','hotspot','quiz2','whenshard']},
+ {n:6, t:'Still too big for one table',    of:['scanprob','partdef','versus','parttypes','pruning',
+                                               'benefits','limits','quiz3','whenpart']},
+ {n:7, t:"Amazon's own answer",            of:['amazondb','wild']},
+ {n:8, t:'What you should actually do',    of:['ladder','plan','recap']}
+];
+
+/* the opening card for each chapter: where we are, and what just broke */
+const OPENERS = {
+ 3:{when:'A few Christmases later',
+    problem:'The orders table has outgrown the biggest server money can buy.',
+    detail:'Reads can be spread across replicas. Writes cannot — every one of them still lands on a single primary. The machine itself is now the limit.',
+    next:'So we stop making the machine bigger, and start making more of them.'},
+ 4:{when:'The decision nobody can undo',
+    problem:'We have agreed to split the data. Now: which rows go where?',
+    detail:'This single choice decides whether a typical query touches one machine or all of them — and you do not get to change your mind cheaply.',
+    next:'Three strategies, and what each one costs you.'},
+ 5:{when:'The shards are live',
+    problem:'Writes are keeping up. And three things that used to be free have quietly stopped being free.',
+    detail:'A join. Adding a machine. And the assumption that traffic spreads evenly.',
+    next:'Each one is a bill that arrives after the architecture is already in production.'},
+ 6:{when:'One problem down, one to go',
+    problem:'Each shard holds a tenth of the data. A tenth of a billion is still 150 million rows.',
+    detail:'The machine is fine now. The table is not — and a query for one month still reads all five years of it.',
+    next:'This one we can fix without touching the application at all.'},
+ 7:{when:'2007',
+    problem:'Everything so far, Amazon had to solve for itself first.',
+    detail:'Then they published how — and that paper became the way a generation of databases partition data.',
+    next:'Including the one you would use today.'},
+ 8:{when:'The part that matters in the exam, and at work',
+    problem:'You now know how to shard and how to partition.',
+    detail:'The harder question is when to reach for each — and in what order, because doing them in the wrong order costs months.',
+    next:'Here is the order.'}
+};
+
+function chapterBody(ch, st){
+  const o = OPENERS[ch.n] || {};
+  return `<div class="chapter">
+    <div class="ch-rail"><span class="ch-num">${String(ch.n).padStart(2,'0')}</span>
+      <span class="ch-of">Chapter ${ch.n} of ${CHAPTERS.length}</span></div>
+    <div class="ch-body">
+      <div class="ch-when">${o.when||''}</div>
+      <h2 class="ch-title">${ch.t}</h2>
+      ${st>=1?`<p class="ch-problem pop">${o.problem||''}</p>`:''}
+      ${st>=2?`<p class="ch-detail pop">${o.detail||''}</p>`:''}
+      ${st>=3?`<p class="ch-next pop">${o.next||''}</p>`:''}
+    </div></div>`;
+}
+
 const DECK = [
 { id:'title', kick:'one database, then the world', eyebrow:'Lecture 13 · Database Optimization', title:'Why does a database slow down?',
   tag:'intro', steps:[
@@ -866,34 +958,6 @@ const DECK = [
       ${st>=3?`<p class="pop" style="margin-top:.3rem"><b style="color:var(--purple)">&rarr; Query Level.</b>
         The statement itself is inefficient — the fix is in how it is written.</p>`:`<p style="opacity:.4">…</p>`}</div>`:''}
   </div>` },
-
-{ id:'ladder', kick:'sharding is the last rung, not the first', eyebrow:'Before you re-architect anything',
-  title:'The escalation ladder', tag:'judgement', steps:[
-  {note:'This slide is the one I most want them to remember. Most engineers who say "we need to shard" actually have a missing index. Work up the ladder, never start at the top.'},
-  {note:'Rung one: read the execution plan, rewrite the query, add the right index. Hours of work, completely reversible, and it fixes the majority of real slowdowns.'},
-  {note:'Rung two: fix the schema. Wrong data types, missing foreign keys, a column that should have been a separate table. Days of work, still reversible.'},
-  {note:'Rung three: cache what is hot. If the same twenty queries are ninety percent of your traffic, the fastest query is the one you never send.'},
-  {note:'Rung four: read replicas. If READS are the bottleneck — reports, dashboards, search — replicas are dramatically cheaper and simpler than sharding. This is the step people skip.'},
-  {note:'Rung five: partition. Now you are changing storage layout, but still on one machine, and the application does not change.'},
-  {note:'Rung six: shard. Months of work, and it is a permanent architectural commitment — you do not casually un-shard a system. Earn your way here.'}],
-  body:(st)=>{
-    const rungs=[
-      ['1','Tune the query','Read the plan. Rewrite it. Add the index it is missing.','hours · reversible','search',''],
-      ['2','Fix the schema','Right types, right keys, right tables.','days · reversible','grid',''],
-      ['3','Cache what is hot','The fastest query is the one you never send.','days · reversible','bolt','tl'],
-      ['4','Add read replicas','If READS are the bottleneck, this is far cheaper than sharding.','days · reversible','layers','tl'],
-      ['5','Partition the table','Storage layout changes. One machine. No application change.','weeks · reversible','db','pp'],
-      ['6','Shard','Months of work, and a permanent architectural commitment.','months · one-way door','server','warn']];
-    return `<div class="cards" style="gap:.4rem;align-content:center;flex:1">
-      ${rungs.map((r,i)=> st>=i ? `<div class="card ${r[5]} pop" style="animation-delay:${i*40}ms;padding:.6rem .95rem">
-        <span class="ico">${ico(r[4])}</span>
-        <div style="display:flex;align-items:baseline;gap:.6rem">
-          <span style="font-family:var(--serif);font-size:.86rem;font-weight:600;color:var(--accent-deep)">${r[0]}</span>
-          <span style="font-family:var(--serif);font-size:.86rem;font-weight:600">${r[1]}</span>
-          <span style="font-family:var(--mono);font-size:.5rem;color:var(--muted);margin-left:auto;
-            padding-right:2.6rem;white-space:nowrap">${r[3]}</span></div>
-        <p style="margin-top:.1rem;font-size:.7rem">${r[2]}</p></div>` : '').join('')}
-    </div>`; } },
 
 { id:'scaleup', kick:'vertical scaling and its ceiling', eyebrow:'Why sharding exists · the need', title:'First instinct: scale up',
   tag:'part 2 · sharding', steps:[
@@ -1214,6 +1278,34 @@ const DECK = [
         shop — so the overwhelming majority of queries stay on a single shard.</p></div>`:''}
     </div>`; } },
 
+{ id:'ladder', kick:'sharding is the last rung, not the first', eyebrow:'Before you re-architect anything',
+  title:'The escalation ladder', tag:'judgement', steps:[
+  {note:'This slide is the one I most want them to remember. Most engineers who say "we need to shard" actually have a missing index. Work up the ladder, never start at the top.'},
+  {note:'Rung one: read the execution plan, rewrite the query, add the right index. Hours of work, completely reversible, and it fixes the majority of real slowdowns.'},
+  {note:'Rung two: fix the schema. Wrong data types, missing foreign keys, a column that should have been a separate table. Days of work, still reversible.'},
+  {note:'Rung three: cache what is hot. If the same twenty queries are ninety percent of your traffic, the fastest query is the one you never send.'},
+  {note:'Rung four: read replicas. If READS are the bottleneck — reports, dashboards, search — replicas are dramatically cheaper and simpler than sharding. This is the step people skip.'},
+  {note:'Rung five: partition. Now you are changing storage layout, but still on one machine, and the application does not change.'},
+  {note:'Rung six: shard. Months of work, and it is a permanent architectural commitment — you do not casually un-shard a system. Earn your way here.'}],
+  body:(st)=>{
+    const rungs=[
+      ['1','Tune the query','Read the plan. Rewrite it. Add the index it is missing.','hours · reversible','search',''],
+      ['2','Fix the schema','Right types, right keys, right tables.','days · reversible','grid',''],
+      ['3','Cache what is hot','The fastest query is the one you never send.','days · reversible','bolt','tl'],
+      ['4','Add read replicas','If READS are the bottleneck, this is far cheaper than sharding.','days · reversible','layers','tl'],
+      ['5','Partition the table','Storage layout changes. One machine. No application change.','weeks · reversible','db','pp'],
+      ['6','Shard','Months of work, and a permanent architectural commitment.','months · one-way door','server','warn']];
+    return `<div class="cards" style="gap:.4rem;align-content:center;flex:1">
+      ${rungs.map((r,i)=> st>=i ? `<div class="card ${r[5]} pop" style="animation-delay:${i*40}ms;padding:.6rem .95rem">
+        <span class="ico">${ico(r[4])}</span>
+        <div style="display:flex;align-items:baseline;gap:.6rem">
+          <span style="font-family:var(--serif);font-size:.86rem;font-weight:600;color:var(--accent-deep)">${r[0]}</span>
+          <span style="font-family:var(--serif);font-size:.86rem;font-weight:600">${r[1]}</span>
+          <span style="font-family:var(--mono);font-size:.5rem;color:var(--muted);margin-left:auto;
+            padding-right:2.6rem;white-space:nowrap">${r[3]}</span></div>
+        <p style="margin-top:.1rem;font-size:.7rem">${r[2]}</p></div>` : '').join('')}
+    </div>`; } },
+
 { id:'plan', kick:'the ladder, applied', eyebrow:'What we would actually do',
   title:'Putting it together', tag:'real world', steps:[
   {note:'Let us end by applying the ladder to the company we opened with, in order.'},
@@ -1250,6 +1342,26 @@ const DECK = [
 ];
 </script>
 <script>
+/* ---- assemble the running order: a chapter opener, then that chapter's slides ---- */
+const BY_ID = Object.fromEntries(DECK.map(d => [d.id, d]));
+const RUN = [];
+CHAPTERS.forEach(ch => {
+  if(OPENERS[ch.n]) RUN.push({
+    id:'ch'+ch.n, chapter:ch, type:'chapter',
+    eyebrow:'Chapter '+ch.n, title:ch.t, kick:OPENERS[ch.n].when, tag:'story',
+    steps:[
+      {note:'Chapter card. Pause here — this is where the story turns. Read the situation, then let them feel the problem before you name the technique.'},
+      {note:OPENERS[ch.n].problem},
+      {note:OPENERS[ch.n].detail},
+      {note:OPENERS[ch.n].next}
+    ],
+    body:(st)=>chapterBody(ch, st)
+  });
+  ch.of.forEach(id => { const d = BY_ID[id]; if(d){ d.chapter = ch; RUN.push(d); } });
+});
+DECK.length = 0;
+RUN.forEach(d => DECK.push(d));
+
 /* ===================== presenter engine ===================== */
 const $ = s => document.querySelector(s);
 const stage = $('#stage');
@@ -1265,6 +1377,8 @@ function render(){
   $('#sEyebrow').textContent = sl.eyebrow;
   $('#sTag').textContent     = sl.tag;
   $('#sKick').textContent    = sl.kick || '';
+  $('#sChap').innerHTML      = sl.chapter
+      ? `Ch <b>${sl.chapter.n}</b>/${CHAPTERS.length} &middot; ${sl.chapter.t}` : '';
   $('#stepCount').textContent = `slide ${si+1}/${DECK.length} · step ${pi+1}/${sl.steps.length}`;
   $('#noteSay').innerHTML = sl.steps[pi].note || '—';
   $('#noteNxt').textContent = pi+1 < sl.steps.length
@@ -1362,8 +1476,9 @@ document.addEventListener('fullscreenchange', () => {
 
 /* ---- run of show ---- */
 $('#ovGrid').innerHTML = DECK.map((s,i)=>
-  `<div class="ovc" data-i="${i}"><div class="i">${String(i+1).padStart(2,'0')} · ${s.tag}</div>
-   <div class="t">${s.title}</div></div>`).join('');
+  `<div class="ovc${s.type==='chapter'?' ovc-ch':''}" data-i="${i}">
+     <div class="i">${s.chapter ? 'CH '+s.chapter.n : ''} · ${s.tag}</div>
+     <div class="t">${s.title}</div></div>`).join('');
 $('#ovGrid').querySelectorAll('.ovc').forEach(el =>
   el.onclick = () => { si=+el.dataset.i; pi=0; $('#ov').classList.remove('open'); render(); });
 
