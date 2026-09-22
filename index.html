@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Database Optimization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Type is a share of SCREEN HEIGHT so the deck keeps its physical size on any
+     projector resolution. --scale is the presenter's live zoom (+ / - / 0).   */
+  --scale:1;
+
+  /* Atelier house palette — shared with cs-atelier / data-atelier / machine-atelier */
+  --bg:#f4efe8;
+  --bg-2:#efe7dd;
+  --panel:#fbf7f1;
+  --panel-2:#f6f0e7;
+  --ink:#2b2622;
+  --ink-2:#6f665d;
+  --muted:#a89e93;
+  --line:#e7ddce;
+  --line-2:#efe7db;
+
+  --accent:#d98b7d;          /* coral — the primary voice */
+  --accent-deep:#c1705f;
+  --accent-soft:#f6e3dd;
+  --accent-tint:#fbeee9;
+  --violet:#8a7bd8;
+  --violet-soft:#efeafb;
+  --teal:#5c9aa1;
+  --teal-soft:#e4f1f0;
+  --gold:#f6e9a8;
+  --gold-line:#e9d778;
+  --clay:#b4533f;            /* warnings, hotspots */
+  --ok:#7fae86;
+
+  /* names the scene code already speaks, re-voiced in Atelier colours */
+  --navy-900:#2b2622;
+  --navy-800:#3a332c;
+  --navy-700:#463c33;
+  --blue:var(--accent);
+  --blue-400:var(--accent-deep);
+  --blue-300:#e9b5a9;
+  --purple:var(--violet);
+  --purple-300:#b3a8e8;
+  --orange:var(--clay);
+  --green:var(--ok);
+
+  --shadow:0 24px 60px -30px rgba(80,54,40,.35);
+  --shadow-sm:0 10px 30px -18px rgba(80,54,40,.4);
+
+  --serif:'Fraunces',Georgia,'Times New Roman',serif;
+  --news:'Newsreader',Georgia,serif;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+:root[data-theme="dark"]{
+  --bg:#1d1916;
+  --bg-2:#241f1b;
+  --panel:#272220;
+  --panel-2:#2f2925;
+  --ink:#f2ebe1;
+  --ink-2:#cdc2b5;
+  --muted:#9d9186;
+  --line:#3a322c;
+  --line-2:#332c27;
+  --accent:#e59f92;
+  --accent-deep:#d98b7d;
+  --accent-soft:#3a2b27;
+  --accent-tint:#2f2421;
+  --violet:#a396e8;
+  --violet-soft:#2b2740;
+  --teal:#77b3ba;
+  --navy-900:#f2ebe1;
+  --navy-800:#141110;
+  --navy-700:#161312;
+  --shadow:0 24px 60px -30px rgba(0,0,0,.7);
+  --shadow-sm:0 10px 30px -18px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{font-size:clamp(15px, calc(3.5vh * var(--scale)), 56px)}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);overflow:hidden;
+}
+
+/* ================= shell ================= */
+#app{height:100vh;display:flex;flex-direction:column}
+header{flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:11px 26px;
+  border-bottom:1px solid var(--line);background:var(--bg)}
+.mark{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+.mark .shield{width:clamp(20px,2.7vh,42px);height:clamp(20px,2.7vh,42px);flex:0 0 auto}
+.mark .spark{color:var(--accent);font-size:clamp(9px,1.2vh,18px);align-self:flex-start;margin-left:-2px}
+.mark .txt{font-size:clamp(9px,1.18vh,18px);line-height:1.15;font-weight:600;color:var(--ink-2);
+  letter-spacing:.1px;white-space:nowrap}
+:root[data-theme="dark"] .mark .txt{color:var(--ink)}
+.title-wrap{flex:1 1 auto;min-width:0}
+.kick{flex:0 1 auto;min-width:0;font-family:var(--news);font-style:italic;color:var(--violet);
+  font-size:clamp(11px,1.6vh,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  padding-right:.6rem}
+@media (max-width:1100px){.kick{display:none}}
+.eyebrow{font-size:clamp(9px,1.15vh,17px);font-weight:700;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--accent-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide-title{min-width:0;font-family:var(--serif);font-size:clamp(17px,2.5vh,40px);font-weight:600;
+  line-height:1.15;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badges{display:flex;gap:8px;align-items:center;flex:0 0 auto}
+.badge{font-size:clamp(8px,1.02vh,15px);font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  padding:5px 13px;border-radius:999px;border:1px solid var(--accent-soft);color:var(--accent-deep);
+  background:var(--accent-tint);white-space:nowrap}
+.badge.p{color:var(--violet);border-color:var(--violet-soft);background:var(--violet-soft)}
+.clock{font-family:var(--mono);font-size:clamp(9px,1.12vh,17px);color:var(--muted);min-width:4.2em;text-align:right}
+
+main{flex:1 1 auto;min-height:0;padding:16px 24px;display:flex}
+.slide{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:.5rem;
+  overflow-y:auto;overscroll-behavior:contain}
+.slide::-webkit-scrollbar{width:8px}
+.slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+
+footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 26px;border-top:1px solid var(--line);background:var(--bg)}
+.dots{display:flex;gap:5px;flex:1 1 auto;flex-wrap:wrap}
+.pd{width:9px;height:9px;border-radius:50%;background:var(--line);cursor:pointer;transition:.2s}
+.pd:hover{transform:scale(1.4)}
+.pd.done{background:var(--accent-soft)}
+.pd.now{background:var(--accent);transform:scale(1.4)}
+.steps{font-family:var(--mono);font-size:clamp(9px,1.1vh,17px);color:var(--muted);white-space:nowrap}
+.keys{font-size:clamp(9px,1.02vh,16px);color:var(--muted);white-space:nowrap}
+kbd{font-family:var(--mono);font-size:clamp(8px,.95vh,15px);background:var(--panel);
+  border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 6px;color:var(--ink-2)}
+
+/* ================= shared blocks ================= */
+.lede{font-family:var(--news);font-size:.92rem;line-height:1.55;color:var(--ink-2);max-width:54rem}
+.lede b{color:var(--ink);font-weight:600}
+.kicker{font-family:var(--news);font-style:italic;font-size:.82rem;color:var(--violet);margin:0}
+.stage-row{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
+svg.scene{width:100%;height:100%;max-height:100%;overflow:visible;fill:var(--ink)}
+.cards{display:grid;gap:.62rem}
+.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:20px;
+  padding:.85rem 1.05rem;box-shadow:var(--shadow-sm);overflow:hidden}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);
+  opacity:.9}
+.card.warn::before{background:var(--clay)} .card.good::before{background:var(--ok)}
+.card.pp::before{background:var(--violet)} .card.tl::before{background:var(--teal)}
+.card h4{margin:0 0 .3rem;font-size:.58rem;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--accent-deep)}
+.card.warn h4{color:var(--clay)} .card.good h4{color:var(--ok)}
+.card.pp h4{color:var(--violet)} .card.tl h4{color:var(--teal)}
+.card h3{margin:0 0 .3rem;font-family:var(--serif);font-size:.95rem;font-weight:600;line-height:1.2;
+  letter-spacing:-.01em}
+.card p{margin:0;font-family:var(--news);font-size:.76rem;line-height:1.5;color:var(--ink-2)}
+.card .ico{position:absolute;right:.9rem;top:.85rem;width:2.15rem;height:2.15rem;border-radius:50%;
+  display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);
+  box-shadow:inset 0 1px 3px rgba(80,54,40,.10)}
+.card .ico svg{width:1.1rem;height:1.1rem;color:var(--accent-deep)}
+.plan .card{padding:.56rem .95rem}
+.plan .card h3{font-size:.88rem;margin-bottom:.16rem}
+.plan .card p{font-size:.7rem;line-height:1.4;padding-right:2.4rem}
+.card.warn .ico svg{color:var(--clay)} .card.good .ico svg{color:var(--ok)}
+.card.pp .ico svg{color:var(--violet)} .card.tl .ico svg{color:var(--teal)}
+code,.mono{font-family:var(--mono);font-size:.88em;background:var(--accent-tint);
+  padding:1px 6px;border-radius:6px;color:var(--accent-deep);border:1px solid var(--accent-soft)}
+:root[data-theme="dark"] code,:root[data-theme="dark"] .mono{color:var(--accent)}
+
+.pop{opacity:0;transform:translateY(12px);animation:pop .42s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes pop{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.14s}.d3{animation-delay:.22s}
+.d4{animation-delay:.3s}.d5{animation-delay:.38s}.d6{animation-delay:.46s}
+
+/* ================= motion primitives ================= */
+@keyframes drawIn{to{stroke-dashoffset:0}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes riseIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+@keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(27,127,212,0))}
+                     50%{filter:drop-shadow(0 0 10px rgba(27,127,212,.65))}}
+@keyframes hotPulse{0%,100%{filter:drop-shadow(0 0 2px rgba(232,85,45,.35))}
+                    50%{filter:drop-shadow(0 0 16px rgba(232,85,45,.85))}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+@keyframes dashFlow{to{stroke-dashoffset:-36}}
+
+.sv-draw{stroke-dasharray:var(--len,600);stroke-dashoffset:var(--len,600);
+  animation:drawIn .7s ease forwards}
+.sv-fade{opacity:0;animation:fadeIn .45s ease forwards}
+.sv-rise{opacity:0;animation:riseIn .5s cubic-bezier(.22,1,.36,1) forwards}
+.sv-pop{opacity:0;transform-box:fill-box;transform-origin:center;
+  animation:popIn .45s cubic-bezier(.34,1.56,.64,1) forwards}
+.sv-glow{animation:glowPulse 2.1s ease-in-out infinite}
+.sv-hot{animation:hotPulse 1.3s ease-in-out infinite}
+.sv-float{animation:floatY 2.6s ease-in-out infinite}
+.wire{stroke:var(--line);stroke-width:2;fill:none}
+.wire.live{stroke:var(--blue);stroke-width:2.5;stroke-dasharray:9 9;animation:dashFlow .9s linear infinite}
+/* `animation` is a shorthand, so a flowing wire that also fades in needs BOTH
+   animations declared together — otherwise the flow replaces the fade and the
+   line is stuck at opacity 0. */
+.wire.live.sv-fade{animation:dashFlow .9s linear infinite, fadeIn .45s ease forwards}
+.wire.sv-fade{animation:fadeIn .45s ease forwards}
+.wire.hotwire{stroke:var(--orange)}
+text{font-family:var(--sans)}
+.t-lbl{font-size:15px;font-weight:600;fill:var(--ink)}
+.t-serif{font-family:var(--serif);font-weight:600;fill:var(--ink)}
+.t-sub{font-size:13px;fill:var(--muted)}
+.t-mono{font-family:'JetBrains Mono',monospace;font-size:14px;fill:var(--ink-2)}
+.t-big{font-family:var(--serif);font-size:25px;font-weight:600;fill:var(--ink)}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.box-navy{fill:var(--navy-700);stroke:none}
+.box-blue{fill:var(--blue);stroke:none}
+.box-purple{fill:var(--purple);stroke:none}
+.box-orange{fill:var(--orange);stroke:none}
+.on-navy{fill:#fff}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important}
+  .sv-draw{stroke-dashoffset:0}
+  .sv-fade,.sv-rise,.sv-pop,.pop{opacity:1;transform:none}
+}
+
+/* ================= notes / overview / zoom ================= */
+#notes{position:fixed;left:0;right:0;bottom:0;z-index:40;transform:translateY(101%);
+  transition:transform .28s ease;background:#2b2622;color:#f4efe8;
+  border-top:3px solid var(--accent);padding:14px 24px 16px;max-height:46vh;overflow-y:auto}
+#notes.open{transform:none}
+#notes h6{margin:0 0 6px;font-size:.5rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent)}
+#notes .say{font-family:var(--news);font-size:.86rem;line-height:1.6;max-width:66rem}
+#notes .say b{color:#f0b9ab;font-weight:600}
+#notes .nxt{margin-top:8px;font-size:.5rem;color:#a89e93;font-family:var(--mono)}
+
+#ov{position:fixed;inset:0;z-index:50;background:var(--bg);padding:28px;display:none;overflow-y:auto}
+#ov.open{display:block}
+#ov h3{margin:0 0 16px;font-family:var(--serif);font-size:.86rem;color:var(--ink);letter-spacing:0;text-transform:none}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:10px}
+.ovc{padding:12px 14px;border-radius:16px;border:1px solid var(--line);cursor:pointer;
+  background:var(--panel);transition:.2s;box-shadow:var(--shadow-sm)}
+.ovc:hover{border-color:var(--accent);transform:translateY(-3px)}
+.ovc .i{font-family:var(--mono);font-size:.45rem;color:var(--accent-deep);font-weight:700}
+.ovc .t{font-family:var(--serif);font-size:.72rem;font-weight:600;margin-top:4px;line-height:1.2}
+
+#zoom{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);z-index:60;
+  padding:.9rem 1.5rem;border-radius:18px;border:2px solid var(--accent);background:var(--panel);
+  color:var(--accent-deep);font-family:var(--mono);font-size:1.5rem;font-weight:700;opacity:0;
+  pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:var(--shadow)}
+#zoom.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#zoom small{display:block;font-size:.42em;color:var(--muted);font-weight:400;margin-top:.3rem;text-align:center}
+
+@media (max-width:900px){ header,main,footer{padding-left:14px;padding-right:14px} }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="mark">
+      <svg class="shield" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M20 3 L34 8 V20 C34 29 27.5 35 20 37 C12.5 35 6 29 6 20 V8 Z"
+              fill="none" stroke="var(--accent)" stroke-width="2.6"/>
+        <path d="M15 14 h6.5 a4.5 4.5 0 0 1 0 9 H15 z M15 14 v13" fill="none"
+              stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+      <div class="txt">Newton School<br>of Technology</div>
+      <span class="spark">&#10022;</span>
+    </div>
+    <div class="title-wrap">
+      <div class="eyebrow" id="sEyebrow">—</div>
+      <div class="slide-title" id="sTitle">—</div>
+    </div>
+    <div class="kick" id="sKick"></div>
+    <div class="badges">
+      <span class="badge" id="sTag">intro</span>
+      <span class="badge p">Lecture 13</span>
+      <span class="clock" id="clock">00:00</span>
+    </div>
+  </header>
+  <main id="stage"></main>
+  <footer>
+    <div class="dots" id="dots"></div>
+    <div class="steps" id="stepCount">—</div>
+    <div class="keys"><kbd>&rarr;</kbd><kbd>&larr;</kbd> step &nbsp;<kbd>S</kbd> notes &nbsp;<kbd>O</kbd> map
+      &nbsp;<kbd>T</kbd> theme &nbsp;<kbd>F</kbd> full &nbsp;<kbd>+</kbd><kbd>&minus;</kbd> size</div>
+  </footer>
+</div>
+
+<div id="notes"><h6>Speaker notes</h6><div class="say" id="noteSay">—</div><div class="nxt" id="noteNxt"></div></div>
+<div id="zoom"></div>
+<div id="ov"><h3>Run of show</h3><div class="ovgrid" id="ovGrid"></div></div>
+<script>
+/* =====================================================================
+   Motion scenes — inline SVG infographics.
+   Every scene takes the current step and returns markup; entrance
+   animations are CSS classes, so a re-render replays only what changed.
+   ===================================================================== */
+/* ---- line-art icon set — stroked, inherits colour, reads at projector size ---- */
+const ICON = {
+  server:  'M3 4h18v6H3zM3 14h18v6H3zM7 7h.01M7 17h.01',
+  db:      'M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
+  lock:    'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+  grid:    'M3 3h18v18H3zM3 9h18M9 3v18',
+  search:  'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16M21 21l-4.3-4.3',
+  users:   'M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6M22 19v-1a4 4 0 0 0-3-3.9',
+  cart:    'M2 3h2l2.4 12.5a2 2 0 0 0 2 1.5h9.7a2 2 0 0 0 2-1.6L21 7H6M9.5 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2M18 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2',
+  bolt:    'M13 2 3 14h8l-1 8 10-12h-8z',
+  trash:   'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14',
+  layers:  'M12 2 2 7l10 5 10-5zM2 12l10 5 10-5M2 17l10 5 10-5',
+  ban:     'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18M5.6 5.6l12.8 12.8',
+  sigma:   'M18 5H6l6 7-6 7h12',
+  clock:   'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18M12 7v5l3 2',
+  build:   'M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5',
+  route:   'M6 3v12a3 3 0 0 0 3 3h9M15 15l3 3-3 3',
+  shield:  'M12 3l8 3v6c0 5-3.5 8.3-8 9.5C7.5 20.3 4 17 4 12V6z',
+  split:   'M6 3v6a3 3 0 0 0 3 3h9M6 21v-6a3 3 0 0 1 3-3M15 9l3 3-3 3',
+  gauge:   'M12 21a9 9 0 1 1 9-9M12 12l5-3'
+};
+const ico = (n, c='currentColor') =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round"><path d="${ICON[n]||ICON.db}"/></svg>`;
+
+const SV = (vb, inner) => `<svg class="scene" viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${inner}</svg>`;
+const D  = n => `style="animation-delay:${n}ms"`;
+
+/* ---- 1. the five-level stack, as a building ---- */
+const LEVELS = [   /* index 0 sits at the bottom: System is the foundation */
+  {n:'01', t:'System Level',      d:'Data across machines \u00b7 compute & network', k:'Sharding',                 c:'var(--accent)', i:'server'},
+  {n:'02', t:'Storage Level',     d:'Data layout on disk within one instance',  k:'Partitioning',             c:'var(--teal)',   i:'db'},
+  {n:'03', t:'Transaction Level', d:'Safe concurrent reads & writes',           k:'MVCC \u00b7 Locking',           c:'var(--violet)', i:'lock'},
+  {n:'04', t:'Schema Level',      d:'Table & index design',                     k:'Normalization \u00b7 Indexing', c:'var(--violet)', i:'grid'},
+  {n:'05', t:'Query Level',       d:'How each SQL statement is written',        k:'SQL & plan tuning',        c:'var(--violet)', i:'search'}
+];
+function sceneStack(step, focus){
+  const W=1000, fh=66, gap=9, x=170, w=660, base=372;
+  let g='';
+  LEVELS.forEach((L,i)=>{
+    const y = base - (i+1)*(fh+gap);
+    const shown = step >= i+1;
+    const lit = focus === i+1;                   // focus is a level number 1..5
+    if(!shown) return;
+    const fill = lit ? L.c : 'var(--panel)';
+    const tc   = lit ? '#fff' : 'var(--ink)';
+    const sc   = lit ? 'rgba(255,255,255,.8)' : 'var(--muted)';
+    g += `<g class="sv-rise" ${D(i*90)}>
+      <rect x="${x}" y="${y}" width="${w}" height="${fh}" rx="17" fill="${fill}"
+            stroke="${lit?'none':'var(--line)'}" stroke-width="1.5"
+            ${lit?'class="sv-glow"':''}/>
+      <rect x="${x}" y="${y+11}" width="5" height="${fh-22}" rx="2.5" fill="${L.c}"
+            opacity="${lit?'.8':'1'}"/>
+      <circle cx="${x+44}" cy="${y+fh/2}" r="19"
+              fill="${lit?'rgba(255,255,255,.22)':'var(--bg)'}"
+              stroke="${lit?'rgba(255,255,255,.4)':'var(--line)'}"/>
+      <g transform="translate(${x+33} ${y+fh/2-11}) scale(.92)" stroke="${lit?'#fff':L.c}"
+         fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="${ICON[L.i]}"/></g>
+      <text class="t-serif" x="${x+80}" y="${y+43}" style="fill:${lit?'#fff':L.c};font-size:24px">${L.n}</text>
+      <text class="t-serif" x="${x+132}" y="${y+29}" style="fill:${tc};font-size:18px">${L.t}</text>
+      <text x="${x+132}" y="${y+49}" style="fill:${sc};font-family:var(--news);font-size:14px">${L.d}</text>
+      <text class="t-mono" x="${x+w-20}" y="${y+41}" text-anchor="end"
+            style="fill:${lit?'#fff':'var(--accent-deep)'};font-size:13px">${L.k}</text>
+    </g>`;
+  });
+  // the plot of land
+  g += `<g class="sv-fade"><rect x="${x-26}" y="${base+4}" width="${w+52}" height="12" rx="6" fill="var(--ink)" opacity=".8"/>
+        <text x="${x+w/2}" y="${base+36}" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">the hardware it all stands on</text></g>`;
+  if(step>=6) g += `<g class="sv-fade"><path d="M110 ${base-5*(fh+gap)-10} L110 ${base}" class="wire live"/>
+      <text class="t-sub" x="98" y="${base-5*(fh+gap)/2}" text-anchor="end" transform="rotate(-90 98 ${base-5*(fh+gap)/2})"
+            style="font-size:12px;font-weight:600;fill:var(--accent-deep);font-family:var(--news);font-style:italic">built from the foundation up</text></g>`;
+  return SV(`0 0 ${W} 420`, g);
+}
+
+/* ---- 2. load growth: counters + a curve that bends ---- */
+function sceneGrowth(step){
+  const pts = 'M80,330 C220,326 330,318 430,300 C540,280 620,236 700,168 C760,116 800,74 860,46';
+  let g = `<path d="${pts}" fill="none" stroke="var(--line)" stroke-width="3"/>`;
+  if(step>=1) g += `<path d="${pts}" fill="none" stroke="var(--blue)" stroke-width="4" stroke-linecap="round"
+      class="sv-draw" style="--len:1000"/>`;
+  if(step>=1) g += `<g class="sv-pop" ${D(700)}><circle cx="80" cy="330" r="8" fill="var(--green)"/>
+      <text class="t-sub" x="80" y="360" text-anchor="middle">launch · 3 yrs ago</text></g>`;
+  if(step>=2) g += `<g class="sv-pop" ${D(180)}><circle cx="860" cy="46" r="11" fill="var(--orange)" class="sv-hot"/>
+      <text class="t-lbl" x="860" y="24" text-anchor="middle" style="fill:var(--orange)">timeouts</text>
+      <text class="t-sub" x="866" y="76" text-anchor="middle">today</text></g>`;
+  if(step>=3) g += `<g class="sv-fade"><text class="t-sub" x="470" y="200" text-anchor="middle"
+      style="font-family:var(--news);font-style:italic;font-size:15px;fill:var(--muted)">
+      the curve nobody watched until it was vertical</text></g>`;
+  return SV('0 0 1000 376', g);
+}
+
+/* ---- 3. scale up, and the ceiling ---- */
+function sceneScaleUp(step){
+  const sizes = [[0,90,70],[1,130,104],[2,176,140],[3,214,176]];
+  const cur = Math.min(step,3);
+  const [,w,h] = sizes[cur];
+  const cx=300, base=330;
+  let g = `<line x1="80" y1="86" x2="520" y2="86" stroke="var(--orange)" stroke-width="4" stroke-dasharray="10 8"/>
+    <text class="t-lbl" x="300" y="70" text-anchor="middle" style="fill:var(--orange)">the ceiling — biggest box money can buy</text>`;
+  g += `<g style="transition:all .5s cubic-bezier(.22,1,.36,1)">
+    <rect x="${cx-w/2}" y="${base-h}" width="${w}" height="${h}" rx="12"
+          class="box-navy" ${step>=3?'':''}/>
+    <text class="on-navy t-lbl" x="${cx}" y="${base-h/2-4}" text-anchor="middle" style="font-size:16px">1 server</text>
+    <text x="${cx}" y="${base-h/2+18}" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.75)">
+      ${['16 cores','32 cores','64 cores','128 cores · maxed'][cur]}</text>
+  </g>`;
+  g += `<text class="t-sub" x="${cx}" y="${base+28}" text-anchor="middle">Vertical scaling · buy a bigger machine</text>`;
+  if(step>=3){
+    g += `<g class="sv-pop"><rect x="${cx-w/2}" y="${base-h-16}" width="${w}" height="16" rx="6" fill="var(--orange)" class="sv-hot"/>
+      <text class="on-navy" x="${cx}" y="${base-h-4}" text-anchor="middle" style="font-size:11px;font-weight:700">100% · no room left</text></g>`;
+  }
+  // right side commentary
+  const notes = [
+    ['+ Simple','No application-code changes at all.','var(--green)'],
+    ['− Finite','One machine can only store and serve so much.','var(--orange)'],
+    ['− Costly','Past a point a bigger box is not economical.','var(--orange)']
+  ];
+  notes.forEach((n,i)=>{ if(step>=i+1)
+    g += `<g class="sv-rise" ${D(i*90)}>
+      <rect x="580" y="${112+i*74}" width="360" height="58" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+      <rect x="580" y="${112+i*74}" width="5" height="58" rx="2.5" fill="${n[2]}"/>
+      <text class="t-lbl" x="600" y="${134+i*74}" style="fill:${n[2]}">${n[0]}</text>
+      <text class="t-sub" x="600" y="${154+i*74}">${n[1]}</text></g>`;
+  });
+  return SV('0 0 1000 380', g);
+}
+
+/* ---- 4. scale out: one box becomes many ---- */
+function sceneScaleOut(step){
+  let g='';
+  g += `<g><rect x="60" y="150" width="150" height="120" rx="12" class="box-navy"/>
+    <text class="on-navy t-lbl" x="135" y="196" text-anchor="middle">1 huge</text>
+    <text class="on-navy t-lbl" x="135" y="218" text-anchor="middle">server</text>
+    <text x="135" y="246" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.7)">1B rows · maxed</text></g>`;
+  if(step>=1) g += `<g class="sv-fade"><path d="M232 210 L300 210" class="wire live" marker-end="url(#ar)"/>
+    <text class="t-sub" x="266" y="196" text-anchor="middle" style="fill:var(--blue)">shard</text></g>`;
+  if(step>=2) for(let i=0;i<5;i++){
+    const x = 330 + i*128;
+    g += `<g class="sv-pop" ${D(i*110)}>
+      <rect x="${x}" y="152" width="108" height="116" rx="11" class="box-blue"/>
+      <text class="on-navy t-lbl" x="${x+54}" y="200" text-anchor="middle">S${i+1}</text>
+      <text x="${x+54}" y="224" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.8)">200M rows</text>
+      <text x="${x+54}" y="244" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.8)">full speed</text></g>`;
+  }
+  if(step>=3) g += `<g class="sv-rise"><rect x="330" y="290" width="620" height="46" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <text class="t-lbl" x="640" y="319" text-anchor="middle">Horizontal scaling — each node holds ~1/5 of the data and serves it at full speed</text></g>`;
+  g += `<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+    <path d="M0,0 L9,4.5 L0,9 z" fill="var(--blue)"/></marker></defs>`;
+  return SV('0 0 1000 360', g);
+}
+
+/* ---- 5. split by customer_id ---- */
+function sceneShardSplit(step){
+  let g='';
+  const servers = [['Server 1','1 — 100M'],['Server 2','100M — 200M'],['Server 3','200M — 300M'],['Server 10','900M — 1B']];
+  if(step>=1) g += `<g class="sv-rise"><rect x="330" y="26" width="340" height="52" rx="10" class="box-navy"/>
+    <text class="on-navy t-lbl" x="500" y="49" text-anchor="middle">orders</text>
+    <text x="500" y="68" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.75)">1,000,000,000 rows</text></g>`;
+  if(step>=2) servers.forEach((sv,i)=>{
+    const x = 55 + i*240 , skip = i===3;
+    g += `<g class="sv-pop" ${D(i*120)}>
+      <path d="M500 84 C500 130 ${x+100} 120 ${x+100} 168" class="wire live"/>
+      <rect x="${x}" y="172" width="200" height="96" rx="11" class="box-navy"/>
+      <text class="on-navy t-lbl" x="${x+16}" y="206" style="font-size:16px">${sv[0]}</text>
+      <text class="t-mono" x="${x+16}" y="236" style="fill:var(--blue-300)">customer_id</text>
+      <text class="t-mono" x="${x+16}" y="254" style="fill:#fff">${sv[1]}</text></g>`;
+  });
+  if(step>=2) g += `<text class="t-big" x="748" y="228" text-anchor="middle" style="fill:var(--muted)">· · ·</text>`;
+  if(step>=3) g += `<g class="sv-rise"><rect x="55" y="292" width="890" height="54" rx="10" fill="var(--panel)"
+      stroke="var(--line)"/><rect x="55" y="292" width="5" height="54" rx="2.5" fill="var(--blue)"/>
+    <text class="t-lbl" x="78" y="316">No single machine can index and serve 1 billion rows at speed.</text>
+    <text class="t-sub" x="78" y="336">With sharding each server handles one tenth — and serves its share at full speed.</text></g>`;
+  return SV('0 0 1000 360', g);
+}
+
+/* ---- 6. anatomy: app → router → shards, with a live query packet ---- */
+function sceneAnatomy(step){
+  let g='';
+  g += `<g class="sv-rise"><rect x="390" y="20" width="220" height="52" rx="10" class="box-navy"/>
+    <text class="on-navy t-lbl" x="500" y="52" text-anchor="middle">Application</text></g>`;
+  if(step>=1) g += `<path d="M500 74 L500 122" class="wire ${step>=3?'live':''}"/>`;
+  if(step>=1) g += `<g class="sv-pop"><rect x="352" y="124" width="296" height="56" rx="10" class="box-blue ${step>=3?'sv-glow':''}"/>
+    <text class="on-navy t-lbl" x="500" y="152" text-anchor="middle" style="font-size:17px">Shard Router</text>
+    <text x="500" y="170" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.85)">knows which shard holds which key</text></g>`;
+  if(step>=2) [0,1,2].forEach(i=>{
+    const x = 200 + i*250;
+    const hit = step>=3 && i===1;
+    g += `<g class="sv-pop" ${D(i*110)}>
+      <path d="M500 182 C500 214 ${x+90} 206 ${x+90} 238" class="wire ${hit?'live':''}"/>
+      <rect x="${x}" y="240" width="180" height="76" rx="11" fill="${hit?'var(--blue)':'var(--navy-700)'}"
+            ${hit?'class="sv-glow"':''}/>
+      <text class="on-navy t-lbl" x="${x+90}" y="272" text-anchor="middle">Shard ${i+1}</text>
+      <text x="${x+90}" y="294" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.75)">own CPU · disk · network</text></g>`;
+  });
+  if(step>=3) g += `<g class="sv-fade"><rect x="640" y="124" width="300" height="56" rx="10" fill="var(--panel)" stroke="var(--blue)"/>
+    <text class="t-mono" x="660" y="148" style="font-size:13px">WHERE customer_id = 142857</text>
+    <text class="t-sub" x="660" y="167" style="fill:var(--blue)">→ one targeted lookup on Shard 2</text></g>`;
+  return SV('0 0 1000 340', g);
+}
+
+/* ---- 7. range-based sharding ---- */
+function sceneRange(step){
+  const shards = [['Shard 1','id 1 — 1,000,000'],['Shard 2','id 1,000,001 — 2,000,000'],['Shard 3','id 2,000,001 +']];
+  let g='';
+  shards.forEach((sh,i)=>{ if(step<1) return;
+    const x = 60 + i*310;
+    const hit = step>=2 && i===0;
+    g += `<g class="sv-rise" ${D(i*110)}>
+      <rect x="${x}" y="120" width="280" height="104" rx="11" fill="var(--panel)"
+            stroke="${hit?'var(--blue)':'var(--line)'}" stroke-width="${hit?3:1.5}" ${hit?'class="sv-glow"':''}/>
+      <rect x="${x}" y="120" width="280" height="6" rx="3" fill="var(--blue)"/>
+      <text class="t-lbl" x="${x+20}" y="162" style="fill:var(--blue);font-size:17px">${sh[0]}</text>
+      <text class="t-mono" x="${x+20}" y="192">${sh[1]}</text></g>`;
+  });
+  if(step>=2) g += `<g class="sv-fade"><rect x="60" y="30" width="880" height="56" rx="10" class="box-navy"/>
+    <text class="t-mono" x="84" y="56" style="fill:#9FD0FF;font-size:14px">SELECT * FROM orders WHERE id BETWEEN 500000 AND 600000;</text>
+    <text x="84" y="76" class="t-sub" style="fill:rgba(255,255,255,.8)">a contiguous range lives entirely on one shard</text>
+    <path d="M200 92 L200 114" class="wire live"/></g>`;
+  if(step>=3) g += `<g class="sv-rise"><rect x="60" y="252" width="430" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="60" y="252" width="5" height="66" rx="2.5" fill="var(--green)"/>
+    <text class="t-lbl" x="82" y="278" style="fill:var(--green)">Efficient range queries</text>
+    <text class="t-sub" x="82" y="300">One shard answers — no need to touch the others.</text>
+    <rect x="510" y="252" width="430" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="510" y="252" width="5" height="66" rx="2.5" fill="var(--orange)"/>
+    <text class="t-lbl" x="532" y="278" style="fill:var(--orange)">Hotspots</text>
+    <text class="t-sub" x="532" y="300">Newest IDs all land on the last shard; the rest sit idle.</text></g>`;
+  return SV('0 0 1000 340', g);
+}
+
+/* ---- 8. hash-based sharding: the modulo, computed on screen ---- */
+function sceneHash(step){
+  const rows = [['1001','1'],['1002','2'],['1003','3'],['1004','0']];
+  let g = `<text class="t-mono" x="60" y="42" style="font-size:15px;fill:var(--blue)">id mod 4</text>`;
+  rows.forEach((r,i)=>{ if(step<1) return;
+    g += `<g class="sv-rise" ${D(i*90)}>
+      <text class="t-mono" x="60" y="${92+i*44}" style="font-size:16px">${r[0]} mod 4 = </text>
+      <text class="t-mono" x="238" y="${92+i*44}" style="font-size:16px;font-weight:700;fill:var(--blue)">${r[1]}</text></g>`;
+  });
+  if(step>=2) rows.forEach((r,i)=>{
+    const tgt = parseInt(r[1],10);
+    const ex = 430 + tgt*138 + 7;          // top-centre of the destination shard
+    g += `<path d="M280 ${86+i*44} C350 ${86+i*44} ${ex-70} ${86+i*44} ${ex} 148"
+            class="wire live sv-fade" ${D(i*120)}/>`;
+  });
+  if(step>=1) for(let i=0;i<4;i++){
+    const x = 430 + i*138, filled = step>=2;
+    g += `<g class="sv-pop" ${D(i*100)}>
+      <rect x="${x-52}" y="152" width="118" height="92" rx="11" fill="${filled?'var(--blue)':'var(--navy-700)'}"/>
+      <text class="on-navy t-lbl" x="${x+7}" y="186" text-anchor="middle">Shard ${i}</text>
+      <text class="t-mono" x="${x+7}" y="216" text-anchor="middle" style="fill:rgba(255,255,255,.9)">
+        ${filled ? (rows.find(r=>+r[1]===i)||['—'])[0] : '—'}</text></g>`;
+  }
+  if(step>=3) g += `<g class="sv-rise"><rect x="60" y="272" width="430" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="60" y="272" width="5" height="66" rx="2.5" fill="var(--green)"/>
+    <text class="t-lbl" x="82" y="298" style="fill:var(--green)">Uniform distribution</text>
+    <text class="t-sub" x="82" y="320">The hash scatters rows evenly — no hotspots.</text>
+    <rect x="510" y="272" width="430" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="510" y="272" width="5" height="66" rx="2.5" fill="var(--orange)"/>
+    <text class="t-lbl" x="532" y="298" style="fill:var(--orange)">Scatter–gather ranges</text>
+    <text class="t-sub" x="532" y="320">Order is destroyed, so a range query must hit every shard.</text></g>`;
+  return SV('0 0 1000 356', g);
+}
+
+/* ---- 9. directory-based sharding ---- */
+function sceneDirectory(step){
+  const rows=[['key 1042','Shard 3'],['key 1043','Shard 1'],['key 1044','Shard 3'],['key 1045','Shard 2']];
+  let g = `<g class="sv-rise"><rect x="60" y="60" width="300" height="42" rx="8" class="box-navy"/>
+    <text class="on-navy t-mono" x="80" y="87">key</text>
+    <text class="on-navy t-mono" x="240" y="87">shard</text></g>`;
+  rows.forEach((r,i)=>{ if(step<1) return;
+    const hl = step>=2 && i===1;
+    g += `<g class="sv-rise" ${D(i*80)}>
+      <rect x="60" y="${102+i*42}" width="300" height="42" fill="${hl?'color-mix(in srgb,var(--blue) 14%,transparent)':(i%2?'var(--panel)':'var(--bg)')}"
+            stroke="var(--line)"/>
+      <text class="t-mono" x="80" y="${129+i*42}">${r[0]}</text>
+      <text class="t-mono" x="240" y="${129+i*42}" style="fill:var(--blue)">${r[1]}</text></g>`;
+  });
+  if(step>=1) g += `<text class="t-sub" x="60" y="44" style="fill:var(--blue);font-weight:600">Shard Directory — a lookup table consulted on every query</text>`;
+  [1,2,3].forEach(i=>{ if(step<1) return;
+    const hit = step>=2 && i===1;
+    g += `<g class="sv-pop" ${D(i*90)}>
+      <rect x="600" y="${62+(i-1)*88}" width="340" height="70" rx="11"
+            fill="${hit?'var(--blue)':'var(--navy-700)'}" ${hit?'class="sv-glow"':''}/>
+      <text class="on-navy t-lbl" x="624" y="${104+(i-1)*88}" style="font-size:17px">Shard ${i}</text></g>`;
+  });
+  if(step>=2) g += `<path d="M372 144 C470 144 480 98 590 98" class="wire live sv-fade"/>`;
+  if(step>=3) g += `<g class="sv-rise"><rect x="60" y="292" width="430" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="60" y="292" width="5" height="66" rx="2.5" fill="var(--green)"/>
+    <text class="t-lbl" x="82" y="318" style="fill:var(--green)">Flexible</text>
+    <text class="t-sub" x="82" y="340">Move rows between shards by editing one entry — no re-hashing.</text>
+    <rect x="510" y="292" width="430" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="510" y="292" width="5" height="66" rx="2.5" fill="var(--orange)"/>
+    <text class="t-lbl" x="532" y="318" style="fill:var(--orange)">Central bottleneck</text>
+    <text class="t-sub" x="532" y="340">Every query consults it first. Slow directory, slow everything.</text></g>`;
+  return SV('0 0 1000 372', g);
+}
+
+/* ---- 10. hotspot bar chart (order_date as shard key) ---- */
+function sceneHotspot(step){
+  const bars=[['2023','idle',18,'var(--line)'],['2024','idle',22,'var(--line)'],
+              ['Early 2025','light',64,'var(--teal)'],['Today','overwhelmed',250,'var(--orange)']];
+  let g='';
+  bars.forEach((b,i)=>{ if(step<i+1) return;
+    const x=110+i*215, h=b[2], y=300-h, hot=i===3;
+    g += `<g class="sv-rise" ${D(i*100)}>
+      <rect x="${x}" y="${y}" width="180" height="${h}" rx="8" fill="${b[3]}" ${hot?'class="sv-hot"':''}/>
+      ${hot?`<text class="on-navy t-lbl" x="${x+90}" y="${y+34}" text-anchor="middle" style="font-size:19px">100% load</text>`:''}
+      <text class="t-lbl" x="${x+90}" y="324" text-anchor="middle" style="font-size:14px">${b[0]}</text>
+      <text class="t-sub" x="${x+90}" y="344" text-anchor="middle" style="fill:${hot?'var(--orange)':'var(--muted)'}">${b[1]}</text></g>`;
+  });
+  if(step>=5) g += `<g class="sv-rise"><rect x="110" y="362" width="825" height="50" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="110" y="362" width="5" height="50" rx="2.5" fill="var(--orange)"/>
+    <text class="t-lbl" x="132" y="392">Shard key <tspan class="t-mono" fill="var(--orange)">order_date</tspan> with range sharding — every new order lands on one shard.</text></g>`;
+  return SV('0 0 1000 424', g);
+}
+
+/* ---- 11. scatter–gather ---- */
+function sceneScatter(step){
+  let g = `<g class="sv-rise"><rect x="360" y="18" width="280" height="50" rx="10" class="box-navy"/>
+    <text class="on-navy t-lbl" x="500" y="49" text-anchor="middle">Application</text></g>`;
+  for(let i=0;i<4;i++){
+    const x=110+i*225;
+    if(step>=1) g += `<path d="M500 70 C500 110 ${x+85} 100 ${x+85} 146" class="wire live sv-fade" ${D(i*90)}/>`;
+    if(step>=1) g += `<g class="sv-pop" ${D(i*90)}><rect x="${x}" y="148" width="170" height="70" rx="11" class="box-navy"/>
+      <text class="on-navy t-lbl" x="${x+85}" y="180" text-anchor="middle">Shard ${i+1}</text>
+      <text x="${x+85}" y="202" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.75)">partial result</text></g>`;
+    if(step>=2) g += `<path d="M${x+85} 220 C${x+85} 262 500 250 500 292" class="wire live sv-fade" ${D(i*90)}
+      stroke="var(--orange)"/>`;
+  }
+  if(step>=2) g += `<g class="sv-pop"><rect x="330" y="294" width="340" height="56" rx="10" fill="var(--orange)"/>
+    <text class="on-navy t-lbl" x="500" y="320" text-anchor="middle">merge in application memory</text>
+    <text x="500" y="340" text-anchor="middle" class="t-sub" style="fill:rgba(255,255,255,.85)">an application-level join — milliseconds become seconds</text></g>`;
+  return SV('0 0 1000 366', g);
+}
+
+/* ---- 12. re-sharding ---- */
+function sceneReshard(step){
+  let g='';
+  [0,1,2].forEach(i=>{
+    g += `<g><rect x="${70+i*96}" y="120" width="80" height="96" rx="10" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/>
+      <rect x="${70+i*96}" y="120" width="80" height="6" rx="3" fill="var(--blue-300)"/>
+      <text class="t-lbl" x="${110+i*96}" y="176" text-anchor="middle">S${i+1}</text></g>`;
+  });
+  if(step>=1) g += `<g class="sv-fade"><text class="t-lbl" x="420" y="162" text-anchor="middle" style="fill:var(--orange)">+ new shard</text>
+    <path d="M348 176 L492 176" class="wire live" stroke="var(--orange)"/></g>`;
+  if(step>=1) [0,1,2,3].forEach(i=>{
+    const nw = i===3;
+    g += `<g class="sv-pop" ${D(i*100)}><rect x="${540+i*96}" y="120" width="80" height="96" rx="10"
+      fill="${nw?'var(--blue)':'var(--navy-700)'}" ${nw?'class="sv-glow"':''}/>
+      <text class="on-navy t-lbl" x="${580+i*96}" y="176" text-anchor="middle">S${i+1}</text></g>`;
+  });
+  if(step>=2) g += `<g class="sv-fade"><path d="M110 228 C110 280 560 280 580 228" class="wire live" stroke="var(--orange)"/>
+    <path d="M206 228 C206 292 660 292 676 228" class="wire live" stroke="var(--orange)"/>
+    <path d="M302 228 C302 304 760 304 772 228" class="wire live" stroke="var(--orange)"/>
+    <text class="t-sub" x="440" y="322" text-anchor="middle" style="fill:var(--orange);font-weight:600">
+      every existing row is re-evaluated against the new shard map</text></g>`;
+  if(step>=3) g += `<g class="sv-rise"><rect x="70" y="342" width="866" height="50" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="70" y="342" width="5" height="50" rx="2.5" fill="var(--orange)"/>
+    <text class="t-lbl" x="92" y="372">Re-sharding is expensive, complex, and risky to perform on a live production system.</text></g>`;
+  return SV('0 0 1000 404', g);
+}
+
+/* ---- 13. the full-table-scan problem ---- */
+function sceneScan(step){
+  let g='';
+  const COLS=20, CW=42, CH=30, X0=70, Y0=96;
+  for(let i=0;i<60;i++){
+    const x=X0+(i%COLS)*CW, y=Y0+Math.floor(i/COLS)*(CH+6);
+    const scanned = step>=1, target = step>=2 && i===12;
+    g += `<rect x="${x}" y="${y}" width="${CW-5}" height="${CH}" rx="5"
+      fill="${target?'var(--blue)':(scanned?'color-mix(in srgb,var(--orange) 26%,transparent)':'var(--panel)')}"
+      stroke="var(--line)" ${scanned&&!target?`class="sv-fade" ${D(i*8)}`:''} ${target?'class="sv-glow"':''}/>`;
+  }
+  g += `<text class="t-sub" x="${X0}" y="80" style="font-weight:600">orders — one cell per month · 60 months · 150M rows</text>`;
+  if(step>=2) g += `<g class="sv-pop"><path d="M${X0+12*CW-3} ${Y0-8} L${X0+12*CW-3} ${Y0-26}" class="wire live"/>
+    <text class="t-sub" x="${X0+12*CW-3}" y="${Y0-32}" text-anchor="middle" style="fill:var(--blue);font-weight:600">Jan 2025</text></g>`;
+  // annotations sit BELOW the grid so nothing overlaps the cells
+  if(step>=1) g += `<g class="sv-rise"><rect x="${X0}" y="236" width="400" height="62" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="${X0}" y="236" width="5" height="62" rx="2.5" fill="var(--orange)"/>
+    <text class="t-lbl" x="${X0+22}" y="262" style="fill:var(--orange);font-size:16px">Without partitioning · 150M rows read</text>
+    <text class="t-sub" x="${X0+22}" y="284">Every cell is examined to find the 2–3M that match.</text></g>`;
+  if(step>=2) g += `<g class="sv-rise"><rect x="${X0+440}" y="236" width="400" height="62" rx="10" fill="var(--panel)" stroke="var(--blue)" stroke-width="2"/>
+    <rect x="${X0+440}" y="236" width="5" height="62" rx="2.5" fill="var(--blue)"/>
+    <text class="t-lbl" x="${X0+462}" y="262" style="fill:var(--blue);font-size:16px">One piece per month · ~2–3M rows</text>
+    <text class="t-sub" x="${X0+462}" y="284">Go straight to the Jan-2025 piece; ignore the other 59.</text></g>`;
+  if(step>=3) g += `<g class="sv-rise"><rect x="${X0}" y="312" width="840" height="52" rx="10" class="box-navy"/>
+    <text class="t-lbl on-navy" x="${X0+22}" y="336" style="fill:#fff">A query that took 30 minutes now takes seconds.</text>
+    <text x="${X0+22}" y="356" style="fill:rgba(255,255,255,.8)" class="t-sub">The engine skips the other 59 pieces entirely — that skipping is partition pruning.</text></g>`;
+  return SV('0 0 1000 376', g);
+}
+
+/* ---- 14. partition pruning in action ---- */
+function scenePruning(step){
+  const parts=[['orders_2023',0],['orders_2024',1],['orders_2025',2]];
+  let g = `<g class="sv-rise"><rect x="60" y="24" width="880" height="52" rx="10" class="box-navy"/>
+    <text class="t-mono" x="84" y="56" style="fill:#9FD0FF;font-size:14px">SELECT * FROM orders WHERE order_date BETWEEN '2025-01-01' AND '2025-01-31';</text></g>`;
+  parts.forEach(([name,i])=>{
+    const x=60+i*300, hit = step>=1 && i===2, skipped = step>=1 && i!==2;
+    if(step>=1) g += `<path d="M500 80 C500 112 ${x+140} 104 ${x+140} 136" class="wire ${hit?'live':''} sv-fade" ${D(i*90)}
+      ${skipped?'stroke-dasharray="3 7"':''}/>`;
+    g += `<g class="sv-rise" ${D(i*90)}>
+      <rect x="${x}" y="138" width="280" height="96" rx="11"
+        fill="${hit?'var(--navy-700)':'var(--panel)'}" stroke="${hit?'none':'var(--line)'}"
+        opacity="${skipped?.45:1}" ${hit?'class="sv-glow"':''}/>
+      <text class="t-mono" x="${x+22}" y="176" style="fill:${hit?'#fff':'var(--muted)'};font-size:15px">${name}${hit?' ✓':''}</text>
+      <text class="t-sub" x="${x+22}" y="202" style="fill:${hit?'rgba(255,255,255,.8)':'var(--muted)'}">
+        ${hit?'scanned · ~2–3M rows':'skipped'}</text></g>`;
+  });
+  if(step>=2) g += `<g class="sv-rise"><rect x="60" y="260" width="880" height="50" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="60" y="260" width="5" height="50" rx="2.5" fill="var(--blue)"/>
+    <text class="t-lbl" x="82" y="290">The scan drops from 150M rows to ~2–3M — the planner never opens the other partitions.</text></g>`;
+  return SV('0 0 1000 324', g);
+}
+
+/* ---- 15. sharding vs partitioning ---- */
+function sceneVersus(step){
+  let g='';
+  if(step>=1){
+    g += `<g class="sv-rise"><text class="t-serif" x="250" y="38" text-anchor="middle" style="fill:var(--accent-deep);font-size:24px">Sharding</text>
+      <text x="250" y="60" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">many machines · a scaling technique</text></g>`;
+    [0,1,2].forEach(i=>{
+      g += `<g class="sv-pop" ${D(i*100)}>
+        <rect x="${72+i*128}" y="86" width="108" height="118" rx="11" class="box-navy"/>
+        <text class="on-navy t-sub" x="${126+i*128}" y="112" text-anchor="middle">machine ${i+1}</text>
+        <rect x="${86+i*128}" y="126" width="80" height="14" rx="4" fill="var(--blue-300)"/>
+        <rect x="${86+i*128}" y="146" width="80" height="14" rx="4" fill="var(--blue-300)"/>
+        <rect x="${86+i*128}" y="166" width="80" height="14" rx="4" fill="var(--blue-300)"/></g>`;
+    });
+  }
+  if(step>=2){
+    g += `<g class="sv-rise"><text class="t-serif" x="750" y="38" text-anchor="middle" style="fill:var(--violet);font-size:24px">Partitioning</text>
+      <text x="750" y="60" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">one machine · a storage-organisation technique</text>
+      <rect x="560" y="86" width="380" height="118" rx="12" fill="var(--panel)" stroke="var(--purple)" stroke-width="2"/>
+      <text class="t-sub" x="750" y="106" text-anchor="middle" style="fill:var(--purple)">a single instance</text></g>`;
+    [0,1,2,3].forEach(i=>{
+      g += `<g class="sv-pop" ${D(i*90)}><rect x="${578+i*92}" y="118" width="80" height="70" rx="8" class="box-purple"/>
+        <text class="on-navy t-sub" x="${618+i*92}" y="158" text-anchor="middle">part ${i+1}</text></g>`;
+    });
+  }
+  if(step>=3) g += `<g class="sv-rise"><rect x="72" y="232" width="420" height="64" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="72" y="232" width="5" height="64" rx="2.5" fill="var(--blue)"/>
+    <text class="t-sub" x="94" y="258">Splits data across <tspan style="font-weight:700;fill:var(--ink)">independent database instances</tspan>,</text>
+    <text class="t-sub" x="94" y="278">on different machines. Solves: one box is not enough.</text>
+    <rect x="520" y="232" width="420" height="64" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="520" y="232" width="5" height="64" rx="2.5" fill="var(--purple)"/>
+    <text class="t-sub" x="542" y="258">Splits one table <tspan style="font-weight:700;fill:var(--ink)">within a single instance</tspan>,</text>
+    <text class="t-sub" x="542" y="278">across storage segments. Solves: this table is too big.</text></g>`;
+  return SV('0 0 1000 310', g);
+}
+</script>
+<script>
+/* =====================================================================
+   Deck — DBMS Lecture 13 · Database Optimization
+   Content follows the lecture deck; each slide adds an animated scene.
+   ===================================================================== */
+const card = (k,t,p,cls='',ico='') =>
+  `<div class="card ${cls}">${ico?`<span class="ico">${ico}</span>`:''}
+     <h4>${k}</h4><h3>${t}</h3><p>${p}</p></div>`;
+
+const DECK = [
+{ id:'title', kick:'same code, two hundred times the load', eyebrow:'Lecture 13 · Database Optimization', title:'Why does a database slow down?',
+  tag:'intro', steps:[
+  {note:'Open on the question, not the answer. Everyone here has written SQL that worked fine on a laptop. Today is about what happens to that same SQL when the data grows two hundred times.'},
+  {note:'Build the stack one floor at a time as you name each level. The point of the whole lecture is in this picture: optimization is not one trick, it is five different places a problem can live.'},
+  {note:'Levels 1 and 2 are today. Levels 3, 4 and 5 are the next lectures — level 3 is the transactions material.'}],
+  body:(st)=>`
+    <div class="stage-row">${sceneStack(Math.min(st*2+1,6), 0)}</div>
+    <p class="lede">${st>=2
+      ? 'Optimization is a <b>layered discipline</b>. Diagnose which layer the problem lives in, then reach for that layer\'s technique. A problem at the infrastructure level needs a different fix from a problem inside a query.'
+      : 'ShopFast ran on a single PostgreSQL instance for three years. Same code, same queries — and today the server throws timeouts.'}</p>` },
+
+{ id:'growth', kick:'the code never changed — the load did', eyebrow:'Same code · 200× the load', title:'What changed in three years',
+  tag:'the hook', steps:[
+  {note:'Nothing in the codebase changed. Everything about the load did. Let the three numbers land before you explain anything.'},
+  {note:'Customers 10K to 2M. Orders per minute 50 to thousands. Catalog 500 products to a million. That is roughly two hundred times the pressure on the same design.'},
+  {note:'Several things broke at once — and each one has a specific home in the database system. That is what the five levels are for.'}],
+  body:(st)=>`
+    <div class="stage-row" style="flex:0 0 auto;height:44%">${sceneGrowth(Math.min(st+1,3))}</div>
+    <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+      ${st>=1?`<div class="pop d1">${card('Customers','10K &rarr; 2M','Two million accounts against a schema designed for ten thousand.','',ico('users'))}</div>`:''}
+      ${st>=1?`<div class="pop d2">${card('Orders / minute','~50 &rarr; 1000s','Write contention the original design never had to survive.','tl',ico('cart'))}</div>`:''}
+      ${st>=1?`<div class="pop d3">${card('Product catalog','500 &rarr; 1M','Searches that were trivial at 500 rows now scan a million.','pp',ico('search'))}</div>`:''}
+    </div>
+    ${st>=2?`<p class="lede pop">Several things broke at once — and <b>each has a specific home</b> in the database system.</p>`:''}` },
+
+{ id:'levels', kick:'five places a bottleneck can live', eyebrow:'From infrastructure down to the individual query', title:'The five levels of optimization',
+  tag:'part 1', steps:[
+  {note:'Level 1, System. The physical infrastructure — how data is spread across machines when one machine is no longer enough. Technique: sharding. This is today.'},
+  {note:'Level 2, Storage. How data is laid out on disk inside one instance. A table with hundreds of millions of rows destroys performance even on good hardware. Technique: partitioning. Also today.'},
+  {note:'Level 3, Transaction. How concurrent users read and write without corrupting each other. MVCC, locking, deadlock handling. Next lecture.'},
+  {note:'Level 4, Schema. Table and index design. A poor schema guarantees poor performance no matter how powerful the hardware.'},
+  {note:'Level 5, Query. How the individual SQL statement is written. A bad query cripples a perfect schema on perfect hardware.'},
+  {note:'Now the mental model: these are the layers of a building. Foundation, floor plan, corridor rules, furniture, and the path you walk. You cannot fix the foundation by rearranging furniture.'}],
+  body:(st)=>`
+    <div class="stage-row">${sceneStack(6, st>=1 && st<=5 ? st : 0)}</div>
+    ${st>=5?`<p class="lede pop"><b>One mental model:</b> System is the foundation and the plot of land · Storage is how rooms are arranged on each floor ·
+      Transaction is the rules for moving through corridors without colliding · Schema is how furniture inside a room is arranged ·
+      Query is the specific path a person walks from desk to printer.</p>`:''}` },
+
+{ id:'mapped', kick:'symptom first, then the layer', eyebrow:'One real symptom per level', title:'Five levels, mapped to ShopFast',
+  tag:'diagnosis', steps:[
+  {note:'Read the symptom first and let them guess the level before you reveal the fix. This table is the practical payoff of the whole model.'},
+  {note:'System: 50,000 reads a second on one server, CPU maxed. No query rewrite saves you. Distribute across servers — sharding.'},
+  {note:'Storage: the this-month query scans all 500 million order rows. Organize by time range — partitioning.'},
+  {note:'Transaction: two buyers take the last item and stock goes negative. Coordinate the writes — locking and MVCC.'},
+  {note:'Schema: product-name search takes seconds because there is no index. Add the right index.'},
+  {note:'Query: the revenue report joins five tables and takes 45 seconds. Rewrite it — join order and early filtering.'}],
+  body:(st)=>{
+    const rows=[['System','50K reads/sec on one server; CPU maxed out.','Distribute data across servers — Sharding.','var(--blue)'],
+      ['Storage','This-month query scans all 500M order rows.','Organize by time range — Partitioning.','var(--blue)'],
+      ['Transaction','Two buyers take the last item; stock goes negative.','Coordinate writes — Locking & MVCC.','var(--purple)'],
+      ['Schema','Product-name search takes seconds; no index.','Add an appropriate Index.','var(--purple)'],
+      ['Query','Revenue report joins 5 tables; takes 45 seconds.','Rewrite with join order & early filtering.','var(--purple)']];
+    return `<div class="cards" style="gap:.4rem">
+      <div style="display:grid;grid-template-columns:1fr 2.4fr 2.4fr;gap:.5rem;padding:.35rem .7rem;
+        background:var(--navy-700);border-radius:10px;color:#fff;font-size:.56rem;font-weight:700;
+        letter-spacing:.8px;text-transform:uppercase"><span>Level</span><span>Symptom</span><span>Fix</span></div>
+      ${rows.map((r,i)=> st>=i+1 ? `<div class="pop" style="animation-delay:${i*50}ms;display:grid;
+        grid-template-columns:1fr 2.4fr 2.4fr;gap:.5rem;padding:.42rem .7rem;background:var(--panel);
+        border-radius:10px;border-left:4px solid ${r[3]};align-items:center">
+        <span style="font-weight:700;color:${r[3]};font-size:.66rem">${r[0]}</span>
+        <span style="font-size:.6rem;color:var(--ink-2)">${r[1]}</span>
+        <span style="font-size:.6rem;color:var(--ink-2)">${r[2]}</span></div>` : '').join('')}
+    </div>`; } },
+
+{ id:'quiz1', kick:'diagnose before you treat', eyebrow:'Check yourself', title:'Which level is it?',
+  tag:'checkpoint', steps:[
+  {note:'Ask the room. Do not answer immediately — wait for hands.'},
+  {note:'System Level. The bottleneck is compute and infrastructure, so the fix is to scale out. No amount of query tuning fixes a saturated machine.'},
+  {note:'Second one. Again, let them answer.'},
+  {note:'Query Level. The statement itself is inefficient — the fix is in how it is written, not in the hardware.'}],
+  body:(st)=>`<div class="cards" style="gap:.55rem;align-content:center;flex:1">
+    <div class="pop card"><h3>1 · A single machine cannot handle the request volume.</h3>
+      ${st>=1?`<p class="pop" style="margin-top:.3rem"><b style="color:var(--blue)">&rarr; System Level.</b>
+        The bottleneck is compute and infrastructure — the fix is to scale out.</p>`:`<p style="opacity:.4">…</p>`}</div>
+    ${st>=2?`<div class="pop card pp"><h3>2 · A query returns too many rows because it has no WHERE clause.</h3>
+      ${st>=3?`<p class="pop" style="margin-top:.3rem"><b style="color:var(--purple)">&rarr; Query Level.</b>
+        The statement itself is inefficient — the fix is in how it is written.</p>`:`<p style="opacity:.4">…</p>`}</div>`:''}
+  </div>` },
+
+{ id:'ladder', kick:'sharding is the last rung, not the first', eyebrow:'Before you re-architect anything',
+  title:'The escalation ladder', tag:'judgement', steps:[
+  {note:'This slide is the one I most want them to remember. Most engineers who say "we need to shard" actually have a missing index. Work up the ladder, never start at the top.'},
+  {note:'Rung one: read the execution plan, rewrite the query, add the right index. Hours of work, completely reversible, and it fixes the majority of real slowdowns.'},
+  {note:'Rung two: fix the schema. Wrong data types, missing foreign keys, a column that should have been a separate table. Days of work, still reversible.'},
+  {note:'Rung three: cache what is hot. If the same twenty queries are ninety percent of your traffic, the fastest query is the one you never send.'},
+  {note:'Rung four: read replicas. If READS are the bottleneck — reports, dashboards, search — replicas are dramatically cheaper and simpler than sharding. This is the step people skip.'},
+  {note:'Rung five: partition. Now you are changing storage layout, but still on one machine, and the application does not change.'},
+  {note:'Rung six: shard. Months of work, and it is a permanent architectural commitment — you do not casually un-shard a system. Earn your way here.'}],
+  body:(st)=>{
+    const rungs=[
+      ['1','Tune the query','Read the plan. Rewrite it. Add the index it is missing.','hours · reversible','search',''],
+      ['2','Fix the schema','Right types, right keys, right tables.','days · reversible','grid',''],
+      ['3','Cache what is hot','The fastest query is the one you never send.','days · reversible','bolt','tl'],
+      ['4','Add read replicas','If READS are the bottleneck, this is far cheaper than sharding.','days · reversible','layers','tl'],
+      ['5','Partition the table','Storage layout changes. One machine. No application change.','weeks · reversible','db','pp'],
+      ['6','Shard','Months of work, and a permanent architectural commitment.','months · one-way door','server','warn']];
+    return `<div class="cards" style="gap:.4rem;align-content:center;flex:1">
+      ${rungs.map((r,i)=> st>=i ? `<div class="card ${r[5]} pop" style="animation-delay:${i*40}ms;padding:.6rem .95rem">
+        <span class="ico">${ico(r[4])}</span>
+        <div style="display:flex;align-items:baseline;gap:.6rem">
+          <span style="font-family:var(--serif);font-size:.86rem;font-weight:600;color:var(--accent-deep)">${r[0]}</span>
+          <span style="font-family:var(--serif);font-size:.86rem;font-weight:600">${r[1]}</span>
+          <span style="font-family:var(--mono);font-size:.5rem;color:var(--muted);margin-left:auto;
+            padding-right:2.6rem;white-space:nowrap">${r[3]}</span></div>
+        <p style="margin-top:.1rem;font-size:.7rem">${r[2]}</p></div>` : '').join('')}
+    </div>`; } },
+
+{ id:'scaleup', kick:'vertical scaling and its ceiling', eyebrow:'Why sharding exists · the need', title:'First instinct: scale up',
+  tag:'part 2 · sharding', steps:[
+  {note:'The obvious move when a server is saturated: buy a bigger one. More cores, more RAM, faster disks. It is genuinely attractive — nothing in the application has to change.'},
+  {note:'But there is a ceiling. The most powerful single server can still only store and serve a finite amount.'},
+  {note:'And well before the physical ceiling you hit the economic one. Doubling the box stops doubling the throughput, and the price does not scale linearly.'},
+  {note:'At this point vertical scaling is finished as a strategy. The only direction left is sideways.'}],
+  body:(st)=>`<div class="stage-row">${sceneScaleUp(st)}</div>` },
+
+{ id:'scaleout', kick:'horizontal scaling', eyebrow:'The alternative', title:'Scale out instead',
+  tag:'sharding', steps:[
+  {note:'Instead of one server doing everything, ten servers each handle a fraction of the data and the traffic.'},
+  {note:'This is horizontal scaling — and sharding is the technique that makes it possible.'},
+  {note:'Each node holds roughly a tenth of the rows, so each one can index and serve its share at full speed.'}],
+  body:(st)=>`<div class="stage-row">${sceneScaleOut(st+1)}</div>
+    ${st>=2?`<p class="lede pop">This is <b>Horizontal Scaling</b> — and <b>Sharding</b> is what enables it.</p>`:''}` },
+
+{ id:'split', kick:'one billion rows across ten nodes', eyebrow:'Example · ShopFast · 1 billion orders', title:'Split the data by customer ID',
+  tag:'sharding', steps:[
+  {note:'One orders table, a billion rows. No single machine indexes and serves that at the speed the checkout page needs.'},
+  {note:'Split on customer_id. Server one takes the first hundred million IDs, server two the next hundred million, and so on to server ten.'},
+  {note:'Each server now handles one tenth and serves its share at full speed. Note what we chose to split on — that column is about to become the most important decision in the design.'}],
+  body:(st)=>`<div class="stage-row">${sceneShardSplit(st+1)}</div>` },
+
+{ id:'define', kick:'many instances, one logical database', eyebrow:'Definition', title:'What is sharding?',
+  tag:'sharding', steps:[
+  {note:'Read the definition slowly. Horizontally partitioning a database across multiple independent instances, each one called a shard.'},
+  {note:'Each shard is a self-contained database holding a subset of the data. The union of all shards is the complete dataset.'},
+  {note:'And crucially — to any external system the database still appears as a single logical entity. The splitting is internal.'}],
+  body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.6rem">
+    <div class="pop" style="background:var(--navy-700);color:#fff;border-radius:14px;padding:.85rem 1rem">
+      <div style="font-size:.86rem;font-weight:700;line-height:1.35">Horizontally partitioning a database across multiple
+        independent database instances — each called a <span style="color:var(--blue-300)">Shard</span>.</div></div>
+    <div class="cards" style="grid-template-columns:1fr 1fr">
+      ${st>=1?`<div class="pop d1">${card('Self-contained','Each shard is a full database','It holds a subset of the rows. The union of all shards is the complete dataset.','',ico('db'))}</div>`:''}
+      ${st>=2?`<div class="pop d2">${card('Transparent','One logical entity','To any external system it still looks like a single database — the spread is internal.','pp',ico('layers'))}</div>`:''}
+    </div></div>` },
+
+{ id:'anatomy', kick:'shard · shard key · shard router', eyebrow:'Three components to know', title:'Anatomy of a sharded system',
+  tag:'sharding', steps:[
+  {note:'The Shard: an independent node with its own CPU, memory, disk and network. It operates independently of the others.'},
+  {note:'The Shard Router: sits between the application and the shards. It knows which shard holds which data and routes each query. Middleware, or logic inside your app.'},
+  {note:'The Shard Key: the column or columns that decide which shard a row belongs to. This is the single most critical decision in the design — a poor choice gives you imbalanced shards and degradation you cannot tune away.'}],
+  body:(st)=>`<div class="stage-row">${sceneAnatomy(st+1)}</div>
+    ${st>=2?`<p class="lede pop"><b style="color:var(--orange)">Shard Key — the most critical decision.</b>
+      The column(s) that decide which shard a row belongs to. A poor choice produces imbalanced shards and degradation.</p>`:''}` },
+
+{ id:'range', kick:'contiguous keys stay together', eyebrow:'Strategy 1 of 3', title:'Range-based sharding',
+  tag:'strategies', steps:[
+  {note:'Divide into shards by a range of values in the shard-key column. Shard one takes IDs up to a million, shard two the next million, and so on.'},
+  {note:'A query for IDs five hundred thousand to six hundred thousand? The router knows it lives entirely on shard one — one targeted lookup.'},
+  {note:'Advantage: efficient range queries. Disadvantage: hotspots. If most traffic comes from recent customers, the highest-ID shard is overwhelmed while the earlier ones sit idle.'}],
+  body:(st)=>`<div class="stage-row">${sceneRange(st+1)}</div>` },
+
+{ id:'hash', kick:'ordering traded for even distribution', eyebrow:'Strategy 2 of 3', title:'Hash-based sharding',
+  tag:'strategies', steps:[
+  {note:'Apply a hash function to the shard-key value; the result picks the shard. For four shards, id mod 4 is the simplest possible hash.'},
+  {note:'Walk the arithmetic out loud — 1001 mod 4 is 1, so that row goes to shard 1. The consecutive IDs scatter to four different shards.'},
+  {note:'Advantage: uniform distribution, no hotspots, regardless of how IDs are generated. Disadvantage: hashing destroys order, so a range query must hit every shard and merge — a scatter-gather.'}],
+  body:(st)=>`<div class="stage-row">${sceneHash(st+1)}</div>` },
+
+{ id:'directory', kick:'an explicit key-to-shard map', eyebrow:'Strategy 3 of 3', title:'Directory-based sharding',
+  tag:'strategies', steps:[
+  {note:'A lookup table — the shard directory — maps each shard-key value to a specific shard. The router consults it on every insert and every query.'},
+  {note:'Look up key 1043, the directory says shard 1, the query goes there. Completely explicit.'},
+  {note:'Advantage: maximum flexibility — move rows between shards by editing one entry, no re-hashing of anything. Disadvantage: every query consults the directory first, so it is a central bottleneck and a single point of failure.'}],
+  body:(st)=>`<div class="stage-row">${sceneDirectory(st+1)}</div>` },
+
+{ id:'compare', kick:'every strategy has one main risk', eyebrow:'Pick by workload', title:'Strategies at a glance',
+  tag:'reference', steps:[
+  {note:'Build the comparison row by row. Distribution: range can be uneven, hash is uniform, directory is whatever the table says.'},
+  {note:'Range queries: single shard for range, scatter-gather for hash, depends on layout for directory.'},
+  {note:'Rebalancing: re-split ranges, re-hash all data, or edit one entry.'},
+  {note:'And the main risk of each — hotspots, costly ranges, central bottleneck. This row is the one to memorise.'}],
+  body:(st)=>{
+    const rows=[['Distribution','Can be uneven','Uniform','Controlled by table',false],
+      ['Range queries','Single shard','Scatter–gather','Depends on layout',false],
+      ['Rebalancing','Re-split ranges','Re-hash all data','Edit one entry',false],
+      ['Main risk','Hotspots','Costly ranges','Central bottleneck',true]];
+    return `<div class="cards" style="gap:.4rem;align-content:center;flex:1">
+      <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.5rem;padding:.4rem .7rem;
+        background:var(--navy-700);border-radius:10px;color:#fff;font-size:.6rem;font-weight:700">
+        <span></span><span>Range</span><span>Hash</span><span>Directory</span></div>
+      ${rows.map((r,i)=> st>=i ? `<div class="pop" style="animation-delay:${i*50}ms;display:grid;
+        grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.5rem;padding:.46rem .7rem;background:var(--panel);border-radius:10px">
+        <span style="font-weight:700;font-size:.62rem">${r[0]}</span>
+        ${[1,2,3].map(k=>`<span style="font-size:.6rem;color:${r[4]?'var(--orange)':'var(--ink-2)'};
+          font-weight:${r[4]?600:400}">${r[k]}</span>`).join('')}</div>` : '').join('')}
+    </div>`; } },
+
+{ id:'crossshard', kick:'joins that leave the database', eyebrow:'Pitfall 1 · challenges of sharding', title:'Cross-shard queries',
+  tag:'pitfalls', steps:[
+  {note:'When a query joins or aggregates data living on multiple shards, the application must fetch from each and combine in memory.'},
+  {note:'That is an application-level join, and it is far slower than a native SQL join. ShopFast shards customers by customer_id and orders by order_id — so one customer\'s orders are spread across many shards. A one-to-many join that took milliseconds in a single instance now takes seconds.'}],
+  body:(st)=>`<div class="stage-row">${sceneScatter(st+1)}</div>
+    ${st>=1?`<p class="lede pop"><b>ShopFast:</b> customers sharded by <code>customer_id</code>, orders by <code>order_id</code>.
+      To report customers with their orders the app queries every shard, collects, and merges.</p>`:''}` },
+
+{ id:'reshard', kick:'redistributing data on a live system', eyebrow:'Pitfall 2 · challenges of sharding', title:'Re-sharding',
+  tag:'pitfalls', steps:[
+  {note:'Data grows, you add a shard. Now the shard map has changed, and existing data has to be redistributed to match it.'},
+  {note:'With hash sharding especially, adding one node changes the modulus and therefore where almost every row belongs.'},
+  {note:'Re-sharding is expensive, complex, and risky to perform on a live production system. This is why the shard key and the shard count deserve real thought up front.'}],
+  body:(st)=>`<div class="stage-row">${sceneReshard(st+1)}</div>` },
+
+{ id:'hotspot', kick:'one shard saturated, nine idle', eyebrow:'Pitfall 3 · a poor shard key in action', title:'Hotspots',
+  tag:'pitfalls', steps:[
+  {note:'ShopFast picks order_date as the shard key, with range sharding. Seems reasonable.'},
+  {note:'The 2023 shard is idle. Nobody queries two-year-old orders.'},
+  {note:'2024 is idle too.'},
+  {note:'Early 2025 gets light traffic.'},
+  {note:'And every single order placed today lands on the newest shard. It is at a hundred percent while every other machine you paid for does nothing. That is the hotspot problem — and it comes directly from the shard key choice.'}],
+  body:(st)=>`<div class="stage-row">${sceneHotspot(st+1)}</div>` },
+
+{ id:'whenshard', kick:'the decision, not the mechanism', eyebrow:'Where you should — and should not — shard',
+  title:'When to reach for sharding', tag:'judgement', steps:[
+  {note:'Three conditions, and you want all three before you shard. First: writes. A single primary cannot be scaled by adding replicas, so if WRITE throughput is the wall, sharding is one of the few real answers.'},
+  {note:'Second: size. The working set no longer fits on the largest machine you can economically buy or operate.'},
+  {note:'Third, and the one people forget: you must have a key that almost every query already carries. Tenant ID, user ID, workspace ID. Without it, every query becomes scatter-gather and you have made things worse.'},
+  {note:'Now the counter-cases. If READS are the bottleneck, add replicas — far cheaper and reversible. If you can still scale up, do that first. If you have no natural shard key, sharding will hurt. And if your workload genuinely needs cross-entity transactions and joins, sharding takes those away from you.'}],
+  body:(st)=>`<div class="cards" style="grid-template-columns:1fr 1fr;align-content:center;flex:1;gap:.55rem">
+    <div style="grid-column:1/-1" class="pop">${card('Shard when all three are true','Writes are the wall',
+      'A single primary cannot absorb the write throughput — and replicas do not help with writes.','good',ico('bolt'))}</div>
+    ${st>=1?`<div class="pop">${card('Condition 2','The data outgrew the machine',
+      'The working set no longer fits on the largest machine you can economically buy and operate.','good',ico('db'))}</div>`:''}
+    ${st>=2?`<div class="pop">${card('Condition 3','You have a natural key',
+      'Tenant, user or workspace ID — carried by nearly every query, so most stay on one shard.','good',ico('route'))}</div>`:''}
+    ${st>=3?`<div style="grid-column:1/-1" class="pop">${card('Do not shard when','Any one of these is true',
+      'Reads are the bottleneck — use replicas. You can still scale up. There is no natural shard key. Or your workload needs cross-entity joins and transactions, which sharding takes away.','warn',ico('ban'))}</div>`:''}
+  </div>` },
+
+{ id:'quiz2', kick:'check your understanding', eyebrow:'Check yourself', title:'Sharding checkpoint',
+  tag:'checkpoint', steps:[
+  {note:'Three questions. Ask all three, take answers, then reveal.'},
+  {note:'One: the shard key decides which shard each row lands on. A poor key produces imbalanced shards and hotspots — the single most critical sharding decision.'},
+  {note:'Two: hashing spreads new writes evenly across all shards, avoiding the hotspot that range sharding creates on the newest-value shard.'},
+  {note:'Three: a scatter-gather query hits every shard and merges the results. It commonly occurs with hash-based sharding, on range queries.'}],
+  body:(st)=>{
+    const qs=[['What is the role of the shard key, and why is choosing it correctly so important?',
+        'It decides which shard each row lands on. A poor key produces imbalanced shards and hotspots — the single most critical sharding decision.'],
+      ['Why prefer hash over range for a high-write orders table?',
+        'Hashing spreads new writes evenly across all shards, avoiding the hotspot that range sharding creates on the newest-value shard.'],
+      ['What is a scatter–gather query, and under which strategy does it occur?',
+        'A query that must hit every shard and merge results. It commonly occurs with hash-based sharding, on range queries.']];
+    return `<div class="cards" style="gap:.5rem;align-content:center;flex:1">
+      ${qs.map((q,i)=>`<div class="card pop" style="animation-delay:${i*50}ms">
+        <h3>${i+1} · ${q[0]}</h3>
+        ${st>=i+1?`<p class="pop" style="margin-top:.28rem">${q[1]}</p>`:`<p style="opacity:.35">…</p>`}</div>`).join('')}
+    </div>`; } },
+
+{ id:'scanprob', kick:'150M rows read to return 3M', eyebrow:'Why partitioning exists · the need', title:'The full table scan problem',
+  tag:'part 3 · partitioning', steps:[
+  {note:'Sharding spread data across machines. But within a single instance a table can still hold hundreds of millions of rows. ShopFast orders: 150 million.'},
+  {note:'A query for January 2025 examines all 150 million rows to find the two or three million that match. That is a full table scan, and it is slow no matter what hardware you throw at it.'},
+  {note:'Now cut the table into one piece per month. Go straight to the January 2025 piece and ignore the other fifty-nine. A query that took thirty minutes now takes seconds.'}],
+  body:(st)=>`<div class="stage-row">${sceneScan(st+1)}</div>` },
+
+{ id:'partdef', kick:'one table, many physical segments', eyebrow:'Definition', title:'What is partitioning?',
+  tag:'partitioning', steps:[
+  {note:'Dividing a single large table into smaller physical segments called partitions — while the table still appears as one logical entity to the application. The application does not change its queries at all.'},
+  {note:'Queries against the main table are automatically redirected by the engine to the relevant partitions. That automatic redirection is called partition pruning, and it is the whole benefit.'}],
+  body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.7rem">
+    <div class="pop" style="background:var(--navy-700);color:#fff;border-radius:14px;padding:1rem 1.15rem">
+      <div style="font-size:.92rem;font-weight:700;line-height:1.35">Dividing a single large table into smaller physical
+        segments called <span style="color:var(--purple-300)">Partitions</span> — while the table still appears as
+        one logical entity to the application.</div></div>
+    ${st>=1?`<p class="lede pop">Queries against the main table are automatically redirected by the engine to the
+      relevant partition(s). This automatic redirection is called <b>Partition Pruning</b> — and it is the whole benefit.</p>`:''}
+  </div>` },
+
+{ id:'versus', kick:'machines versus tables', eyebrow:'The distinction students must not confuse', title:'Sharding vs. partitioning',
+  tag:'partitioning', steps:[
+  {note:'Sharding: many machines. Data is split across multiple independent database instances, each on its own hardware. It is a horizontal scaling technique — it solves "one box is not enough".'},
+  {note:'Partitioning: one machine. A single table is split across storage segments inside one instance. It is a storage-organisation technique — it solves "this table is too big to scan".'},
+  {note:'Say it plainly: sharding is about machines, partitioning is about tables. They are often used together — you shard across ten servers, and partition the big table on each one.'}],
+  body:(st)=>`<div class="stage-row">${sceneVersus(st+1)}</div>
+    ${st>=2?`<p class="lede pop">They are not alternatives — a large system does <b>both</b>: shard across ten servers,
+      then partition the big table inside each one.</p>`:''}` },
+
+{ id:'parttypes', kick:'range · list · hash', eyebrow:'Three types', title:'Range, List and Hash partitioning',
+  tag:'partitioning', steps:[
+  {note:'Range: divide by a range of values in the partition key. The most common type — time-series data, transaction logs, audit records.'},
+  {note:'List: divide by a discrete list of values. Best for a column with a known finite set — region, country code, department, order status.'},
+  {note:'Hash: apply a hash to the partition key and distribute by the result. Use it when no natural range or category exists and the goal is simply to reduce individual table sizes evenly.'}],
+  body:(st)=>{
+    const t=[['Range','Best for time-series','Divide by a range of values in the partition key. Time-series data, transaction logs, audit records.',
+        "PARTITION BY RANGE (order_date);\n\nCREATE TABLE orders_2025\n  PARTITION OF orders\n  FOR VALUES FROM ('2025-01-01')\n  TO ('2026-01-01');",'var(--blue)'],
+      ['List','Best for categorical values','Each partition holds rows matching one of its assigned values. Region, country, department, status.',
+        "PARTITION BY LIST (region);\n\nCREATE TABLE customers_north\n  PARTITION OF customers\n  FOR VALUES IN ('North',\n    'NorthEast','NorthWest');",'var(--purple)'],
+      ['Hash','Best for even distribution','No natural range or category exists — the goal is simply to reduce table sizes evenly.',
+        "PARTITION BY HASH (product_id);\n\nCREATE TABLE products_p0\n  PARTITION OF products\n  FOR VALUES WITH\n  (MODULUS 4, REMAINDER 0);",'var(--green)']];
+    return `<div class="cards" style="grid-template-columns:repeat(3,1fr);flex:1;align-content:center">
+      ${t.map((x,i)=> st>=i ? `<div class="pop" style="animation-delay:${i*60}ms;background:var(--panel);
+        border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column">
+        <div style="background:${x[4]};color:#fff;padding:.42rem .7rem">
+          <div style="font-size:.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.85">${x[1]}</div>
+          <div style="font-size:.8rem;font-weight:700">${x[0]} Partitioning</div></div>
+        <div style="padding:.5rem .7rem;font-size:.56rem;line-height:1.4;color:var(--ink-2)">${x[2]}</div>
+        <pre style="margin:0;padding:.5rem .7rem;background:var(--navy-800);color:#CFE6FF;
+          font-family:var(--mono);font-size:.46rem;line-height:1.55;flex:1;white-space:pre-wrap">${x[3]}</pre>
+      </div>` : '').join('')}
+    </div>`; } },
+
+{ id:'pruning', kick:'the partitions it never opens', eyebrow:'Partition pruning in action', title:'The engine reads only what matches',
+  tag:'partitioning', steps:[
+  {note:'Here is the query. It filters on order_date — which is the partition key.'},
+  {note:'The planner looks at the filter, works out that only orders_2025 can contain matching rows, and skips the others entirely. Not "reads them quickly" — never opens them.'},
+  {note:'150 million rows down to two or three million. And notice the condition: this only works because we filtered on the partition key.'}],
+  body:(st)=>`<div class="stage-row">${scenePruning(st)}</div>` },
+
+{ id:'benefits', kick:'what partitioning buys', eyebrow:'What partitioning buys you', title:'Benefits of partitioning',
+  tag:'partitioning', steps:[
+  {note:'Query performance: filtering on the partition key scans only the relevant partition. ShopFast\'s monthly report goes from five years of data to one month.'},
+  {note:'Data lifecycle. This one is underrated. DROP TABLE orders_2020 completes in milliseconds — it is a metadata operation. A DELETE with a date filter locks the table and runs for hours.'},
+  {note:'Smaller indexes: each partition has its own index, smaller and faster to scan than one massive index over the whole table.'}],
+  body:(st)=>`<div class="cards" style="grid-template-columns:repeat(3,1fr);align-content:center;flex:1">
+    ${st>=0?`<div class="pop d1">${card('Query performance','Scan one partition, not five years','Filtering on the partition key scans only the relevant partition — ShopFast\'s monthly report drops from 150M rows to one month.','good',ico('bolt'))}</div>`:''}
+    ${st>=1?`<div class="pop d2">${card('Data lifecycle','<code>DROP TABLE orders_2020</code>','A metadata operation completing in milliseconds — versus a DELETE that locks the table for hours.','good',ico('trash'))}</div>`:''}
+    ${st>=2?`<div class="pop d3">${card('Smaller indexes','One index per partition','Smaller and faster to scan than a single massive index over the whole table.','good',ico('grid'))}</div>`:''}
+  </div>` },
+
+{ id:'limits', kick:'where partitioning stops helping', eyebrow:'Where partitioning stops helping', title:'Limitations of partitioning',
+  tag:'partitioning', steps:[
+  {note:'No pruning without the partition key. Partitioned by order_date, a query filtering on customer_id hits every partition. You get none of the benefit.'},
+  {note:'Cross-partition aggregations add overhead. Total revenue for the year must scan every partition — partitioning does not help and adds a little coordination cost.'},
+  {note:'And too many partitions degrade the planner. One partition per day over ten years is three thousand six hundred and fifty partitions. The planner evaluates all of them, and planning itself becomes slow.'}],
+  body:(st)=>`<div class="cards" style="align-content:center;flex:1;gap:.5rem">
+    ${st>=0?`<div class="pop d1">${card('Pitfall 1','No pruning without the partition key','Partitioned by <code>order_date</code>, a query <code>WHERE customer_id = 500</code> hits every partition — no pruning at all.','warn',ico('ban'))}</div>`:''}
+    ${st>=1?`<div class="pop d2">${card('Pitfall 2','Cross-partition aggregations add overhead','Queries that aggregate across all partitions — total revenue for the year — must scan every one of them.','warn',ico('sigma'))}</div>`:''}
+    ${st>=2?`<div class="pop d3">${card('Pitfall 3','Too many partitions degrade the planner','One partition per day over 10 years = 3,650 partitions. The planner must evaluate all of them, and planning itself becomes slow.','warn',ico('clock'))}</div>`:''}
+  </div>` },
+
+{ id:'whenpart', kick:'partition on the column your WHERE clause already has', eyebrow:'Where you should — and should not — partition',
+  title:'When to reach for partitioning', tag:'judgement', steps:[
+  {note:'Partitioning is a much easier decision than sharding, because it is reversible and invisible to the application. Three signals.'},
+  {note:'One: a single table dominates the database — hundreds of millions of rows, tens or hundreds of gigabytes, while everything else is small.'},
+  {note:'Two: nearly every query filters on the same natural key, and in practice that key is almost always time. Orders by date, events by day, logs by hour.'},
+  {note:'Three: you delete old data on a schedule. This is the underrated one — dropping a partition is instant, where a DELETE across hundreds of millions of rows can lock the table for hours.'},
+  {note:'And the counter-cases: if the table is small enough for an index to handle, partitioning adds complexity for nothing. If there is no shared filter key you get zero pruning. And if your scheme would create thousands of partitions, planning itself becomes the bottleneck.'}],
+  body:(st)=>`<div class="cards" style="grid-template-columns:1fr 1fr 1fr;align-content:center;flex:1;gap:.55rem">
+    ${st>=0?`<div class="pop d1">${card('Signal 1','One table dominates',
+      'Hundreds of millions of rows, or tens to hundreds of GB, while the rest of the schema is small.','good',ico('db'))}</div>`:''}
+    ${st>=1?`<div class="pop d2">${card('Signal 2','A shared filter key',
+      'Nearly every query filters on the same column — in practice that column is almost always time.','good',ico('clock'))}</div>`:''}
+    ${st>=2?`<div class="pop d3">${card('Signal 3','Scheduled deletion',
+      'You drop old data on a cadence. <code>DROP TABLE</code> on a partition is instant; a DELETE is hours.','good',ico('trash'))}</div>`:''}
+    ${st>=3?`<div style="grid-column:1/-1" class="pop">${card('Do not partition when','It buys you nothing',
+      'The table is small enough for an index to handle · there is no shared filter key, so nothing prunes · or the scheme would create thousands of partitions and slow the planner down.','warn',ico('ban'))}</div>`:''}
+  </div>` },
+
+{ id:'quiz3', kick:'check your understanding', eyebrow:'Check yourself', title:'Partitioning checkpoint',
+  tag:'checkpoint', steps:[
+  {note:'Three questions again — this is the one they will be examined on.'},
+  {note:'Sharding splits data across multiple independent database instances on different machines — that is scaling. Partitioning splits one table into segments within a single instance — that is storage organisation.'},
+  {note:'No. The filter is not on the partition key, so the engine cannot prune and must scan every partition.'},
+  {note:'Dropping a partition is a metadata operation completing in milliseconds. A DELETE with a date filter locks the table and runs for hours across hundreds of millions of rows.'}],
+  body:(st)=>{
+    const qs=[['Difference between sharding and partitioning, in two sentences?',
+        'Sharding splits data across multiple independent database instances on different machines (scaling). Partitioning splits one table into segments within a single instance (storage organisation).'],
+      ['Partitioned by <code>order_date</code> — does <code>WHERE customer_id = 500</code> prune?',
+        'No. The filter is not on the partition key, so the engine cannot prune and must scan every partition.'],
+      ['Why drop a partition to remove old data instead of a DELETE?',
+        'Dropping a partition is a metadata operation completing in milliseconds. A DELETE with a date filter locks the table and runs for hours across hundreds of millions of rows.']];
+    return `<div class="cards" style="gap:.5rem;align-content:center;flex:1">
+      ${qs.map((q,i)=>`<div class="card pp pop" style="animation-delay:${i*50}ms">
+        <h3>${i+1} · ${q[0]}</h3>
+        ${st>=i+1?`<p class="pop" style="margin-top:.28rem">${q[1]}</p>`:`<p style="opacity:.35">…</p>`}</div>`).join('')}
+    </div>`; } },
+
+{ id:'wild', kick:'every one of them shards on the tenant', eyebrow:'How production systems actually do this',
+  title:'In the wild', tag:'real world', steps:[
+  {note:'These are publicly documented architectures — engineering blogs, conference talks, open source. Worth showing students that this is not a textbook exercise.'},
+  {note:'Instagram sharded PostgreSQL by user ID, into thousands of logical shards mapped onto a smaller number of physical databases. The logical-shard trick means you can move shards between machines without re-hashing.'},
+  {note:'Notion sharded Postgres by workspace ID. A workspace is the natural unit — almost every query in the product is scoped to one workspace, so almost every query hits one shard.'},
+  {note:'Shopify calls theirs pods: a shop lives entirely inside one shard, with its own database and application capacity. Same idea — shard on the tenant.'},
+  {note:'Vitess began as YouTube\'s sharding layer over MySQL and is now open source, used by many companies who want sharding without writing the router themselves.'},
+  {note:'And on the partitioning side, TimescaleDB is essentially automated Postgres range partitioning by time — chunks instead of partitions, created and pruned for you.'},
+  {note:'Pull the common thread out loud: every one of these shards on the entity the product is about. That is what keeps queries on a single shard and avoids scatter-gather.'}],
+  body:(st)=>{
+    const rows=[
+      ['Instagram','PostgreSQL, sharded by user ID','Thousands of logical shards mapped onto fewer physical databases — so a shard can move machines without re-hashing.','users',''],
+      ['Notion','PostgreSQL, sharded by workspace ID','A workspace is the natural unit: nearly every query in the product is already scoped to one.','layers','tl'],
+      ['Shopify','MySQL "pods", sharded by shop','A shop lives entirely inside one shard, with its own database and application capacity.','build','tl'],
+      ['Vitess (from YouTube)','A sharding layer over MySQL','Began as YouTube\'s router, now open source — sharding without writing the router yourself.','route','pp'],
+      ['TimescaleDB','PostgreSQL range partitioning by time','Chunks instead of partitions, created and dropped automatically. Partitioning as a product.','clock','pp']];
+    return `<div class="cards" style="gap:.42rem;align-content:center;flex:1">
+      ${rows.map((r,i)=> st>=i+1 ? `<div class="card ${r[4]} pop" style="animation-delay:${i*40}ms;padding:.46rem .9rem">
+        <span class="ico" style="top:.5rem;width:1.8rem;height:1.8rem">${ico(r[3])}</span>
+        <div style="display:flex;align-items:baseline;gap:.55rem;flex-wrap:wrap">
+          <span style="font-family:var(--serif);font-size:.84rem;font-weight:600">${r[0]}</span>
+          <span style="font-family:var(--mono);font-size:.54rem;color:var(--accent-deep)">${r[1]}</span></div>
+        <p style="margin-top:.06rem;font-size:.66rem;line-height:1.4;padding-right:2.2rem">${r[2]}</p></div>` : '').join('')}
+      ${st>=6?`<div class="pop" style="margin-top:.1rem;padding:.46rem .9rem;border-radius:16px;
+        background:var(--accent-tint);border:1px solid var(--accent-soft)">
+        <p style="margin:0;font-family:var(--news);font-size:.74rem;line-height:1.4;color:var(--ink)">
+        <b>The common thread:</b> every one of them shards on the entity the product is about — user, workspace,
+        shop — so the overwhelming majority of queries stay on a single shard.</p></div>`:''}
+    </div>`; } },
+
+{ id:'plan', kick:'the ladder, applied', eyebrow:'ShopFast · what we would actually do',
+  title:'Putting it together', tag:'real world', steps:[
+  {note:'Let us end by applying the ladder to the company we opened with, in order.'},
+  {note:'Step one: partition orders by month. The monthly report stops scanning five years of data, and retention becomes a DROP instead of an overnight DELETE. Weeks of work, no application change, fully reversible.'},
+  {note:'Step two: move the reporting and analytics traffic to read replicas. Those queries are the ones hurting everyone else, and they do not need the primary.'},
+  {note:'Step three, and only if writes are still the wall after one and two: shard by customer_id. Note the choice — customer_id, not order_date. And we co-locate each customer\'s orders with the customer row, so the join the product runs constantly stays inside one shard.'},
+  {note:'And explicitly, what we would not do: shard by order_date, which recreates the hotspot we saw; or shard before partitioning, which is months of irreversible work to solve a problem that weeks of reversible work would have solved.'}],
+  body:(st)=>`<div class="cards plan" style="align-content:center;flex:1;gap:.42rem">
+    ${st>=1?`<div class="pop d1">${card('Step 1 · weeks, reversible','Partition <code>orders</code> by month',
+      'The monthly report stops scanning five years. Retention becomes <code>DROP TABLE orders_2020</code> instead of an overnight DELETE. No application change.','good',ico('db'))}</div>`:''}
+    ${st>=2?`<div class="pop d2">${card('Step 2 · days, reversible','Move reporting to read replicas',
+      'Analytics queries are what hurt everyone else, and they do not need the primary.','good',ico('layers'))}</div>`:''}
+    ${st>=3?`<div class="pop d3">${card('Step 3 · only if writes are still the wall','Shard by <code>customer_id</code>',
+      'Co-locate each customer\'s orders with the customer row, so the join the product runs constantly stays inside one shard.','tl',ico('server'))}</div>`:''}
+    ${st>=4?`<div class="pop d4">${card('What we would not do','Shard first, or shard by date',
+      'Sharding by <code>order_date</code> recreates the hotspot. Sharding before partitioning spends months of irreversible work on a problem weeks of reversible work would have solved.','warn',ico('ban'))}</div>`:''}
+  </div>` },
+
+{ id:'recap', kick:'two levels down, three to go', eyebrow:'Where we\'ve been · what\'s next', title:'Two levels down, three to go',
+  tag:'recap', steps:[
+  {note:'Level one, System: sharding. Scale out across machines. Range, hash and directory strategies — mind the shard key, the hotspots, and the cross-shard cost.'},
+  {note:'Level two, Storage: partitioning. Organize within an instance. Range, list and hash types — pruning speeds reads, but only when you filter on the partition key.'},
+  {note:'Next lecture is level three, the Transaction Level. When thousands of users write simultaneously, how does the database stop two updates to the same row from corrupting each other? That is MVCC, locking and deadlock handling — and it is where the ACID properties earn their keep.'}],
+  body:(st)=>`
+    <div class="stage-row" style="flex:0 0 auto;height:42%">${sceneStack(6, st<2 ? st+1 : 0)}</div>
+    <div class="cards" style="grid-template-columns:1fr 1fr">
+      ${st>=0?`<div class="pop d1">${card('Level 1 · System','Sharding','Scale out across machines. Range, hash, directory strategies — mind the shard key, hotspots, and cross-shard cost.','',ico('build'))}</div>`:''}
+      ${st>=1?`<div class="pop d2">${card('Level 2 · Storage','Partitioning','Organize within an instance. Range, list, hash types — pruning speeds reads, but only when you filter on the partition key.','tl',ico('db'))}</div>`:''}
+    </div>
+    ${st>=2?`<div class="pop" style="background:var(--navy-700);color:#fff;border-radius:14px;padding:.6rem .85rem">
+      <div style="font-size:.5rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--purple-300)">Next lecture · Transaction Level</div>
+      <div style="font-size:.72rem;line-height:1.4;margin-top:.2rem">When thousands of users write simultaneously, how does the
+        database stop two updates to the same row from corrupting each other?</div></div>`:''}` }
+];
+</script>
+<script>
+/* ===================== presenter engine ===================== */
+const $ = s => document.querySelector(s);
+const stage = $('#stage');
+let si = 0, pi = 0, lastSlide = null;
+
+function render(){
+  const sl = DECK[si];
+  pi = Math.max(0, Math.min(pi, sl.steps.length - 1));
+  const entering = lastSlide !== sl.id;
+  lastSlide = sl.id;
+  stage.innerHTML = `<div class="slide"${entering?' data-entering="1"':''}>${sl.body(pi)}</div>`;
+  $('#sTitle').textContent   = sl.title;
+  $('#sEyebrow').textContent = sl.eyebrow;
+  $('#sTag').textContent     = sl.tag;
+  $('#sKick').textContent    = sl.kick || '';
+  $('#stepCount').textContent = `slide ${si+1}/${DECK.length} · step ${pi+1}/${sl.steps.length}`;
+  $('#noteSay').innerHTML = sl.steps[pi].note || '—';
+  $('#noteNxt').textContent = pi+1 < sl.steps.length
+    ? `next → step ${pi+2} of this slide`
+    : (si+1 < DECK.length ? `next → ${DECK[si+1].title}` : 'end of deck');
+  renderDots();
+}
+function renderDots(){
+  const d = $('#dots');
+  d.innerHTML = DECK.map((s,i)=>`<span class="pd ${i<si?'done':''}${i===si?' now':''}" data-i="${i}" title="${s.title}"></span>`).join('');
+  d.querySelectorAll('.pd').forEach(el => el.onclick = () => { si=+el.dataset.i; pi=0; render(); });
+}
+
+/* ---- navigation: right / left arrow drive the whole deck ---- */
+function next(){
+  const s = DECK[si];
+  if(pi < s.steps.length-1) pi++;
+  else if(si < DECK.length-1){ si++; pi = 0; }
+  else return;
+  render();
+}
+function prev(){
+  if(pi > 0) pi--;
+  else if(si > 0){ si--; pi = DECK[si].steps.length-1; }
+  else return;
+  render();
+}
+function jump(d){ const n = si+d; if(n<0||n>=DECK.length) return; si=n; pi=0; render(); }
+
+/* ---- presenter zoom: type is a share of screen height, this multiplies it ---- */
+const ZMIN=.6, ZMAX=2.0, ZSTEP=.08;
+let zoom = 1;
+try { zoom = parseFloat(localStorage.getItem('dbopt-zoom')) || 1; } catch(e){}
+function applyZoom(show){
+  zoom = Math.min(ZMAX, Math.max(ZMIN, zoom));
+  document.documentElement.style.setProperty('--scale', zoom.toFixed(3));
+  try { localStorage.setItem('dbopt-zoom', zoom); } catch(e){}
+  if(show){
+    const px = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const z = $('#zoom');
+    z.innerHTML = Math.round(zoom*100) + '%<small>body text &asymp; ' + Math.round(px*.72) + 'px · 0 resets</small>';
+    z.classList.add('show');
+    clearTimeout(z._t); z._t = setTimeout(()=>z.classList.remove('show'), 1100);
+  }
+}
+applyZoom(false);
+
+/* ---- theme: light matches the lecture deck, dark reads better in a dim hall ---- */
+function applyTheme(t, show){
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('dbopt-theme', t); } catch(e){}
+  if(show){
+    const z = $('#zoom');
+    z.innerHTML = (t === 'dark' ? 'Dark' : 'Light') + '<small>press T to switch</small>';
+    z.classList.add('show');
+    clearTimeout(z._t); z._t = setTimeout(()=>z.classList.remove('show'), 900);
+  }
+}
+let theme = 'light';
+try { theme = localStorage.getItem('dbopt-theme') || 'light'; } catch(e){}
+applyTheme(theme, false);
+
+document.addEventListener('keydown', e=>{
+  if($('#ov').classList.contains('open') && !['o','O','Escape'].includes(e.key)) return;
+  switch(e.key){
+    case 'ArrowRight': case ' ': case 'PageDown': e.preventDefault(); next(); break;
+    case 'ArrowLeft':  case 'PageUp':            e.preventDefault(); prev(); break;
+    case 'ArrowDown':  e.preventDefault(); jump(1);  break;
+    case 'ArrowUp':    e.preventDefault(); jump(-1); break;
+    case 'Home': si=0; pi=0; render(); break;
+    case 'End':  si=DECK.length-1; pi=DECK[si].steps.length-1; render(); break;
+    case 'f': case 'F':
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); break;
+    case 's': case 'S': $('#notes').classList.toggle('open'); break;
+    case 'o': case 'O': $('#ov').classList.toggle('open'); break;
+    case 't': case 'T':
+      theme = theme === 'dark' ? 'light' : 'dark'; applyTheme(theme, true); break;
+    case 'r': case 'R': pi = 0; render(); break;
+    case 'Escape': $('#ov').classList.remove('open'); $('#notes').classList.remove('open'); break;
+    case '+': case '=': e.preventDefault(); zoom += ZSTEP; applyZoom(true); break;
+    case '-': case '_': e.preventDefault(); zoom -= ZSTEP; applyZoom(true); break;
+    case '0': e.preventDefault(); zoom = 1; applyZoom(true); break;
+  }
+});
+stage.addEventListener('click', () => next());
+
+/* ---- run of show ---- */
+$('#ovGrid').innerHTML = DECK.map((s,i)=>
+  `<div class="ovc" data-i="${i}"><div class="i">${String(i+1).padStart(2,'0')} · ${s.tag}</div>
+   <div class="t">${s.title}</div></div>`).join('');
+$('#ovGrid').querySelectorAll('.ovc').forEach(el =>
+  el.onclick = () => { si=+el.dataset.i; pi=0; $('#ov').classList.remove('open'); render(); });
+
+/* ---- elapsed timer ---- */
+const t0 = Date.now();
+setInterval(()=>{
+  const s = Math.floor((Date.now()-t0)/1000);
+  $('#clock').textContent = String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}, 1000);
+
+render();
+</script>
+</body>
+</html>
