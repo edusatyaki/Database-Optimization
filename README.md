@@ -196,6 +196,9 @@ hand-drawn boxes, rather than a corporate slide template.
   one for shapes, a finer one for connector lines.
 - The rail is the notebook margin — dashed rules, no fill, the current chapter
   boxed in highlighter.
+- Real artefacts (the Amazon wordmark) are **taped in**: a white printout with
+  washi-tape corners, rotated off true, captioned in hand. It keeps a crisp
+  corporate mark from fighting the drawn page.
 
 Colour is used semantically, not decoratively: **pencil blue** for machinery,
 **amber** for emphasis, **flame** for hotspots and pitfalls, **leaf** for
@@ -222,6 +225,12 @@ and worth stating as such in class:
 
 That second point is the spine of the lecture: managed infrastructure does not
 remove the shard-key decision, it removes your ability to fix it later.
+
+The Amazon wordmark appears on the three story slides — the opening, the growth
+arc, and the Dynamo chapter — presented as a printout taped into the notebook,
+so it reads as the subject of the case study rather than as the deck's own
+identity. It is Amazon's trademark, used here to identify the company being
+discussed.
 
 This is a case study for teaching. The deck is not affiliated with, endorsed by,
 or produced in association with Amazon.
