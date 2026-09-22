@@ -77,15 +77,20 @@ remembered per machine. Checked for overflow across all 120 steps, in both theme
 
 ## Design
 
-Built in the **Atelier** house style shared by `cs-atelier`, `data-atelier` and
-`machine-atelier` — warm paper (`#f4efe8`), cream cards with long soft shadows,
-Fraunces for display type, Newsreader italic for the kickers and body, Inter for
-UI, JetBrains Mono for SQL. Coral is the primary voice, with violet and teal as
-secondaries and a clay red for hotspots and warnings.
+Built on the **Atelier** house palette shared by `cs-atelier`, `data-atelier` and
+`machine-atelier` — warm paper (`#f4efe8`), cream cards with long soft shadows.
+Coral is the primary voice, with violet and teal as secondaries and a clay red
+for hotspots and warnings.
 
-Every slide carries an italic kicker in the Atelier voice ("one shard saturated,
-nine idle"), and the five levels each get a line-art icon in a soft inset circle —
-the same device `data-atelier` uses for its concept library, drawn as stroked SVG
+**Type is Arial throughout**, matching the other teaching sites in this workspace.
+The display / editorial / UI roles are still separate design tokens, so the
+hierarchy is carried by size, weight and colour rather than by three typefaces.
+SQL and query output stay in JetBrains Mono, where column alignment is
+load-bearing.
+
+Every slide carries an italic kicker beside the title ("one shard saturated, nine
+idle"), and the five levels each get a line-art icon in a soft inset circle — the
+same device `data-atelier` uses for its concept library, drawn as stroked SVG
 rather than emoji so it holds up on a projector.
 
 Dark mode is a warm dark brown rather than a cold black, so the palette keeps

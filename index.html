@@ -6,7 +6,7 @@
 <title>Database Optimization</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   /* Type is a share of SCREEN HEIGHT so the deck keeps its physical size on any
@@ -52,9 +52,10 @@
   --shadow:0 24px 60px -30px rgba(80,54,40,.35);
   --shadow-sm:0 10px 30px -18px rgba(80,54,40,.4);
 
-  --serif:'Fraunces',Georgia,'Times New Roman',serif;
-  --news:'Newsreader',Georgia,serif;
-  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --arial:Arial,'Helvetica Neue',Helvetica,sans-serif;
+  --serif:var(--arial);    /* display role */
+  --news:var(--arial);     /* editorial role */
+  --sans:var(--arial);     /* UI role */
   --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
 }
 :root[data-theme="dark"]{
@@ -105,7 +106,7 @@ header{flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:11px 26px;
 @media (max-width:1100px){.kick{display:none}}
 .eyebrow{font-size:clamp(9px,1.15vh,17px);font-weight:700;letter-spacing:1.6px;
   text-transform:uppercase;color:var(--accent-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.slide-title{min-width:0;font-family:var(--serif);font-size:clamp(17px,2.5vh,40px);font-weight:600;
+.slide-title{min-width:0;font-family:var(--serif);font-size:clamp(17px,2.4vh,38px);font-weight:700;
   line-height:1.15;letter-spacing:-.01em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .badges{display:flex;gap:8px;align-items:center;flex:0 0 auto}
@@ -133,7 +134,7 @@ kbd{font-family:var(--mono);font-size:clamp(8px,.95vh,15px);background:var(--pan
   border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 6px;color:var(--ink-2)}
 
 /* ================= shared blocks ================= */
-.lede{font-family:var(--news);font-size:.92rem;line-height:1.55;color:var(--ink-2);max-width:54rem}
+.lede{font-family:var(--news);font-size:.86rem;line-height:1.5;color:var(--ink-2);max-width:54rem}
 .lede b{color:var(--ink);font-weight:600}
 .kicker{font-family:var(--news);font-style:italic;font-size:.82rem;color:var(--violet);margin:0}
 .stage-row{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
@@ -149,9 +150,9 @@ svg.scene{width:100%;height:100%;max-height:100%;overflow:visible;fill:var(--ink
   text-transform:uppercase;color:var(--accent-deep)}
 .card.warn h4{color:var(--clay)} .card.good h4{color:var(--ok)}
 .card.pp h4{color:var(--violet)} .card.tl h4{color:var(--teal)}
-.card h3{margin:0 0 .3rem;font-family:var(--serif);font-size:.95rem;font-weight:600;line-height:1.2;
+.card h3{margin:0 0 .3rem;font-family:var(--serif);font-size:.9rem;font-weight:700;line-height:1.25;
   letter-spacing:-.01em}
-.card p{margin:0;font-family:var(--news);font-size:.76rem;line-height:1.5;color:var(--ink-2)}
+.card p{margin:0;font-family:var(--news);font-size:.72rem;line-height:1.45;color:var(--ink-2)}
 .card .ico{position:absolute;right:.9rem;top:.85rem;width:2.15rem;height:2.15rem;border-radius:50%;
   display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);
   box-shadow:inset 0 1px 3px rgba(80,54,40,.10)}
@@ -200,12 +201,12 @@ code,.mono{font-family:var(--mono);font-size:.88em;background:var(--accent-tint)
 .wire.live.sv-fade{animation:dashFlow .9s linear infinite, fadeIn .45s ease forwards}
 .wire.sv-fade{animation:fadeIn .45s ease forwards}
 .wire.hotwire{stroke:var(--orange)}
-text{font-family:var(--sans)}
+text{font-family:var(--arial)}
 .t-lbl{font-size:15px;font-weight:600;fill:var(--ink)}
-.t-serif{font-family:var(--serif);font-weight:600;fill:var(--ink)}
+.t-serif{font-family:var(--serif);font-weight:700;fill:var(--ink)}
 .t-sub{font-size:13px;fill:var(--muted)}
 .t-mono{font-family:'JetBrains Mono',monospace;font-size:14px;fill:var(--ink-2)}
-.t-big{font-family:var(--serif);font-size:25px;font-weight:600;fill:var(--ink)}
+.t-big{font-family:var(--serif);font-size:24px;font-weight:700;fill:var(--ink)}
 .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
 .box-navy{fill:var(--navy-700);stroke:none}
 .box-blue{fill:var(--blue);stroke:none}
@@ -226,19 +227,19 @@ text{font-family:var(--sans)}
   border-top:3px solid var(--accent);padding:14px 24px 16px;max-height:46vh;overflow-y:auto}
 #notes.open{transform:none}
 #notes h6{margin:0 0 6px;font-size:.5rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent)}
-#notes .say{font-family:var(--news);font-size:.86rem;line-height:1.6;max-width:66rem}
+#notes .say{font-family:var(--news);font-size:.82rem;line-height:1.55;max-width:66rem}
 #notes .say b{color:#f0b9ab;font-weight:600}
 #notes .nxt{margin-top:8px;font-size:.5rem;color:#a89e93;font-family:var(--mono)}
 
 #ov{position:fixed;inset:0;z-index:50;background:var(--bg);padding:28px;display:none;overflow-y:auto}
 #ov.open{display:block}
-#ov h3{margin:0 0 16px;font-family:var(--serif);font-size:.86rem;color:var(--ink);letter-spacing:0;text-transform:none}
+#ov h3{margin:0 0 16px;font-family:var(--serif);font-size:.86rem;font-weight:700;color:var(--ink);letter-spacing:0;text-transform:none}
 .ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:10px}
 .ovc{padding:12px 14px;border-radius:16px;border:1px solid var(--line);cursor:pointer;
   background:var(--panel);transition:.2s;box-shadow:var(--shadow-sm)}
 .ovc:hover{border-color:var(--accent);transform:translateY(-3px)}
 .ovc .i{font-family:var(--mono);font-size:.45rem;color:var(--accent-deep);font-weight:700}
-.ovc .t{font-family:var(--serif);font-size:.72rem;font-weight:600;margin-top:4px;line-height:1.2}
+.ovc .t{font-family:var(--serif);font-size:.7rem;font-weight:700;margin-top:4px;line-height:1.2}
 
 #zoom{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);z-index:60;
   padding:.9rem 1.5rem;border-radius:18px;border:2px solid var(--accent);background:var(--panel);
@@ -711,7 +712,7 @@ function scenePruning(step){
 function sceneVersus(step){
   let g='';
   if(step>=1){
-    g += `<g class="sv-rise"><text class="t-serif" x="250" y="38" text-anchor="middle" style="fill:var(--accent-deep);font-size:24px">Sharding</text>
+    g += `<g class="sv-rise"><text class="t-serif" x="250" y="38" text-anchor="middle" style="fill:var(--accent-deep);font-size:23px;font-weight:700">Sharding</text>
       <text x="250" y="60" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">many machines · a scaling technique</text></g>`;
     [0,1,2].forEach(i=>{
       g += `<g class="sv-pop" ${D(i*100)}>
@@ -723,7 +724,7 @@ function sceneVersus(step){
     });
   }
   if(step>=2){
-    g += `<g class="sv-rise"><text class="t-serif" x="750" y="38" text-anchor="middle" style="fill:var(--violet);font-size:24px">Partitioning</text>
+    g += `<g class="sv-rise"><text class="t-serif" x="750" y="38" text-anchor="middle" style="fill:var(--violet);font-size:23px;font-weight:700">Partitioning</text>
       <text x="750" y="60" text-anchor="middle" style="font-family:var(--news);font-style:italic;font-size:14px;fill:var(--muted)">one machine · a storage-organisation technique</text>
       <rect x="560" y="86" width="380" height="118" rx="12" fill="var(--panel)" stroke="var(--purple)" stroke-width="2"/>
       <text class="t-sub" x="750" y="106" text-anchor="middle" style="fill:var(--purple)">a single instance</text></g>`;
