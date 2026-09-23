@@ -961,8 +961,11 @@ function sceneHotspot(step){
   });
   if(step>=5) g += `<g class="sv-rise"><rect x="110" y="362" width="825" height="50" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="110" y="362" width="5" height="50" rx="2.5" fill="var(--red)"/>
-    <text class="t-lbl" x="132" y="392">Shard key <tspan class="t-mono" fill="var(--red)">order_date</tspan> with range sharding — every new order lands on one shard.</text></g>`;
-  return SV('0 0 1000 424', g);
+    <text class="t-lbl" x="132" y="392">The cause: shard key <tspan class="t-mono" style="fill:var(--flame-ink)">order_date</tspan> only ever increases — every new order has one place to go.</text></g>`;
+  if(step>=6) g += `<g class="sv-rise"><rect x="110" y="422" width="825" height="50" rx="2" fill="var(--panel)" stroke="var(--line)"/>
+    <rect x="110" y="422" width="5" height="50" rx="2.5" fill="var(--leaf)"/>
+    <text class="t-lbl" x="132" y="452">The fix: a key whose values scatter — <tspan class="t-mono" style="fill:var(--blue)">hash(customer_id)</tspan> gives every shard a share of every day.</text></g>`;
+  return SV('0 0 1000 484', g);
 }
 
 /* ---- 11. scatter–gather ---- */
@@ -1420,13 +1423,14 @@ const DECK = [
   {note:'Re-sharding is expensive, complex, and risky to perform on a live production system. This is why the shard key and the shard count deserve real thought up front.'}],
   body:(st)=>`<div class="stage-row">${sceneReshard(st+1)}</div>` },
 
-{ id:'hotspot', kick:'one shard saturated, nine idle', eyebrow:'Pitfall 3 · a poor shard key in action', title:'Hotspots',
+{ id:'hotspot', kick:'one shard saturated, the rest idle', eyebrow:'Pitfall 3 · a poor shard key in action', title:'Hotspots',
   tag:'pitfalls', steps:[
-  {note:'Suppose the orders table is sharded on order_date, with range sharding. It looks reasonable — orders are naturally time-ordered.'},
-  {note:'The 2023 shard is idle. Nobody queries two-year-old orders.'},
-  {note:'2024 is idle too.'},
-  {note:'Early 2025 gets light traffic.'},
-  {note:'And every single order placed today lands on the newest shard. It is at a hundred percent while every other machine you paid for does nothing. That is the hotspot problem — and it comes directly from the shard key choice.'}],
+  {note:'Define the word before the picture builds, because the picture only makes sense once they have it. A HOTSPOT is one shard that absorbs a disproportionate share of the traffic while the others sit idle. Say clearly what it is NOT about: it is not about how much DATA each shard holds. You can have the rows spread perfectly evenly across ten machines and still have a hotspot, because what matters is not where the rows LIVE, it is where the REQUESTS GO. Now the setup on screen: the orders table is sharded on order_date with range sharding, so each shard owns a slice of time. That looks entirely sensible — orders are naturally time-ordered. Here is the 2023 shard, and it is idle: nobody queries two-year-old orders.'},
+  {note:'2024, also quiet. Pause on this, because it is the half of the problem people forget. These are not spare machines — they are fully provisioned, fully paid-for servers doing almost nothing. A hotspot does not only make you slow; it makes you slow while you are paying for hardware that is sitting still.'},
+  {note:'Early 2025 takes some traffic — recent enough that customers still open those orders, chase refunds, check delivery. The shape is already visible: load tracks recency. Ask the room to predict the last bar before you press.'},
+  {note:'And there it is. Every order placed today writes to the newest shard, so it is pinned at a hundred percent while the other three idle. Now make the consequence explicit, because this is the part that matters: the whole system is now limited by ONE machine. Adding more shards does not help at all — the next order still has exactly one place to go. Your ten-machine cluster has the write throughput of a single box, and you are paying for ten.'},
+  {note:'Name the cause, because it is the entire lesson of the slide. The shard key was order_date, and order_date only ever increases. ANY monotonically increasing shard key does this — a timestamp, an auto-increment id, a sequence number — because "the newest shard" and "the shard everything is written to" are the same shard. Every insert queues behind the one before it.'},
+  {note:'So the fix is a key whose values scatter rather than advance: hash the customer_id, and every shard takes a share of every day\'s orders. Two things to leave them with. First, read queries are fine either way — it is the WRITE path that concentrates. Second, and this is why the slide exists: you cannot quietly fix this later. Changing the shard key means re-sharding, which is the slide we just did — migrating live data between machines. The shard key is chosen on day one and you live with it.'}],
   body:(st)=>`<div class="stage-row">${sceneHotspot(st+1)}</div>` },
 
 { id:'whenshard', kick:'the decision, not the mechanism', eyebrow:'Where you should — and should not — shard',

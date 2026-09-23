@@ -30,7 +30,7 @@ The whole deck runs on the arrow keys.
 | `+` / `−` / `0` | type size, for the room you are in |
 | `Home` / `End` | first / last slide |
 
-42 slides, 163 steps. Notes are written for speaking aloud, one per step.
+42 slides, 164 steps. Notes are written for speaking aloud, one per step.
 
 ## Vocabulary before mechanics
 
@@ -153,7 +153,7 @@ than inferring it:
 | Shard split | Rows stream from the one table down into each of the ten servers |
 | Re-sharding | Rows migrate from the old shard map to the new one |
 | Full table scan | A scan head sweeps every cell, then one month lights up |
-| Hotspots | Bars grow from the floor; the newest turns red and keeps pulsing |
+| Hotspots | Bars grow from the floor; the newest turns red and keeps pulsing, then the cause and the fix are named |
 
 Everything respects `prefers-reduced-motion` — with that on, packets are not
 emitted at all and entrances resolve instantly.
@@ -237,7 +237,7 @@ its floor.
 Type is a share of **screen height**, not fixed pixels, so the deck keeps its
 physical size whatever resolution the projector runs at — the root is `3.5vh`,
 so body copy lands around 30px at 1080p. `+` / `−` adjust live and the setting is
-remembered per machine. Checked for overflow across all 163 steps, in both themes.
+remembered per machine. Checked for overflow across all 164 steps, in both themes.
 
 ## Design
 
