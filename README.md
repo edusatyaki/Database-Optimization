@@ -149,7 +149,7 @@ than inferring it:
 | Geographic sharding | Four cities reach one distant database, then each reaches its own local shard |
 | Hash sharding | Each computed `id mod 4` sends its row to the shard it hashed to |
 | Directory sharding | The looked-up entry travels to the shard it names |
-| Partition pruning | The query only travels to the partition it matches; the others dim out |
+| Partition pruning | Every partition starts a candidate; the query then travels only to the one it matches and the others dim out |
 | Shard split | Rows stream from the one table down into each of the ten servers |
 | Re-sharding | Rows migrate from the old shard map to the new one |
 | Full table scan | A scan head sweeps every cell, then one month lights up |

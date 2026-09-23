@@ -1054,26 +1054,31 @@ function sceneScan(step){
 
 /* ---- 14. partition pruning in action ---- */
 function scenePruning(step){
-  const parts=[['orders_2023',0],['orders_2024',1],['orders_2025',2]];
+  // monthly partitions, to match the 60-cell scan slide: 150M rows / 60 months = ~2.5M each
+  const parts=[['orders_2024_12',0],['orders_2025_01',1],['orders_2025_02',2]];
+  const TARGET=1;
   let g = `<g class="sv-rise"><rect x="60" y="24" width="880" height="52" rx="2" class="box-navy"/>
     <text class="t-mono" x="84" y="56" style="fill:var(--ink);font-size:14px">SELECT * FROM orders WHERE order_date BETWEEN '2025-01-01' AND '2025-01-31';</text></g>`;
+  g += `<text class="t-sub" x="940" y="116" text-anchor="end">3 of 60 monthly partitions</text>`;
   parts.forEach(([name,i])=>{
-    const x=60+i*300, hit = step>=1 && i===2, skipped = step>=1 && i!==2;
-    if(step>=1) g += hit
-        ? wire(`M500 80 C500 112 ${x+140} 104 ${x+140} 136`, {dur:1.2, r:5.5})
-        : `<path d="M500 80 C500 112 ${x+140} 104 ${x+140} 136" class="wire sv-fade" ${D(i*90)}
+    const decided = step>=1;
+    const hit = decided && i===TARGET, skipped = decided && i!==TARGET;
+    if(decided) g += hit
+        ? wire(`M500 80 C500 112 ${60+i*300+140} 104 ${60+i*300+140} 136`, {dur:1.2, r:5.5})
+        : `<path d="M500 80 C500 112 ${60+i*300+140} 104 ${60+i*300+140} 136" class="wire sv-fade" ${D(i*90)}
              stroke-dasharray="3 7" opacity=".5"/>`;
+    const x=60+i*300;
     g += `<g class="sv-rise" ${D(i*90)}>
       <rect x="${x}" y="138" width="280" height="96" rx="2"
         fill="${hit?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.6"
         opacity="${skipped?.45:1}" ${hit?'class="sv-glow"':''}/>
-      <text class="t-mono" x="${x+22}" y="176" style="fill:${hit?'var(--ink)':'var(--muted)'};font-size:15px">${name}${hit?' ✓':''}</text>
-      <text class="t-sub" x="${x+22}" y="202" style="fill:${hit?'var(--ink-2)':'var(--muted)'}">
-        ${hit?'scanned · ~2–3M rows':'skipped'}</text></g>`;
+      <text class="t-mono" x="${x+22}" y="176" style="fill:${skipped?'var(--muted)':'var(--ink)'};font-size:15px">${name}${hit?' ✓':''}</text>
+      <text class="t-sub" x="${x+22}" y="202" style="fill:${skipped?'var(--muted)':'var(--ink-2)'}">
+        ${!decided?'~2.5M rows':(hit?'scanned · ~2.5M rows':'skipped')}</text></g>`;
   });
   if(step>=2) g += `<g class="sv-rise"><rect x="60" y="260" width="880" height="50" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="60" y="260" width="5" height="50" rx="2.5" fill="var(--blue)"/>
-    <text class="t-lbl" x="82" y="290">The scan drops from 150M rows to ~2–3M — the planner never opens the other partitions.</text></g>`;
+    <text class="t-lbl" x="82" y="290">The scan drops from 150M rows to ~2.5M — the planner never opens the other 59 partitions.</text></g>`;
   return SV('0 0 1000 324', g);
 }
 
@@ -1558,8 +1563,8 @@ const DECK = [
 
 { id:'pruning', kick:'the partitions it never opens', eyebrow:'Partition pruning in action', title:'The engine reads only what matches',
   tag:'partitioning', steps:[
-  {note:'Here is the query. It filters on order_date — which is the partition key.'},
-  {note:'The planner looks at the filter, works out that only orders_2025 can contain matching rows, and skips the others entirely. Not "reads them quickly" — never opens them.'},
+  {note:'Here is the query, and here are three of the sixty monthly partitions — December, January, February. Nothing has been decided yet: at this point every partition is a candidate and each holds roughly two and a half million rows. Point at the filter: it is on order_date, which is the partition key. That is the condition everything else depends on.'},
+  {note:'The planner looks at the filter, works out that only orders_2025_01 can contain matching rows, and skips the others entirely. Not "reads them quickly" — never opens them.'},
   {note:'150 million rows down to two or three million. And notice the condition: this only works because we filtered on the partition key.'}],
   body:(st)=>`<div class="stage-row">${scenePruning(st)}</div>` },
 
