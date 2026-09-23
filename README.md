@@ -30,7 +30,7 @@ The whole deck runs on the arrow keys.
 | `+` / `−` / `0` | type size, for the room you are in |
 | `Home` / `End` | first / last slide |
 
-41 slides, 159 steps. Notes are written for speaking aloud, one per step.
+42 slides, 163 steps. Notes are written for speaking aloud, one per step.
 
 ## Vocabulary before mechanics
 
@@ -130,6 +130,7 @@ question students actually ask next — *where would we really use this?*
 | Slide | What it gives them |
 |-------|--------------------|
 | **The escalation ladder** | Six rungs from "tune the query" (hours, reversible) to "shard" (months, one-way door). Most "we need to shard" problems are a missing index. |
+| **One shard per region** | Sharding for *latency*, not capacity: Mumbai, Singapore, Frankfurt and Virginia each hold their own region's rows. Shows the same table on all four machines with only the rows differing — and that data residency (GDPR, RBI) is satisfied by geography rather than by policy. |
 | **When to reach for sharding** | Three conditions that must all hold — writes are the wall, the data outgrew the machine, you have a natural key — plus the four cases where sharding is the wrong answer. |
 | **When to reach for partitioning** | Three signals: one table dominates, a shared filter key (almost always time), scheduled deletion. Plus where it buys nothing. |
 | **In the wild** | Publicly documented architectures — Instagram (Postgres by user ID), Notion (by workspace), Shopify pods, Vitess out of YouTube, TimescaleDB. The common thread: they all shard on the tenant. |
@@ -145,6 +146,7 @@ than inferring it:
 |-------|--------|
 | Anatomy | A query rides app &rarr; router &rarr; the one shard holding its key |
 | Cross-shard query | Packets fan out to all four shards in blue, then partial results ride back in red |
+| Geographic sharding | Four cities reach one distant database, then each reaches its own local shard |
 | Hash sharding | Each computed `id mod 4` sends its row to the shard it hashed to |
 | Directory sharding | The looked-up entry travels to the shard it names |
 | Partition pruning | The query only travels to the partition it matches; the others dim out |
@@ -228,14 +230,14 @@ The level detail panel sizes itself the same way and expresses its internals in
 auto-fit to shrink the entire slide.
 
 Verified with real viewport resizes at 1024x768, 1280x800, 1512x982 and
-1920x1080: no clipping on any of the 41 slides, and the auto-fit never reaches
+1920x1080: no clipping on any of the 42 slides, and the auto-fit never reaches
 its floor.
 
 
 Type is a share of **screen height**, not fixed pixels, so the deck keeps its
 physical size whatever resolution the projector runs at — the root is `3.5vh`,
 so body copy lands around 30px at 1080p. `+` / `−` adjust live and the setting is
-remembered per machine. Checked for overflow across all 159 steps, in both themes.
+remembered per machine. Checked for overflow across all 163 steps, in both themes.
 
 ## Design
 

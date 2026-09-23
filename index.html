@@ -899,6 +899,52 @@ function sceneDirectory(step){
   return SV('0 0 1000 372', g);
 }
 
+/* ---- 9b. geographic sharding: the shard key is the customer's region ---- */
+function sceneGeo(step){
+  const R = [['Mumbai',    "region = 'IN'", '210 ms', '11 ms'],
+             ['Singapore', "region = 'SG'", '190 ms', '9 ms'],
+             ['Frankfurt', "region = 'EU'", '95 ms',  '12 ms'],
+             ['Virginia',  "region = 'US'", '12 ms',  '8 ms']];
+  let g='';
+  R.forEach((r,i)=>{
+    const cx = 125 + i*250;
+    g += `<g class="sv-fade" ${D(i*70)}>
+      <rect x="${cx-64}" y="16" width="128" height="48" rx="2" class="box-navy"/>
+      <text class="on-navy t-lbl" x="${cx}" y="38" text-anchor="middle" style="font-size:16px">${r[0]}</text>
+      <text x="${cx}" y="56" text-anchor="middle" class="t-sub" style="fill:var(--ink-2);font-size:13px">customers</text></g>`;
+  });
+
+  if(step===0){
+    g += `<g class="sv-pop"><rect x="390" y="238" width="220" height="84" rx="2" class="box-navy"/>
+      <text class="on-navy t-lbl" x="500" y="270" text-anchor="middle">One database</text>
+      <text x="500" y="292" text-anchor="middle" class="t-sub" style="fill:var(--ink-2);font-size:14px">Virginia</text>
+      <text x="500" y="312" text-anchor="middle" class="t-sub" style="fill:var(--flame-ink);font-size:13px;font-weight:600">every read crosses an ocean</text></g>`;
+    R.forEach((r,i)=>{
+      const cx = 125 + i*250;
+      g += wire(`M${cx} 66 C${cx} 150 500 168 500 236`, {dur:2.4, delay:i*.2, r:5});
+      g += `<rect x="${cx-38}" y="110" width="76" height="24" rx="3" fill="var(--card)"/>
+        <text class="t-sub" x="${cx}" y="127" text-anchor="middle"
+        style="fill:var(--flame-ink);font-weight:600;font-size:16px">${r[2]}</text>`;
+    });
+  } else {
+    R.forEach((r,i)=>{
+      const x = 25 + i*250, cx = 125 + i*250;
+      g += step>=2 ? wire(`M${cx} 66 L${cx} 236`, {dur:1.1, delay:i*.12, r:5})
+                   : `<path d="M${cx} 66 L${cx} 236" class="wire"/>`;
+      g += `<g class="sv-pop" ${D(i*90)}>
+        <rect x="${x}" y="238" width="200" height="84" rx="2" class="box-navy"/>
+        <text class="on-navy t-lbl" x="${cx}" y="266" text-anchor="middle" style="font-size:16px">Shard · ${r[0]}</text>
+        <text class="t-mono" x="${cx}" y="288" text-anchor="middle" style="font-size:13px;fill:var(--blue)">${r[1]}</text>
+        ${step>=2?`<text x="${cx}" y="310" text-anchor="middle" class="t-sub"
+          style="fill:var(--leaf);font-weight:600;font-size:15px">${r[3]}</text>`:''}</g>`;
+    });
+    g += `<rect x="326" y="142" width="348" height="26" rx="3" fill="var(--card)"/>
+      <text x="500" y="160" text-anchor="middle" class="t-sub"
+      style="fill:var(--ink-2);font-size:15px">same table · same columns · different rows</text>`;
+  }
+  return SV('0 0 1000 340', g);
+}
+
 /* ---- 10. hotspot bar chart (order_date as shard key) ---- */
 function sceneHotspot(step){
   const bars=[['2023','idle',18,'var(--line)'],['2024','idle',22,'var(--line)'],
@@ -1089,7 +1135,7 @@ const CHAPTERS = [
  {n:1, t:'One machine',                    of:['title','growth','vocab']},
  {n:2, t:'A map of where things break',    of:['levels','mapped','quiz1']},
  {n:3, t:'The machine runs out',           of:['scaleup','scaleout','split','define','anatomy']},
- {n:4, t:'Deciding where each row lives',  of:['range','hash','directory','compare']},
+ {n:4, t:'Deciding where each row lives',  of:['range','hash','directory','compare','geo']},
  {n:5, t:'What sharding broke',            of:['crossshard','reshard','hotspot','quiz2','whenshard']},
  {n:6, t:'Still too big for one table',    of:['scanprob','partdef','versus','vstable','parttypes','pruning',
                                                'benefits','limits','quiz3','whenpart']},
@@ -1343,6 +1389,21 @@ const DECK = [
         ${[1,2,3].map(k=>`<span style="font-size:.6rem;color:${r[4]?'var(--flame-ink)':'var(--ink-2)'};
           font-weight:${r[4]?700:400}">${r[k]}</span>`).join('')}</div>` : '').join('')}
     </div>`; } },
+
+{ id:'geo', kick:'the shard key is where the customer is', eyebrow:'Sharding in the real world',
+  title:'One shard per region', tag:'sharding', steps:[
+  {note:'Start with the problem this one solves, because it is not capacity — it is distance. One database in Virginia, and every customer on earth reaches across an ocean to read their own row. Read the numbers out: a Mumbai customer waits 210 milliseconds before the query has done any work at all.'},
+  {note:'So shard on region. Four machines in four cities: Mumbai holds the Indian customers, Singapore the South-East Asian ones, Frankfurt Europe, Virginia the US. Say the line under the boxes aloud — same table, same columns, on all four machines. Only the rows differ. That is what sharding means and it is the thing students most often get wrong.'},
+  {note:'Now each customer talks to the machine nearest them and the round trip collapses to single digits. Note what just happened: sharding bought us LATENCY here, not capacity. That is a second, independent reason to shard.'},
+  {note:'Two consequences. The good one — a row written in Mumbai physically stays in India, which is how GDPR in Europe and RBI localisation in India get satisfied: by geography, not by policy. The catch — a global revenue report now has to ask all four machines and merge the answers. That is the cross-shard query from the next chapter, and it is the price of the latency win.'}],
+  body:(st)=>`
+    <div class="stage-row">${sceneGeo(st)}</div>
+    ${st>=3?`<div class="cards" style="grid-template-columns:1fr 1fr;gap:.6rem">
+      <div class="pop d1">${card('Why it wins','Data stays in its region',
+        'A row written in Mumbai never leaves India. GDPR and RBI localisation are met by <b>geography</b>, not by policy.','',ico('shield'))}</div>
+      <div class="pop d2">${card('The catch','A global report hits all four',
+        'Revenue across every region is a cross-shard query — fan out, collect, merge in the application.','tl',ico('route'))}</div>
+    </div>`:''}` },
 
 { id:'crossshard', kick:'joins that leave the database', eyebrow:'Pitfall 1 · challenges of sharding', title:'Cross-shard queries',
   tag:'pitfalls', steps:[
