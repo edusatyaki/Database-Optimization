@@ -258,7 +258,7 @@ hand-drawn boxes, rather than a corporate slide template.
   which makes straight edges wobble like pen on paper. Two strengths: a coarser
   one for shapes, a finer one for connector lines.
 - The rail is the notebook margin — dashed rules, no fill, the current chapter
-  boxed in highlighter.
+  boxed in highlighter. The byline sits at its foot.
 - Real artefacts (the Amazon wordmark) are **taped in**: a white printout with
   washi-tape corners, rotated off true, captioned in hand. It keeps a crisp
   corporate mark from fighting the drawn page.

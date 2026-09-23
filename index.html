@@ -153,7 +153,7 @@ body{
 .rail-nav{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;
   gap:.08rem;overflow:hidden}
 .rn{display:grid;grid-template-columns:1.35rem 1fr;gap:.4rem;align-items:baseline;
-  padding:.3rem .25rem;cursor:pointer;border-left:3px solid transparent;
+  padding:clamp(.16rem,.72vh,.3rem) .25rem;cursor:pointer;border-left:3px solid transparent;
   color:var(--muted);transition:color .15s,border-color .15s,background .15s}
 .rn:hover{color:var(--ink);background:var(--amber-soft)}
 .rn-n{font-family:var(--mono);font-size:.46rem;font-weight:700;text-align:right;color:var(--orange-deep)}
@@ -202,6 +202,15 @@ main{flex:1 1 auto;min-height:0;min-width:0;padding:.65rem 1.35rem .7rem;display
   align-items:flex-start!important;align-content:flex-start!important;
   justify-content:flex-start!important}
 
+/* a credit line, not content: capped so it stays subordinate on a big projector
+   and never steals height from the chapter list */
+.rail-by{flex:0 0 auto;font-family:var(--hand);font-size:clamp(8px,.44rem,12px);
+  letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);
+  padding-top:clamp(4px,.42rem,9px);border-top:1px dashed var(--line);
+  white-space:nowrap;overflow:hidden}
+.rail-by b{font-family:var(--marker);font-weight:700;font-size:clamp(11px,.6rem,15px);
+  letter-spacing:.2px;text-transform:none;color:var(--ink)}
+
 .progress{flex:0 0 auto;height:5px;background:var(--line)}
 .progress span{display:block;height:100%;background:var(--amber-2);transition:width .2s ease}
 
@@ -214,6 +223,8 @@ main{flex:1 1 auto;min-height:0;min-width:0;padding:.65rem 1.35rem .7rem;display
 }
 @media (max-height:600px){
   .rail-lecture b{display:none}
+  .rail-by{font-size:0;padding-top:.32rem}
+  .rail-by b{font-size:.56rem}
   .rn-t{font-size:.46rem}
 }
 
@@ -224,6 +235,8 @@ main{flex:1 1 auto;min-height:0;min-width:0;padding:.65rem 1.35rem .7rem;display
   .rail-nav,.rail-keys{display:none}
   .rail-lecture{padding-bottom:0;border-bottom:none}
   .rail-foot{flex-direction:row;align-items:center;border-top:none;padding-top:0;margin-left:auto}
+  .rail-by{font-size:0;padding-top:0;border-top:none}
+  .rail-by b{font-size:.56rem}
   .doc-head{padding:.8rem 1rem .5rem}
   main{padding:.7rem 1rem}
 }
@@ -463,6 +476,7 @@ text{font-family:var(--hand)}
       <div class="rail-meta"><span id="stepCount">—</span><span class="clock" id="clock">00:00</span></div>
       <div class="rail-keys"><kbd>&rarr;</kbd><kbd>&larr;</kbd> step &nbsp;<kbd>S</kbd> notes
         &nbsp;<kbd>O</kbd> map &nbsp;<kbd>T</kbd> theme &nbsp;<kbd>+</kbd><kbd>&minus;</kbd> size</div>
+      <div class="rail-by">Educator &middot; <b>Satyaki Das</b></div>
     </div>
   </aside>
 
