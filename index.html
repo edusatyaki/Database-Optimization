@@ -28,11 +28,14 @@
   --amber-2:#F7C948;
   --amber-soft:#FDEFC2;
   --pencil:#7FA3C9;         /* the blue-grey sketch fill */
-  --pencil-2:#4A6F96;
+  --pencil-2:#3D5C7E;
   --pencil-soft:#DCE8F4;
   --flame:#E8553A;          /* warnings, hot shards — a FILL colour */
   --flame-ink:#BF3419;      /* the same voice, dark enough to set as text */
   --flame-soft:#FBE2DC;
+  --on-flame:#2A1109;     /* text that sits ON a flame fill, in either theme */
+  --surface-blue:#3D5C7E;   /* coloured bands that keep white text in BOTH themes */
+  --surface-green:#3A7A3D;
   --leaf:#3A7A3D;           /* good, benefits */
   --leaf-soft:#E2F0E2;
 
@@ -46,7 +49,7 @@
   --squid-2:var(--pencil-2);
   --squid-deep:#12100E;
   --orange:var(--amber);
-  --orange-deep:#8A5E0A;
+  --orange-deep:#6E4A05;
   --orange-soft:var(--amber-soft);
   --link:var(--pencil-2);
   --link-soft:var(--pencil-soft);
@@ -93,6 +96,13 @@
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 :root[data-theme="dark"]{
+  /* accents re-lit for a dark ground — the light-theme values are far too dark here */
+  --amber:#6B5416;
+  --amber-2:#7A5D14;
+  --pencil-2:#B8D4F0;
+  --flame-ink:#FF8A6E;
+  --leaf:#6FBF73;
+  --orange-deep:#F2D07A;
   --paper:#241F1A;
   --paper-2:#2C261F;
   --card:#2B251E;
@@ -253,7 +263,7 @@ svg.scene rect:not(.nofx),svg.scene circle:not(.packet){filter:url(#rough)}
 .card.pp .ico svg{color:var(--orange-deep)} .card.tl .ico svg{color:var(--pencil-2)}
 code,.mono{font-family:var(--mono);font-size:.84em;background:var(--amber-soft);
   padding:1px 5px;border-radius:5px;color:var(--ink);border:1.5px solid var(--line)}
-:root[data-theme="dark"] code,:root[data-theme="dark"] .mono{color:var(--orange)}
+:root[data-theme="dark"] code,:root[data-theme="dark"] .mono{color:var(--orange-deep)}
 
 .pop{opacity:0;transform:translateY(12px);animation:pop .42s cubic-bezier(.22,1,.36,1) forwards}
 @keyframes pop{to{opacity:1;transform:none}}
@@ -306,9 +316,9 @@ text{font-family:var(--hand)}
 .t-sub{font-size:16px;fill:var(--muted)}
 .t-mono{font-family:'JetBrains Mono',monospace;font-size:14px;fill:var(--ink-2)}
 .t-big{font-family:var(--marker);font-size:30px;font-weight:700;fill:var(--ink)}
-.box{fill:#ffffff;stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
-.box-navy{fill:#ffffff;stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
-.box-blue{fill:#ffffff;stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
+.box{fill:var(--card);stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
+.box-navy{fill:var(--card);stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
+.box-blue{fill:var(--card);stroke:var(--ink);stroke-width:2.6;filter:url(#rough)}
 .box-purple{fill:var(--amber);stroke:var(--ink);stroke-width:2.2;filter:url(#rough)}
 .box-orange{fill:var(--flame);stroke:var(--ink);stroke-width:2.2;filter:url(#rough)}
 .on-navy{fill:var(--ink)}
@@ -358,7 +368,8 @@ text{font-family:var(--hand)}
 .taped img{display:block;height:var(--logo-h,2.4rem);width:auto}
 .taped figcaption{margin-top:.25rem;font-family:var(--hand);font-size:.5rem;
   color:var(--muted);text-align:center;letter-spacing:.3px}
-:root[data-theme="dark"] .taped{background:#F7F2E8}
+:root[data-theme="dark"] .taped{background:#F7F2E8;color:#1C1A17}
+:root[data-theme="dark"] .taped figcaption{color:#6B6259}
 
 /* ================= chapter opener ================= */
 .chapter{flex:1 1 auto;display:flex;align-items:center;gap:2.4rem;padding:0 .6rem}
@@ -549,7 +560,7 @@ function sceneStack(step, focus, compact, hideTech){
     const y = base - (i+1)*(fh+gap);
     if(step < i+1) return;
     const lit = focus === i+1;
-    const fill = lit ? 'var(--amber)' : '#ffffff';
+    const fill = lit ? 'var(--amber)' : 'var(--card)';
     const tc   = 'var(--ink)';
     const sc   = lit ? 'var(--ink-2)' : 'var(--muted)';
     g += `<g class="sv-rise" ${D(i*90)}>
@@ -657,7 +668,7 @@ function sceneVocab(step){
       g += `<g class="sv-pop" ${D(i*90)}>
         <rect x="${578+i*92}" y="94" width="76" height="46" rx="2" fill="var(--amber)"
               stroke="var(--ink)" stroke-width="1.8"/>
-        <text class="t-sub" x="${616+i*92}" y="122" text-anchor="middle">piece ${i+1}</text></g>`;
+        <text class="t-sub" x="${616+i*92}" y="122" text-anchor="middle" style="fill:var(--ink-2)">piece ${i+1}</text></g>`;
     });
   }
   return SV('0 0 1000 176', g);
@@ -672,7 +683,7 @@ function sceneGrowth(step){
   if(step>=1) g += `<g class="sv-pop" ${D(700)}><circle cx="80" cy="330" r="8" fill="var(--green)"/>
       <text class="t-sub" x="80" y="360" text-anchor="middle">1995 · one database</text></g>`;
   if(step>=2) g += `<g class="sv-pop" ${D(180)}><circle cx="860" cy="46" r="11" fill="var(--red)" class="sv-hot"/>
-      <text class="t-lbl" x="860" y="24" text-anchor="middle" style="fill:var(--red)">timeouts</text>
+      <text class="t-lbl" x="860" y="24" text-anchor="middle" style="fill:var(--flame-ink)">timeouts</text>
       <text class="t-sub" x="866" y="76" text-anchor="middle">today</text></g>`;
   if(step>=3) g += `<g class="sv-fade"><text class="t-sub" x="470" y="200" text-anchor="middle"
       style="font-style:italic;font-size:17px;fill:var(--muted)">
@@ -687,7 +698,7 @@ function sceneScaleUp(step){
   const [,w,h] = sizes[cur];
   const cx=300, base=330;
   let g = `<line x1="80" y1="86" x2="520" y2="86" stroke="var(--red)" stroke-width="4" stroke-dasharray="10 8"/>
-    <text class="t-lbl" x="300" y="70" text-anchor="middle" style="fill:var(--red)">the ceiling — biggest box money can buy</text>`;
+    <text class="t-lbl" x="300" y="70" text-anchor="middle" style="fill:var(--flame-ink)">the ceiling — biggest box money can buy</text>`;
   g += `<g style="transition:all .5s cubic-bezier(.22,1,.36,1)">
     <rect x="${cx-w/2}" y="${base-h}" width="${w}" height="${h}" rx="2"
           class="box-navy" ${step>=3?'':''}/>
@@ -698,19 +709,19 @@ function sceneScaleUp(step){
   g += `<text class="t-sub" x="${cx}" y="${base+28}" text-anchor="middle">Vertical scaling · buy a bigger machine</text>`;
   if(step>=3){
     g += `<g class="sv-pop"><rect x="${cx-w/2}" y="${base-h-16}" width="${w}" height="16" rx="1" fill="var(--red)" class="sv-hot"/>
-      <text class="on-navy" x="${cx}" y="${base-h-4}" text-anchor="middle" style="font-size:14px;font-weight:700">100% · no room left</text></g>`;
+      <text class="on-navy" x="${cx}" y="${base-h-4}" text-anchor="middle" style="fill:var(--on-flame);font-size:14px;font-weight:700">100% · no room left</text></g>`;
   }
   // right side commentary
   const notes = [
-    ['+ Simple','No application-code changes at all.','var(--green)'],
-    ['− Finite','One machine can only store and serve so much.','var(--red)'],
-    ['− Costly','Past a point a bigger box is not economical.','var(--red)']
+    ["+ Simple","No application-code changes at all.","var(--green)","var(--leaf)"],
+    ["− Finite","One machine can only store and serve so much.","var(--red)","var(--flame-ink)"],
+    ["− Costly","Past a point a bigger box is not economical.","var(--red)","var(--flame-ink)"]
   ];
   notes.forEach((n,i)=>{ if(step>=i+1)
     g += `<g class="sv-rise" ${D(i*90)}>
       <rect x="580" y="${112+i*74}" width="360" height="58" rx="2" fill="var(--panel)" stroke="var(--line)"/>
       <rect x="580" y="${112+i*74}" width="5" height="58" rx="2.5" fill="${n[2]}"/>
-      <text class="t-lbl" x="600" y="${134+i*74}" style="fill:${n[2]}">${n[0]}</text>
+      <text class="t-lbl" x="600" y="${134+i*74}" style="fill:${n[3]||n[2]}">${n[0]}</text>
       <text class="t-sub" x="600" y="${154+i*74}">${n[1]}</text></g>`;
   });
   return SV('0 0 1000 380', g);
@@ -780,7 +791,7 @@ function sceneAnatomy(step){
     g += `<g class="sv-pop" ${D(i*110)}>
       ${hit ? wire(`M500 182 C500 214 ${x+90} 206 ${x+90} 238`, {dur:1.1, delay:.55, r:5.5})
              : `<path d="M500 182 C500 214 ${x+90} 206 ${x+90} 238" class="wire"/>`}
-      <rect x="${x}" y="240" width="180" height="76" rx="2" fill="${hit?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6"
+      <rect x="${x}" y="240" width="180" height="76" rx="2" fill="${hit?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.6"
             ${hit?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="${x+90}" y="272" text-anchor="middle">Shard ${i+1}</text>
       <text x="${x+90}" y="294" text-anchor="middle" class="t-sub" style="fill:var(--ink-2)">own CPU · disk · network</text></g>`;
@@ -815,7 +826,7 @@ function sceneRange(step){
     <text class="t-sub" x="82" y="300">One shard answers — no need to touch the others.</text>
     <rect x="510" y="252" width="430" height="66" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="510" y="252" width="5" height="66" rx="2.5" fill="var(--red)"/>
-    <text class="t-lbl" x="532" y="278" style="fill:var(--red)">Hotspots</text>
+    <text class="t-lbl" x="532" y="278" style="fill:var(--flame-ink)">Hotspots</text>
     <text class="t-sub" x="532" y="300">Newest IDs all land on the last shard; the rest sit idle.</text></g>`;
   return SV('0 0 1000 340', g);
 }
@@ -838,7 +849,7 @@ function sceneHash(step){
   if(step>=1) for(let i=0;i<4;i++){
     const x = 430 + i*138, filled = step>=2;
     g += `<g class="sv-pop" ${D(i*100)}>
-      <rect x="${x-52}" y="152" width="118" height="92" rx="2" fill="${filled?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6"/>
+      <rect x="${x-52}" y="152" width="118" height="92" rx="2" fill="${filled?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.6"/>
       <text class="on-navy t-lbl" x="${x+7}" y="186" text-anchor="middle">Shard ${i}</text>
       <text class="t-mono" x="${x+7}" y="216" text-anchor="middle" style="fill:var(--ink-2)">
         ${filled ? (rows.find(r=>+r[1]===i)||['—'])[0] : '—'}</text></g>`;
@@ -849,7 +860,7 @@ function sceneHash(step){
     <text class="t-sub" x="82" y="320">The hash scatters rows evenly — no hotspots.</text>
     <rect x="510" y="272" width="430" height="66" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="510" y="272" width="5" height="66" rx="2.5" fill="var(--red)"/>
-    <text class="t-lbl" x="532" y="298" style="fill:var(--red)">Scatter–gather ranges</text>
+    <text class="t-lbl" x="532" y="298" style="fill:var(--flame-ink)">Scatter–gather ranges</text>
     <text class="t-sub" x="532" y="320">Order is destroyed, so a range query must hit every shard.</text></g>`;
   return SV('0 0 1000 356', g);
 }
@@ -873,7 +884,7 @@ function sceneDirectory(step){
     const hit = step>=2 && i===1;
     g += `<g class="sv-pop" ${D(i*90)}>
       <rect x="600" y="${52+(i-1)*76}" width="340" height="62" rx="2"
-            fill="${hit?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6" ${hit?'class="sv-glow"':''}/>
+            fill="${hit?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.6" ${hit?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="624" y="${90+(i-1)*76}" style="font-size:17px">Shard ${i}</text></g>`;
   });
   if(step>=2) g += wire('M372 144 C470 144 480 98 590 98', {dur:1.4, r:5.5});
@@ -883,7 +894,7 @@ function sceneDirectory(step){
     <text class="t-sub" x="82" y="340">Edit one entry to move rows. No re-hashing.</text>
     <rect x="510" y="292" width="430" height="66" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="510" y="292" width="5" height="66" rx="2.5" fill="var(--red)"/>
-    <text class="t-lbl" x="532" y="318" style="fill:var(--red)">Central bottleneck</text>
+    <text class="t-lbl" x="532" y="318" style="fill:var(--flame-ink)">Central bottleneck</text>
     <text class="t-sub" x="532" y="340">Every query consults it first — one choke point.</text></g>`;
   return SV('0 0 1000 372', g);
 }
@@ -898,9 +909,9 @@ function sceneHotspot(step){
     g += `<g class="sv-rise" ${D(i*100)}>
       <rect x="${x}" y="${y}" width="180" height="${h}" rx="2" fill="${b[3]}"
             class="sv-grow${hot?' sv-hot':''}" style="animation-delay:${i*110}ms"/>
-      ${hot?`<text class="on-navy t-lbl" x="${x+90}" y="${y+34}" text-anchor="middle" style="font-size:19px">100% load</text>`:''}
+      ${hot?`<text class="on-navy t-lbl" x="${x+90}" y="${y+34}" text-anchor="middle" style="fill:var(--on-flame);font-size:19px">100% load</text>`:''}
       <text class="t-lbl" x="${x+90}" y="324" text-anchor="middle" style="font-size:14px">${b[0]}</text>
-      <text class="t-sub" x="${x+90}" y="344" text-anchor="middle" style="fill:${hot?'var(--red)':'var(--muted)'}">${b[1]}</text></g>`;
+      <text class="t-sub" x="${x+90}" y="344" text-anchor="middle" style="fill:${hot?'var(--flame-ink)':'var(--muted)'}">${b[1]}</text></g>`;
   });
   if(step>=5) g += `<g class="sv-rise"><rect x="110" y="362" width="825" height="50" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="110" y="362" width="5" height="50" rx="2.5" fill="var(--red)"/>
@@ -923,8 +934,8 @@ function sceneScatter(step){
                           {dur:1.5, delay:i*.12, r:4.5, stroke:'var(--red)', color:'var(--red)'});
   }
   if(step>=2) g += `<g class="sv-pop"><rect x="330" y="294" width="340" height="56" rx="2" fill="var(--red)"/>
-    <text class="on-navy t-lbl" x="500" y="320" text-anchor="middle">merge in application memory</text>
-    <text x="500" y="340" text-anchor="middle" class="t-sub" style="fill:var(--ink-2)">an application-level join — milliseconds become seconds</text></g>`;
+    <text class="on-navy t-lbl" x="500" y="320" text-anchor="middle" style="fill:var(--on-flame)">merge in application memory</text>
+    <text x="500" y="340" text-anchor="middle" class="t-sub" style="fill:var(--on-flame)">an application-level join — milliseconds become seconds</text></g>`;
   return SV('0 0 1000 366', g);
 }
 
@@ -936,19 +947,19 @@ function sceneReshard(step){
       <rect x="${70+i*96}" y="120" width="80" height="6" rx="3" fill="var(--amber-2)"/>
       <text class="t-lbl" x="${110+i*96}" y="176" text-anchor="middle">S${i+1}</text></g>`;
   });
-  if(step>=1) g += `<g class="sv-fade"><text class="t-lbl" x="420" y="162" text-anchor="middle" style="fill:var(--red)">+ new shard</text>
+  if(step>=1) g += `<g class="sv-fade"><text class="t-lbl" x="420" y="162" text-anchor="middle" style="fill:var(--flame-ink)">+ new shard</text>
     <path d="M348 176 L492 176" class="wire live" stroke="var(--red)"/></g>`;
   if(step>=1) [0,1,2,3].forEach(i=>{
     const nw = i===3;
     g += `<g class="sv-pop" ${D(i*100)}><rect x="${540+i*96}" y="120" width="80" height="96" rx="2"
-      fill="${nw?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6" ${nw?'class="sv-glow"':''}/>
+      fill="${nw?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.6" ${nw?'class="sv-glow"':''}/>
       <text class="on-navy t-lbl" x="${580+i*96}" y="176" text-anchor="middle">S${i+1}</text></g>`;
   });
   if(step>=2) g += `<g class="sv-fade">
     ${wire('M110 228 C110 280 560 280 580 228', {dur:2.1, r:4.5, stroke:'var(--red)', color:'var(--red)'})}
     ${wire('M206 228 C206 292 660 292 676 228', {dur:2.1, delay:.3, r:4.5, stroke:'var(--red)', color:'var(--red)'})}
     ${wire('M302 228 C302 304 760 304 772 228', {dur:2.1, delay:.6, r:4.5, stroke:'var(--red)', color:'var(--red)'})}
-    <text class="t-sub" x="440" y="322" text-anchor="middle" style="fill:var(--red);font-weight:600">
+    <text class="t-sub" x="440" y="322" text-anchor="middle" style="fill:var(--flame-ink);font-weight:600">
       every existing row is re-evaluated against the new shard map</text></g>`;
   if(step>=3) g += `<g class="sv-rise"><rect x="70" y="342" width="866" height="50" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="70" y="342" width="5" height="50" rx="2.5" fill="var(--red)"/>
@@ -980,7 +991,7 @@ function sceneScan(step){
   // annotations sit BELOW the grid so nothing overlaps the cells
   if(step>=1) g += `<g class="sv-rise"><rect x="${X0}" y="236" width="400" height="62" rx="2" fill="var(--panel)" stroke="var(--line)"/>
     <rect x="${X0}" y="236" width="5" height="62" rx="2.5" fill="var(--red)"/>
-    <text class="t-lbl" x="${X0+22}" y="262" style="fill:var(--red);font-size:16px">Without partitioning · 150M rows read</text>
+    <text class="t-lbl" x="${X0+22}" y="262" style="fill:var(--flame-ink);font-size:16px">Without partitioning · 150M rows read</text>
     <text class="t-sub" x="${X0+22}" y="284">Every cell is examined to find the 2–3M that match.</text></g>`;
   if(step>=2) g += `<g class="sv-rise"><rect x="${X0+440}" y="236" width="400" height="62" rx="2" fill="var(--panel)" stroke="var(--blue)" stroke-width="2"/>
     <rect x="${X0+440}" y="236" width="5" height="62" rx="2.5" fill="var(--blue)"/>
@@ -1005,7 +1016,7 @@ function scenePruning(step){
              stroke-dasharray="3 7" opacity=".5"/>`;
     g += `<g class="sv-rise" ${D(i*90)}>
       <rect x="${x}" y="138" width="280" height="96" rx="2"
-        fill="${hit?'var(--amber)':'#ffffff'}" stroke="var(--ink)" stroke-width="2.6"
+        fill="${hit?'var(--amber)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.6"
         opacity="${skipped?.45:1}" ${hit?'class="sv-glow"':''}/>
       <text class="t-mono" x="${x+22}" y="176" style="fill:${hit?'var(--ink)':'var(--muted)'};font-size:15px">${name}${hit?' ✓':''}</text>
       <text class="t-sub" x="${x+22}" y="202" style="fill:${hit?'var(--ink-2)':'var(--muted)'}">
@@ -1329,7 +1340,7 @@ const DECK = [
       ${rows.map((r,i)=> st>=i ? `<div class="pop" style="animation-delay:${i*50}ms;display:grid;
         grid-template-columns:1.2fr 1fr 1fr 1fr;gap:.5rem;padding:.46rem .7rem;background:var(--panel);border-radius:10px">
         <span style="font-weight:700;font-size:.62rem">${r[0]}</span>
-        ${[1,2,3].map(k=>`<span style="font-size:.6rem;color:${r[4]?'var(--red)':'var(--ink-2)'};
+        ${[1,2,3].map(k=>`<span style="font-size:.6rem;color:${r[4]?'var(--flame-ink)':'var(--ink-2)'};
           font-weight:${r[4]?700:400}">${r[k]}</span>`).join('')}</div>` : '').join('')}
     </div>`; } },
 
@@ -1431,11 +1442,11 @@ const DECK = [
   {note:'Hash: apply a hash to the partition key and distribute by the result. Use it when no natural range or category exists and the goal is simply to reduce individual table sizes evenly.'}],
   body:(st)=>{
     const t=[['Range','Best for time-series','Divide by a range of values in the partition key. Time-series data, transaction logs, audit records.',
-        "PARTITION BY RANGE (order_date);\n\nCREATE TABLE orders_2025\n  PARTITION OF orders\n  FOR VALUES FROM ('2025-01-01')\n  TO ('2026-01-01');",'var(--blue)'],
+        "PARTITION BY RANGE (order_date);\n\nCREATE TABLE orders_2025\n  PARTITION OF orders\n  FOR VALUES FROM ('2025-01-01')\n  TO ('2026-01-01');",'var(--surface-blue)'],
       ['List','Best for categorical values','Each partition holds rows matching one of its assigned values. Region, country, department, status.',
-        "PARTITION BY LIST (region);\n\nCREATE TABLE customers_north\n  PARTITION OF customers\n  FOR VALUES IN ('North',\n    'NorthEast','NorthWest');",'var(--purple)'],
+        "PARTITION BY LIST (region);\n\nCREATE TABLE customers_north\n  PARTITION OF customers\n  FOR VALUES IN ('North',\n    'NorthEast','NorthWest');",'var(--surface-blue)'],
       ['Hash','Best for even distribution','No natural range or category exists — the goal is simply to reduce table sizes evenly.',
-        "PARTITION BY HASH (product_id);\n\nCREATE TABLE products_p0\n  PARTITION OF products\n  FOR VALUES WITH\n  (MODULUS 4, REMAINDER 0);",'var(--green)']];
+        "PARTITION BY HASH (product_id);\n\nCREATE TABLE products_p0\n  PARTITION OF products\n  FOR VALUES WITH\n  (MODULUS 4, REMAINDER 0);",'var(--surface-green)']];
     return `<div class="cards" style="grid-template-columns:repeat(3,1fr);flex:1;align-content:center">
       ${t.map((x,i)=> st>=i ? `<div class="pop" style="animation-delay:${i*60}ms;background:var(--panel);
         border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--line);display:flex;flex-direction:column">
