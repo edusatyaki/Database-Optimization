@@ -30,7 +30,7 @@ The whole deck runs on the arrow keys.
 | `+` / `−` / `0` | type size, for the room you are in |
 | `Home` / `End` | first / last slide |
 
-40 slides, 152 steps. Notes are written for speaking aloud, one per step.
+41 slides, 159 steps. Notes are written for speaking aloud, one per step.
 
 ## Vocabulary before mechanics
 
@@ -53,8 +53,9 @@ either has been explained.
 ## Sharding vs. partitioning
 
 The one-line version: **sharding splits rows across machines; partitioning
-splits one table into pieces inside a single machine.** Chapter 6 gives this its
-own slide once both mechanisms have been shown.
+splits one table into pieces inside a single machine.** Chapter 6 lays this out
+as its own slide — *The differences, row by row* — built one row at a time, once
+both mechanisms have been shown.
 
 | | Sharding | Partitioning |
 |---|---|---|
@@ -227,14 +228,14 @@ The level detail panel sizes itself the same way and expresses its internals in
 auto-fit to shrink the entire slide.
 
 Verified with real viewport resizes at 1024x768, 1280x800, 1512x982 and
-1920x1080: no clipping on any of the 40 slides, and the auto-fit never reaches
+1920x1080: no clipping on any of the 41 slides, and the auto-fit never reaches
 its floor.
 
 
 Type is a share of **screen height**, not fixed pixels, so the deck keeps its
 physical size whatever resolution the projector runs at — the root is `3.5vh`,
 so body copy lands around 30px at 1080p. `+` / `−` adjust live and the setting is
-remembered per machine. Checked for overflow across all 120 steps, in both themes.
+remembered per machine. Checked for overflow across all 159 steps, in both themes.
 
 ## Design
 

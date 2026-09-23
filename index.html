@@ -1091,7 +1091,7 @@ const CHAPTERS = [
  {n:3, t:'The machine runs out',           of:['scaleup','scaleout','split','define','anatomy']},
  {n:4, t:'Deciding where each row lives',  of:['range','hash','directory','compare']},
  {n:5, t:'What sharding broke',            of:['crossshard','reshard','hotspot','quiz2','whenshard']},
- {n:6, t:'Still too big for one table',    of:['scanprob','partdef','versus','parttypes','pruning',
+ {n:6, t:'Still too big for one table',    of:['scanprob','partdef','versus','vstable','parttypes','pruning',
                                                'benefits','limits','quiz3','whenpart']},
  {n:7, t:"Amazon's own answer",            of:['amazondb','wild']},
  {n:8, t:'What you should actually do',    of:['ladder','plan','recap']}
@@ -1434,6 +1434,37 @@ const DECK = [
   body:(st)=>`<div class="stage-row">${sceneVersus(st+1)}</div>
     ${st>=2?`<p class="lede pop">They are not alternatives — a large system does <b>both</b>: shard across ten servers,
       then partition the big table inside each one.</p>`:''}` },
+
+{ id:'vstable', kick:'one row explains all the others', eyebrow:'Sharding vs. partitioning', title:'The differences, row by row',
+  tag:'reference', steps:[
+  {note:'Build this row by row. What gets split: sharding splits the data itself across independent database instances; partitioning splits one table into child tables. Same verb, different object.'},
+  {note:'Where the pieces live. Different machines versus the same machine, same database. If a student remembers only one row, it is this one.'},
+  {note:'When you reach for each. One machine is not enough, versus one table is too big to scan. These are different symptoms — you can have either without the other.'},
+  {note:'And here is the row that explains every other row. Who routes the query? Under sharding, YOUR APPLICATION does — it has to know the shard key. Under partitioning, the planner does it for you, by pruning. Sharding sends the query OUT of the database; partitioning keeps it inside.'},
+  {note:'Which is exactly why joins differ. Cross-shard you fetch partial results and merge them in application code. Across partitions it is ordinary SQL and the planner handles it. Same for transactions — one instance, so nothing changes.'},
+  {note:'And hardware. Sharding adds machines — that is the entire point of it. Partitioning adds none; it reorganises storage inside the machine you already have.'},
+  {note:'Close on the correction students need most: this is not a choice between two options. A large system does both — shard across ten servers, then partition the big table inside each one.'}],
+  body:(st)=>{
+    const rows=[
+      ['What gets split','The data — rows across instances','One table, into child tables',false],
+      ['Where pieces live','Different machines','Same machine, same database',false],
+      ['Reach for it when','One machine is not enough','One table is too big to scan',false],
+      ['Who routes the query','The application, or a proxy','The planner — partition pruning',true],
+      ['Joins across pieces','Merged in application code','Ordinary SQL',false],
+      ['Adds hardware','Yes — that is the point','No',false]];
+    return `<div class="cards" style="gap:.34rem">
+      <div style="display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:.5rem;padding:.4rem .7rem;
+        background:var(--amber);border:2.5px solid var(--ink);border-radius:var(--wobble-2);color:var(--ink);font-family:var(--hand);font-size:.7rem">
+        <span></span><span>Sharding</span><span>Partitioning</span></div>
+      ${rows.map((r,i)=> st>=i ? `<div class="pop" style="animation-delay:${i*50}ms;display:grid;
+        grid-template-columns:1.05fr 1fr 1fr;gap:.5rem;padding:.44rem .7rem;border-radius:10px;
+        background:${r[3]?'var(--amber-soft)':'var(--panel)'};${r[3]?'box-shadow:inset 0 0 0 2px var(--ink)':''}">
+        <span style="font-weight:700;font-size:.62rem">${r[0]}</span>
+        ${[1,2].map(k=>`<span style="font-size:.6rem;color:${r[3]?'var(--pencil-2)':'var(--ink-2)'};
+          font-weight:${r[3]?700:400}">${r[k]}</span>`).join('')}</div>` : '').join('')}
+    </div>
+    ${st>=6?`<p class="lede pop">Not a choice between two options — a large system does <b>both</b>:
+      shard across ten servers, then partition the big table inside each one.</p>`:''}`; } },
 
 { id:'parttypes', kick:'range · list · hash', eyebrow:'Three types', title:'Range, List and Hash partitioning',
   tag:'partitioning', steps:[
