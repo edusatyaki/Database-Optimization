@@ -202,6 +202,14 @@ columns clip internally, so the rail can never burst its cell and push the
 progress bar off-screen. Below 820px of height it drops its key legend, and
 below 600px it drops the wordmark, rather than overflowing.
 
+The chapter list is the one thing that **scrolls rather than clips**, because at
+a raised type scale it can outgrow the margin no matter how the rest is tuned.
+It is `justify-content: safe center` — centred while it fits, falling back to
+start when it overflows, so the first chapter is never stranded above the scroll
+origin. When it is scrolling it picks up a mask that fades the cut edges, so a
+half-shown chapter reads as *there is more above* rather than as a clipping bug,
+and the chapter you are in scrolls itself into view as you advance.
+
 Audited by walking every slide and asking whether any element's bounding box
 falls outside the viewport — at 863px and at 620px of height, in both themes.
 
@@ -210,8 +218,8 @@ falls outside the viewport — at 863px and at 620px of height, in both themes.
 A slide clips rather than scrolls, and an inner wrapper scales the step down if
 it would not fit — so nothing is scrollable and nothing is silently cut off. At
 the default size no step needs it; the fit exists as a guard for high zoom and
-unusual aspect ratios. The notes drawer and run of show still scroll, with their
-scrollbars hidden.
+unusual aspect ratios. The notes drawer, the run of show and the rail's chapter
+list still scroll, with their scrollbars hidden.
 
 Slide titles are never clipped: the title block owns the full width of the
 document column, and everything that used to compete with it for a header row

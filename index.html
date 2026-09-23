@@ -150,8 +150,19 @@ body{
 .rail-lecture b{display:block;margin-top:.15rem;font-family:var(--marker);font-weight:700;
   font-size:1.05rem;letter-spacing:0;text-transform:none;color:var(--ink);line-height:1.05}
 
-.rail-nav{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;
-  gap:.08rem;overflow:hidden}
+/* the chapter list scrolls rather than clipping — at a large type scale, or on a
+   short screen, it can outgrow the margin. `safe center` keeps it centred while it
+   fits but falls back to start when it overflows, so the first item stays reachable. */
+.rail-nav{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+  justify-content:safe center;gap:.08rem;overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;scrollbar-width:none}
+.rail-nav::-webkit-scrollbar{width:0;height:0}
+/* only when it actually scrolls: fade the cut edges so a half-shown chapter
+   reads as "there is more above/below" rather than as a clipping bug */
+.rail-nav.scrolls{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14px,
+  #000 calc(100% - 14px),transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 14px,
+  #000 calc(100% - 14px),transparent 100%)}
 .rn{display:grid;grid-template-columns:1.35rem 1fr;gap:.4rem;align-items:baseline;
   padding:clamp(.16rem,.72vh,.3rem) .25rem;cursor:pointer;border-left:3px solid transparent;
   color:var(--muted);transition:color .15s,border-color .15s,background .15s}
@@ -1858,12 +1869,26 @@ $('#railNav').querySelectorAll('.rn').forEach(el => el.onclick = () => {
 });
 function railState(sl){
   const cur = sl.chapter ? sl.chapter.n : 0;
-  $('#railNav').querySelectorAll('.rn').forEach(el => {
+  const nav = $('#railNav');
+  let now = null;
+  nav.querySelectorAll('.rn').forEach(el => {
     const n = +el.dataset.ch;
     el.classList.toggle('now',  n === cur);
     el.classList.toggle('done', n <  cur);
+    if(n === cur) now = el;
   });
+  // if the list is scrolling, keep the chapter we are in on screen
+  if(railScrolls() && now){
+    now.scrollIntoView({block:'nearest', behavior: REDUCED ? 'auto' : 'smooth'});
+  }
 }
+function railScrolls(){
+  const nav = $('#railNav');
+  const over = nav.scrollHeight > nav.clientHeight + 1;
+  nav.classList.toggle('scrolls', over);
+  return over;
+}
+window.addEventListener('resize', railScrolls);
 
 /* ---- navigation: right / left arrow drive the whole deck ---- */
 function next(){
