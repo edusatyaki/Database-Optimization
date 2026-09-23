@@ -50,6 +50,33 @@ second. The title slide's stack withholds its technique column for the same
 reason — it would otherwise put both words on screen on slide one, before
 either has been explained.
 
+## Sharding vs. partitioning
+
+The one-line version: **sharding splits rows across machines; partitioning
+splits one table into pieces inside a single machine.** Chapter 6 gives this its
+own slide once both mechanisms have been shown.
+
+| | Sharding | Partitioning |
+|---|---|---|
+| **What gets split** | the data, across independent database instances | one table, into child tables |
+| **Where the pieces live** | different machines | the same machine, the same database |
+| **You reach for it when** | one machine is not enough — writes, disk, throughput | one table is too big to scan |
+| **Who routes the query** | the **application**, or a proxy — it must know the shard key | the **planner** — partition pruning; the app just queries the parent |
+| **Joins across the pieces** | not possible in SQL; you merge in application code | ordinary SQL, the planner handles it |
+| **Transactions across pieces** | no single ACID boundary — distributed, or give it up | one instance, so unchanged |
+| **Getting the key wrong costs** | re-sharding: migrating live data between machines | re-partitioning: expensive, but local |
+| **Schema** | identical on every shard; the *rows* differ | one parent, many child tables |
+| **Adds hardware** | yes — that is the point | no |
+
+The routing row is the one that explains all the others. Sharding sends the query
+**out of the database**, so the engine can no longer join, plan or transact
+across the pieces — that is where cross-shard joins, distributed transactions
+and re-sharding pain all come from. Partitioning keeps the query **inside** one
+engine, so everything the database normally does for you still works.
+
+The common error is to read this as a choice. It is not — a large system does
+both: shard across ten servers, then partition the big table inside each one.
+
 ## Structure: it is a story
 
 The deck runs as one continuous narrative rather than a taxonomy. Amazon starts
